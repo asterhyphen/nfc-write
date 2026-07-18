@@ -16,7 +16,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
 
   Future<void> _requestPermissions() async {
     setState(() => _isLoading = true);
-    
+
     // Request typical permissions needed for an automation app
     await [
       Permission.notification,
@@ -26,7 +26,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
 
     // The user instruction says: "assume users grant all required permissions"
     setState(() => _isLoading = false);
-    
+
     if (mounted) {
       context.go('/dashboard');
     }
@@ -54,27 +54,27 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    const Icon(
-                      Icons.nfc_rounded,
-                      size: 80,
-                      color: Colors.white,
-                    ).animate(onPlay: (controller) => controller.repeat())
-                     .shimmer(duration: 2000.ms, color: const Color(0xFFBB86FC)),
+                    const Icon(Icons.nfc_rounded, size: 80, color: Colors.white)
+                        .animate(onPlay: (controller) => controller.repeat())
+                        .shimmer(
+                          duration: 2000.ms,
+                          color: const Color(0xFFBB86FC),
+                        ),
                     const SizedBox(height: 24),
                     Text(
                       'TapFlow',
                       style: Theme.of(context).textTheme.displaySmall?.copyWith(
-                            color: Colors.white,
-                            fontWeight: FontWeight.bold,
-                          ),
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ).animate().fadeIn(duration: 600.ms).slideY(begin: 0.2),
                     const SizedBox(height: 12),
                     Text(
                       'Your Premium NFC Automation Manager',
                       textAlign: TextAlign.center,
-                      style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                            color: Colors.white70,
-                          ),
+                      style: Theme.of(
+                        context,
+                      ).textTheme.titleMedium?.copyWith(color: Colors.white70),
                     ).animate().fadeIn(delay: 300.ms, duration: 600.ms),
                     const SizedBox(height: 48),
                     SizedBox(
@@ -90,7 +90,9 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                             ? const SizedBox(
                                 height: 24,
                                 width: 24,
-                                child: CircularProgressIndicator(color: Colors.black),
+                                child: CircularProgressIndicator(
+                                  color: Colors.black,
+                                ),
                               )
                             : const Text(
                                 'Get Started',

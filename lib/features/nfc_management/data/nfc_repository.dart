@@ -46,7 +46,7 @@ class NfcRepository {
     if (ndef == null) {
       return false; // Tag is not NDEF formatted
     }
-    
+
     if (!ndef.isWritable) {
       return false;
     }

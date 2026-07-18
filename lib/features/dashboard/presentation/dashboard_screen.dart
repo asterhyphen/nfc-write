@@ -82,14 +82,16 @@ class _DashboardTab extends StatelessWidget {
                   Text(
                     'Welcome back,',
                     style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                          color: Theme.of(context).colorScheme.onSurface.withOpacity(0.7),
-                        ),
+                      color: Theme.of(
+                        context,
+                      ).colorScheme.onSurface.withOpacity(0.7),
+                    ),
                   ),
                   Text(
                     'Creator',
                     style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                          fontWeight: FontWeight.bold,
-                        ),
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                 ],
               ),
@@ -97,7 +99,7 @@ class _DashboardTab extends StatelessWidget {
                 radius: 24,
                 backgroundColor: Color(0xFF6200EE),
                 child: Icon(Icons.person, color: Colors.white),
-              )
+              ),
             ],
           ).animate().fadeIn(duration: 400.ms).slideX(begin: -0.2),
 
@@ -110,9 +112,17 @@ class _DashboardTab extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
                 _StatItem(label: 'Total Scans', value: '142'),
-                Container(width: 1, height: 40, color: Colors.grey.withOpacity(0.3)),
+                Container(
+                  width: 1,
+                  height: 40,
+                  color: Colors.grey.withOpacity(0.3),
+                ),
                 _StatItem(label: 'Active Profiles', value: '8'),
-                Container(width: 1, height: 40, color: Colors.grey.withOpacity(0.3)),
+                Container(
+                  width: 1,
+                  height: 40,
+                  color: Colors.grey.withOpacity(0.3),
+                ),
                 _StatItem(label: 'Favorites', value: '12'),
               ],
             ),
@@ -123,9 +133,9 @@ class _DashboardTab extends StatelessWidget {
           // Quick Actions
           Text(
             'Quick Actions',
-            style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                  fontWeight: FontWeight.bold,
-                ),
+            style: Theme.of(
+              context,
+            ).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
           ).animate().fadeIn(delay: 300.ms),
           const SizedBox(height: 16),
           GridView.count(
@@ -168,27 +178,32 @@ class _DashboardTab extends StatelessWidget {
           // Recent Activity
           Text(
             'Recent Activity',
-            style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                  fontWeight: FontWeight.bold,
-                ),
+            style: Theme.of(
+              context,
+            ).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
           ).animate().fadeIn(delay: 500.ms),
           const SizedBox(height: 16),
-          
+
           ListView.builder(
             shrinkWrap: true,
             physics: const NeverScrollableScrollPhysics(),
             itemCount: 3,
             itemBuilder: (context, index) {
               return ListTile(
-                contentPadding: EdgeInsets.zero,
-                leading: CircleAvatar(
-                  backgroundColor: Theme.of(context).colorScheme.primaryContainer,
-                  child: const Icon(Icons.history, size: 20),
-                ),
-                title: Text('Scanned "Office Wi-Fi"'),
-                subtitle: Text('${index + 1} hour(s) ago'),
-                trailing: const Icon(Icons.chevron_right),
-              ).animate().fadeIn(delay: Duration(milliseconds: 600 + (index * 100))).slideX(begin: 0.2);
+                    contentPadding: EdgeInsets.zero,
+                    leading: CircleAvatar(
+                      backgroundColor: Theme.of(
+                        context,
+                      ).colorScheme.primaryContainer,
+                      child: const Icon(Icons.history, size: 20),
+                    ),
+                    title: Text('Scanned "Office Wi-Fi"'),
+                    subtitle: Text('${index + 1} hour(s) ago'),
+                    trailing: const Icon(Icons.chevron_right),
+                  )
+                  .animate()
+                  .fadeIn(delay: Duration(milliseconds: 600 + (index * 100)))
+                  .slideX(begin: 0.2);
             },
           ),
         ],
@@ -210,15 +225,12 @@ class _StatItem extends StatelessWidget {
         Text(
           value,
           style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                fontWeight: FontWeight.bold,
-                color: Theme.of(context).colorScheme.primary,
-              ),
+            fontWeight: FontWeight.bold,
+            color: Theme.of(context).colorScheme.primary,
+          ),
         ),
         const SizedBox(height: 4),
-        Text(
-          label,
-          style: Theme.of(context).textTheme.bodySmall,
-        ),
+        Text(label, style: Theme.of(context).textTheme.bodySmall),
       ],
     );
   }
@@ -258,9 +270,9 @@ class _ActionCard extends StatelessWidget {
             const SizedBox(height: 12),
             Text(
               title,
-              style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                    fontWeight: FontWeight.w600,
-                  ),
+              style: Theme.of(
+                context,
+              ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w600),
             ),
           ],
         ),
