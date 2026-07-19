@@ -121,10 +121,7 @@ case OpenUrlAction():
 return openUrl(_that);case ShowNotificationAction():
 return showNotification(_that);case LaunchAppAction():
 return launchApp(_that);case SetBrightnessAction():
-return setBrightness(_that);case _:
-  throw StateError('Unexpected subclass');
-
-}
+return setBrightness(_that);}
 }
 /// A variant of `map` that fallback to returning `null`.
 ///
@@ -192,10 +189,7 @@ case OpenUrlAction():
 return openUrl(_that.url);case ShowNotificationAction():
 return showNotification(_that.title,_that.body);case LaunchAppAction():
 return launchApp(_that.packageName);case SetBrightnessAction():
-return setBrightness(_that.level);case _:
-  throw StateError('Unexpected subclass');
-
-}
+return setBrightness(_that.level);}
 }
 /// A variant of `when` that fallback to returning `null`
 ///

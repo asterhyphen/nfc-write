@@ -553,7 +553,7 @@ packages:
     source: hosted
     version: "5.6.4"
   ndef_record:
-    dependency: transitive
+    dependency: "direct main"
     description:
       name: ndef_record
       sha256: "210ffb12284961cab9e44b99462143316d9a20cd992581170706069ef77d74a6"

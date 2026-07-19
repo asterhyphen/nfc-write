@@ -48,4 +48,4 @@ final class NfcRepositoryProvider
   }
 }
 
-String _$nfcRepositoryHash() => r'0761284496ba0358fee04b56434f555993846054';
+String _$nfcRepositoryHash() => r'76471b53d5c9bc0a434a16ea017275a575fa89dd';

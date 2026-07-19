@@ -41,6 +41,6 @@ class AutomationEngine {
 }
 
 @riverpod
-AutomationEngine automationEngine(AutomationEngineRef ref) {
+AutomationEngine automationEngine(Ref ref) {
   return AutomationEngine();
 }

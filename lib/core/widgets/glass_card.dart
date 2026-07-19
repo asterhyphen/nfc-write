@@ -1,6 +1,8 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
 
+/// A reusable glassmorphism card that applies a frosted-glass effect
+/// using [BackdropFilter] and a semi-transparent surface overlay.
 class GlassCard extends StatelessWidget {
   final Widget child;
   final double borderRadius;
@@ -19,6 +21,7 @@ class GlassCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
     return ClipRRect(
       borderRadius: BorderRadius.circular(borderRadius),
       child: BackdropFilter(
@@ -26,10 +29,10 @@ class GlassCard extends StatelessWidget {
         child: Container(
           padding: padding,
           decoration: BoxDecoration(
-            color: Theme.of(context).colorScheme.surface.withOpacity(opacity),
+            color: colorScheme.surface.withValues(alpha: opacity),
             borderRadius: BorderRadius.circular(borderRadius),
             border: Border.all(
-              color: Theme.of(context).colorScheme.onSurface.withOpacity(0.1),
+              color: colorScheme.onSurface.withValues(alpha: 0.1),
               width: 1,
             ),
           ),
