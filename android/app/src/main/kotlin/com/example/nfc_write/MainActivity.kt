@@ -1,4 +1,4 @@
-package com.example.nfc_write
+package dev.aster.nfc_write
 
 import io.flutter.embedding.android.FlutterActivity
 
