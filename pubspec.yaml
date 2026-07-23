@@ -27,6 +27,8 @@ dependencies:
   google_fonts: ^8.2.0
   permission_handler: ^12.0.3
   ndef_record: ^1.4.2
+  intl: ^0.20.3
+  uuid: ^4.6.0
 
 dev_dependencies:
   flutter_test:
