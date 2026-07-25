@@ -31,6 +31,10 @@ AutomationAction _$AutomationActionFromJson(
           return SetBrightnessAction.fromJson(
             json
           );
+                case 'delayTimer':
+          return DelayTimerAction.fromJson(
+            json
+          );
         
           default:
             throw CheckedFromJsonException(
@@ -89,14 +93,15 @@ extension AutomationActionPatterns on AutomationAction {
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeMap<TResult extends Object?>({TResult Function( OpenUrlAction value)?  openUrl,TResult Function( ShowNotificationAction value)?  showNotification,TResult Function( LaunchAppAction value)?  launchApp,TResult Function( SetBrightnessAction value)?  setBrightness,required TResult orElse(),}){
+@optionalTypeArgs TResult maybeMap<TResult extends Object?>({TResult Function( OpenUrlAction value)?  openUrl,TResult Function( ShowNotificationAction value)?  showNotification,TResult Function( LaunchAppAction value)?  launchApp,TResult Function( SetBrightnessAction value)?  setBrightness,TResult Function( DelayTimerAction value)?  delayTimer,required TResult orElse(),}){
 final _that = this;
 switch (_that) {
 case OpenUrlAction() when openUrl != null:
 return openUrl(_that);case ShowNotificationAction() when showNotification != null:
 return showNotification(_that);case LaunchAppAction() when launchApp != null:
 return launchApp(_that);case SetBrightnessAction() when setBrightness != null:
-return setBrightness(_that);case _:
+return setBrightness(_that);case DelayTimerAction() when delayTimer != null:
+return delayTimer(_that);case _:
   return orElse();
 
 }
@@ -114,14 +119,15 @@ return setBrightness(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult map<TResult extends Object?>({required TResult Function( OpenUrlAction value)  openUrl,required TResult Function( ShowNotificationAction value)  showNotification,required TResult Function( LaunchAppAction value)  launchApp,required TResult Function( SetBrightnessAction value)  setBrightness,}){
+@optionalTypeArgs TResult map<TResult extends Object?>({required TResult Function( OpenUrlAction value)  openUrl,required TResult Function( ShowNotificationAction value)  showNotification,required TResult Function( LaunchAppAction value)  launchApp,required TResult Function( SetBrightnessAction value)  setBrightness,required TResult Function( DelayTimerAction value)  delayTimer,}){
 final _that = this;
 switch (_that) {
 case OpenUrlAction():
 return openUrl(_that);case ShowNotificationAction():
 return showNotification(_that);case LaunchAppAction():
 return launchApp(_that);case SetBrightnessAction():
-return setBrightness(_that);}
+return setBrightness(_that);case DelayTimerAction():
+return delayTimer(_that);}
 }
 /// A variant of `map` that fallback to returning `null`.
 ///
@@ -135,14 +141,15 @@ return setBrightness(_that);}
 /// }
 /// ```
 
-@optionalTypeArgs TResult? mapOrNull<TResult extends Object?>({TResult? Function( OpenUrlAction value)?  openUrl,TResult? Function( ShowNotificationAction value)?  showNotification,TResult? Function( LaunchAppAction value)?  launchApp,TResult? Function( SetBrightnessAction value)?  setBrightness,}){
+@optionalTypeArgs TResult? mapOrNull<TResult extends Object?>({TResult? Function( OpenUrlAction value)?  openUrl,TResult? Function( ShowNotificationAction value)?  showNotification,TResult? Function( LaunchAppAction value)?  launchApp,TResult? Function( SetBrightnessAction value)?  setBrightness,TResult? Function( DelayTimerAction value)?  delayTimer,}){
 final _that = this;
 switch (_that) {
 case OpenUrlAction() when openUrl != null:
 return openUrl(_that);case ShowNotificationAction() when showNotification != null:
 return showNotification(_that);case LaunchAppAction() when launchApp != null:
 return launchApp(_that);case SetBrightnessAction() when setBrightness != null:
-return setBrightness(_that);case _:
+return setBrightness(_that);case DelayTimerAction() when delayTimer != null:
+return delayTimer(_that);case _:
   return null;
 
 }
@@ -159,13 +166,14 @@ return setBrightness(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>({TResult Function( String url)?  openUrl,TResult Function( String title,  String body)?  showNotification,TResult Function( String packageName)?  launchApp,TResult Function( double level)?  setBrightness,required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>({TResult Function( String url)?  openUrl,TResult Function( String title,  String body)?  showNotification,TResult Function( String packageName)?  launchApp,TResult Function( double level)?  setBrightness,TResult Function( int seconds,  String? label)?  delayTimer,required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case OpenUrlAction() when openUrl != null:
 return openUrl(_that.url);case ShowNotificationAction() when showNotification != null:
 return showNotification(_that.title,_that.body);case LaunchAppAction() when launchApp != null:
 return launchApp(_that.packageName);case SetBrightnessAction() when setBrightness != null:
-return setBrightness(_that.level);case _:
+return setBrightness(_that.level);case DelayTimerAction() when delayTimer != null:
+return delayTimer(_that.seconds,_that.label);case _:
   return orElse();
 
 }
@@ -183,13 +191,14 @@ return setBrightness(_that.level);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>({required TResult Function( String url)  openUrl,required TResult Function( String title,  String body)  showNotification,required TResult Function( String packageName)  launchApp,required TResult Function( double level)  setBrightness,}) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>({required TResult Function( String url)  openUrl,required TResult Function( String title,  String body)  showNotification,required TResult Function( String packageName)  launchApp,required TResult Function( double level)  setBrightness,required TResult Function( int seconds,  String? label)  delayTimer,}) {final _that = this;
 switch (_that) {
 case OpenUrlAction():
 return openUrl(_that.url);case ShowNotificationAction():
 return showNotification(_that.title,_that.body);case LaunchAppAction():
 return launchApp(_that.packageName);case SetBrightnessAction():
-return setBrightness(_that.level);}
+return setBrightness(_that.level);case DelayTimerAction():
+return delayTimer(_that.seconds,_that.label);}
 }
 /// A variant of `when` that fallback to returning `null`
 ///
@@ -203,13 +212,14 @@ return setBrightness(_that.level);}
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>({TResult? Function( String url)?  openUrl,TResult? Function( String title,  String body)?  showNotification,TResult? Function( String packageName)?  launchApp,TResult? Function( double level)?  setBrightness,}) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>({TResult? Function( String url)?  openUrl,TResult? Function( String title,  String body)?  showNotification,TResult? Function( String packageName)?  launchApp,TResult? Function( double level)?  setBrightness,TResult? Function( int seconds,  String? label)?  delayTimer,}) {final _that = this;
 switch (_that) {
 case OpenUrlAction() when openUrl != null:
 return openUrl(_that.url);case ShowNotificationAction() when showNotification != null:
 return showNotification(_that.title,_that.body);case LaunchAppAction() when launchApp != null:
 return launchApp(_that.packageName);case SetBrightnessAction() when setBrightness != null:
-return setBrightness(_that.level);case _:
+return setBrightness(_that.level);case DelayTimerAction() when delayTimer != null:
+return delayTimer(_that.seconds,_that.label);case _:
   return null;
 
 }
@@ -505,6 +515,81 @@ class _$SetBrightnessActionCopyWithImpl<$Res>
   return _then(SetBrightnessAction(
 level: null == level ? _self.level : level // ignore: cast_nullable_to_non_nullable
 as double,
+  ));
+}
+
+
+}
+
+/// @nodoc
+@JsonSerializable()
+
+class DelayTimerAction implements AutomationAction {
+  const DelayTimerAction({required this.seconds, this.label, final  String? $type}): $type = $type ?? 'delayTimer';
+  factory DelayTimerAction.fromJson(Map<String, dynamic> json) => _$DelayTimerActionFromJson(json);
+
+ final  int seconds;
+ final  String? label;
+
+@JsonKey(name: 'runtimeType')
+final String $type;
+
+
+/// Create a copy of AutomationAction
+/// with the given fields replaced by the non-null parameter values.
+@JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+$DelayTimerActionCopyWith<DelayTimerAction> get copyWith => _$DelayTimerActionCopyWithImpl<DelayTimerAction>(this, _$identity);
+
+@override
+Map<String, dynamic> toJson() {
+  return _$DelayTimerActionToJson(this, );
+}
+
+@override
+bool operator ==(Object other) {
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is DelayTimerAction&&(identical(other.seconds, seconds) || other.seconds == seconds)&&(identical(other.label, label) || other.label == label));
+}
+
+@JsonKey(includeFromJson: false, includeToJson: false)
+@override
+int get hashCode => Object.hash(runtimeType,seconds,label);
+
+@override
+String toString() {
+  return 'AutomationAction.delayTimer(seconds: $seconds, label: $label)';
+}
+
+
+}
+
+/// @nodoc
+abstract mixin class $DelayTimerActionCopyWith<$Res> implements $AutomationActionCopyWith<$Res> {
+  factory $DelayTimerActionCopyWith(DelayTimerAction value, $Res Function(DelayTimerAction) _then) = _$DelayTimerActionCopyWithImpl;
+@useResult
+$Res call({
+ int seconds, String? label
+});
+
+
+
+
+}
+/// @nodoc
+class _$DelayTimerActionCopyWithImpl<$Res>
+    implements $DelayTimerActionCopyWith<$Res> {
+  _$DelayTimerActionCopyWithImpl(this._self, this._then);
+
+  final DelayTimerAction _self;
+  final $Res Function(DelayTimerAction) _then;
+
+/// Create a copy of AutomationAction
+/// with the given fields replaced by the non-null parameter values.
+@pragma('vm:prefer-inline') $Res call({Object? seconds = null,Object? label = freezed,}) {
+  return _then(DelayTimerAction(
+seconds: null == seconds ? _self.seconds : seconds // ignore: cast_nullable_to_non_nullable
+as int,label: freezed == label ? _self.label : label // ignore: cast_nullable_to_non_nullable
+as String?,
   ));
 }
 

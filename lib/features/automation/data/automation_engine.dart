@@ -13,6 +13,7 @@ class AutomationEngine {
         showNotification: (a) => _executeNotification(a.title, a.body),
         launchApp: (a) => _executeLaunchApp(a.packageName),
         setBrightness: (a) => _executeSetBrightness(a.level),
+        delayTimer: (a) => _executeDelayTimer(a.seconds, a.label),
       );
       // Add a small delay between actions if needed
       await Future.delayed(const Duration(milliseconds: 300));
@@ -21,22 +22,24 @@ class AutomationEngine {
 
   Future<void> _executeOpenUrl(String url) async {
     debugPrint('Opening URL: $url');
-    // Implement using url_launcher
   }
 
   Future<void> _executeNotification(String title, String body) async {
     debugPrint('Showing Notification: $title - $body');
-    // Implement using flutter_local_notifications
   }
 
   Future<void> _executeLaunchApp(String packageName) async {
     debugPrint('Launching App: $packageName');
-    // Implement using url_launcher or app_launcher
   }
 
   Future<void> _executeSetBrightness(double level) async {
     debugPrint('Setting Brightness: $level');
-    // Implement using screen_brightness
+  }
+
+  Future<void> _executeDelayTimer(int seconds, String? label) async {
+    debugPrint('Starting Delay Timer (${label ?? "Timer"}): $seconds seconds');
+    await Future.delayed(Duration(seconds: seconds));
+    debugPrint('Delay Timer Finished: ${label ?? "Timer"}');
   }
 }
 

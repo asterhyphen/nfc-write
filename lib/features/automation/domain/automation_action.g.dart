@@ -53,6 +53,20 @@ Map<String, dynamic> _$SetBrightnessActionToJson(
   SetBrightnessAction instance,
 ) => <String, dynamic>{'level': instance.level, 'runtimeType': instance.$type};
 
+DelayTimerAction _$DelayTimerActionFromJson(Map<String, dynamic> json) =>
+    DelayTimerAction(
+      seconds: (json['seconds'] as num).toInt(),
+      label: json['label'] as String?,
+      $type: json['runtimeType'] as String?,
+    );
+
+Map<String, dynamic> _$DelayTimerActionToJson(DelayTimerAction instance) =>
+    <String, dynamic>{
+      'seconds': instance.seconds,
+      'label': instance.label,
+      'runtimeType': instance.$type,
+    };
+
 _AutomationProfile _$AutomationProfileFromJson(Map<String, dynamic> json) =>
     _AutomationProfile(
       id: json['id'] as String,

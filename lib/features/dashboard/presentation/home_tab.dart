@@ -2,12 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../automation/presentation/launch_timer_sheet.dart';
 import '../../history/presentation/history_notifier.dart';
 import '../../../core/widgets/glass_card.dart';
 import '../../nfc_management/presentation/nfc_scan_sheet.dart';
 import '../../nfc_management/presentation/nfc_write_sheet.dart';
 
-/// The main Home tab of the dashboard — statistics, quick actions, recent scans.
+/// The main Home tab of the dashboard — statistics, quick actions, launch timers, recent scans.
 class HomeDashboardTab extends ConsumerWidget {
   const HomeDashboardTab({super.key});
 
@@ -114,21 +115,98 @@ class HomeDashboardTab extends ConsumerWidget {
                 onTap: () => _openWriteSheet(context, ref),
               ),
               _QuickAction(
+                title: 'Launch Timer',
+                subtitle: 'Presets & countdown',
+                icon: Icons.timer_rounded,
+                gradient: [const Color(0xFFFF512F), const Color(0xFFDD2476)],
+                onTap: () => _openLaunchTimerSheet(context, 300), // Standard 5m
+              ),
+              _QuickAction(
                 title: 'Erase Tag',
                 subtitle: 'Wipe NDEF',
                 icon: Icons.delete_sweep_rounded,
-                gradient: [const Color(0xFFEB5757), const Color(0xFF000000)],
+                gradient: [const Color(0xFF8E2DE2), const Color(0xFF4A00E0)],
                 onTap: () => _openEraseSheet(context, ref),
-              ),
-              _QuickAction(
-                title: 'Inspect',
-                subtitle: 'View raw bytes',
-                icon: Icons.search_rounded,
-                gradient: [const Color(0xFFF7971E), const Color(0xFFFFD200)],
-                onTap: () => _openInspectSheet(context, ref),
               ),
             ],
           ).animate().fadeIn(delay: 350.ms).scale(begin: const Offset(0.95, 0.95)),
+
+          const SizedBox(height: 28),
+
+          // ── Standard Launch Timer Presets ─────────────────────────────────
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Row(
+                children: [
+                  Icon(Icons.flash_on_rounded, size: 20, color: cs.primary),
+                  const SizedBox(width: 6),
+                  Text(
+                    'Standard Launch Timers',
+                    style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ],
+              ),
+              TextButton(
+                onPressed: () => _openLaunchTimerSheet(context, 300),
+                child: const Text('Custom'),
+              ),
+            ],
+          ).animate().fadeIn(delay: 400.ms),
+          const SizedBox(height: 10),
+
+          SingleChildScrollView(
+            scrollDirection: Axis.horizontal,
+            child: Row(
+              children: [
+                _TimerPresetCard(
+                  label: '30s Quick',
+                  seconds: 30,
+                  icon: Icons.flash_on_rounded,
+                  color: Colors.orange,
+                  onTap: () => _openLaunchTimerSheet(context, 30, label: '30s Quick Timer'),
+                ),
+                _TimerPresetCard(
+                  label: '1 Min',
+                  seconds: 60,
+                  icon: Icons.timer_10_rounded,
+                  color: Colors.blue,
+                  onTap: () => _openLaunchTimerSheet(context, 60, label: '1 Min Timer'),
+                ),
+                _TimerPresetCard(
+                  label: '5 Mins ★',
+                  seconds: 300,
+                  icon: Icons.star_rounded,
+                  color: Colors.purple,
+                  isStandard: true,
+                  onTap: () => _openLaunchTimerSheet(context, 300, label: '5 Mins Focus'),
+                ),
+                _TimerPresetCard(
+                  label: '10 Mins',
+                  seconds: 600,
+                  icon: Icons.timer_rounded,
+                  color: Colors.teal,
+                  onTap: () => _openLaunchTimerSheet(context, 600, label: '10 Mins Timer'),
+                ),
+                _TimerPresetCard(
+                  label: '15 Mins',
+                  seconds: 900,
+                  icon: Icons.alarm_rounded,
+                  color: Colors.amber,
+                  onTap: () => _openLaunchTimerSheet(context, 900, label: '15 Mins Timer'),
+                ),
+                _TimerPresetCard(
+                  label: '30 Mins',
+                  seconds: 1800,
+                  icon: Icons.hourglass_bottom_rounded,
+                  color: Colors.indigo,
+                  onTap: () => _openLaunchTimerSheet(context, 1800, label: '30 Mins Timer'),
+                ),
+              ],
+            ),
+          ).animate().fadeIn(delay: 450.ms).slideX(begin: 0.1),
 
           const SizedBox(height: 28),
 
@@ -148,7 +226,7 @@ class HomeDashboardTab extends ConsumerWidget {
                   child: const Text('See all'),
                 ),
             ],
-          ).animate().fadeIn(delay: 450.ms),
+          ).animate().fadeIn(delay: 500.ms),
           const SizedBox(height: 10),
 
           historyAsync.when(
@@ -163,7 +241,7 @@ class HomeDashboardTab extends ConsumerWidget {
                   for (int i = 0; i < recent.length; i++)
                     _RecentTile(record: recent[i])
                         .animate()
-                        .fadeIn(delay: Duration(milliseconds: 500 + i * 60))
+                        .fadeIn(delay: Duration(milliseconds: 550 + i * 60))
                         .slideX(begin: 0.1),
                 ],
               );
@@ -212,14 +290,14 @@ class HomeDashboardTab extends ConsumerWidget {
     );
   }
 
-  void _openInspectSheet(BuildContext context, WidgetRef ref) {
+  void _openLaunchTimerSheet(BuildContext context, int seconds, {String? label}) {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
-      builder: (_) => NfcScanSheet(
-        mode: NfcSheetMode.inspect,
-        onRecordSaved: (_) {},
+      builder: (_) => LaunchTimerSheet(
+        initialSeconds: seconds,
+        initialLabel: label,
       ),
     );
   }
@@ -318,6 +396,63 @@ class _QuickAction extends StatelessWidget {
                 ),
               ],
             ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _TimerPresetCard extends StatelessWidget {
+  final String label;
+  final int seconds;
+  final IconData icon;
+  final Color color;
+  final bool isStandard;
+  final VoidCallback onTap;
+
+  const _TimerPresetCard({
+    required this.label,
+    required this.seconds,
+    required this.icon,
+    required this.color,
+    this.isStandard = false,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.only(right: 10),
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(16),
+        child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+          decoration: BoxDecoration(
+            color: isStandard
+                ? color.withValues(alpha: 0.15)
+                : Theme.of(context).colorScheme.surfaceContainerHigh,
+            border: Border.all(
+              color: isStandard ? color : Colors.transparent,
+              width: 1.5,
+            ),
+            borderRadius: BorderRadius.circular(16),
+          ),
+          child: Row(
+            children: [
+              Icon(icon, color: color, size: 20),
+              const SizedBox(width: 8),
+              Text(
+                label,
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  color: isStandard
+                      ? color
+                      : Theme.of(context).colorScheme.onSurface,
+                ),
+              ),
+            ],
           ),
         ),
       ),

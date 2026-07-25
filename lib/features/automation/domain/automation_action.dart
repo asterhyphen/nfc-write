@@ -25,6 +25,12 @@ sealed class AutomationAction with _$AutomationAction {
   const factory AutomationAction.setBrightness({required double level}) =
       SetBrightnessAction;
 
+  /// Waits for a specified [seconds] duration before continuing automation.
+  const factory AutomationAction.delayTimer({
+    required int seconds,
+    String? label,
+  }) = DelayTimerAction;
+
   factory AutomationAction.fromJson(Map<String, dynamic> json) =>
       _$AutomationActionFromJson(json);
 }
