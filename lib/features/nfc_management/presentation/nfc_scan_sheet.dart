@@ -1,23 +1,37 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:nfc_manager/nfc_manager.dart';
 import 'package:ndef_record/ndef_record.dart';
+import 'package:nfc_manager/nfc_manager.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../../../core/widgets/glass_card.dart';
+import '../../automation/presentation/launch_timer_sheet.dart';
 import '../data/nfc_repository.dart';
+import '../data/tag_registry_repository.dart';
 
 /// What the scan sheet should do when a tag is detected.
 enum NfcSheetMode { read, erase, inspect }
 
-/// Thin domain object passed back to the caller after a successful scan.
+/// Domain result object for a scanned NFC tag with custom name and action.
 class ScannedTagResult {
   final String tagType;
   final String content;
-  ScannedTagResult({required this.tagType, required this.content});
+  String? tagName;
+  final String actionLabel;
+  final IconData actionIcon;
+
+  ScannedTagResult({
+    required this.tagType,
+    required this.content,
+    this.tagName,
+    required this.actionLabel,
+    required this.actionIcon,
+  });
 }
 
-/// A modal bottom sheet that starts an NFC session and reacts to discovered tags.
+/// Modal bottom sheet for reading, inspecting, and executing NFC tag actions.
 class NfcScanSheet extends ConsumerStatefulWidget {
   final NfcSheetMode mode;
   final void Function(ScannedTagResult result) onRecordSaved;
@@ -36,6 +50,7 @@ class _NfcScanSheetState extends ConsumerState<NfcScanSheet> {
   _ScanState _state = _ScanState.waiting;
   String? _errorMessage;
   ScannedTagResult? _result;
+  final TextEditingController _nameEditCtrl = TextEditingController();
 
   @override
   void initState() {
@@ -45,7 +60,7 @@ class _NfcScanSheetState extends ConsumerState<NfcScanSheet> {
 
   @override
   void dispose() {
-    // Always stop the session when the sheet closes
+    _nameEditCtrl.dispose();
     ref.read(nfcRepositoryProvider).stopSession();
     super.dispose();
   }
@@ -88,19 +103,27 @@ class _NfcScanSheetState extends ConsumerState<NfcScanSheet> {
       case NfcSheetMode.inspect:
         final msg = repo.readNdefMessage(tag);
         final result = _parseMessage(msg);
+
+        // Fetch assigned tag name from registry if any
+        final tagRegistry = await ref.read(tagRegistryRepositoryProvider.future);
+        final savedName = tagRegistry.getTagName(result.content);
+        if (savedName != null && savedName.isNotEmpty) {
+          result.tagName = savedName;
+        }
+
         await repo.stopSession();
         if (mounted) {
           setState(() {
             _state = _ScanState.success;
             _result = result;
+            _nameEditCtrl.text = result.tagName ?? '';
           });
           widget.onRecordSaved(result);
         }
         break;
 
       case NfcSheetMode.erase:
-        // Write an empty NDEF message to erase
-        final emptyMsg = NdefMessage(records: []);
+        final emptyMsg = const NdefMessage(records: []);
         bool ok = false;
         try {
           if (Theme.of(context).platform == TargetPlatform.android) {
@@ -116,7 +139,12 @@ class _NfcScanSheetState extends ConsumerState<NfcScanSheet> {
           setState(() {
             _state = ok ? _ScanState.success : _ScanState.error;
             if (ok) {
-              _result = ScannedTagResult(tagType: 'Erased', content: '(empty)');
+              _result = ScannedTagResult(
+                tagType: 'Erased',
+                content: '(empty)',
+                actionLabel: 'Tag Cleared',
+                actionIcon: Icons.cleaning_services_rounded,
+              );
             } else {
               _errorMessage = 'Could not erase this tag.';
             }
@@ -128,7 +156,12 @@ class _NfcScanSheetState extends ConsumerState<NfcScanSheet> {
 
   ScannedTagResult _parseMessage(NdefMessage? msg) {
     if (msg == null || msg.records.isEmpty) {
-      return ScannedTagResult(tagType: 'Empty', content: '(no NDEF data)');
+      return ScannedTagResult(
+        tagType: 'Empty',
+        content: '(no NDEF data)',
+        actionLabel: 'No Action Available',
+        actionIcon: Icons.help_outline_rounded,
+      );
     }
 
     final record = msg.records.first;
@@ -137,30 +170,80 @@ class _NfcScanSheetState extends ConsumerState<NfcScanSheet> {
     if (tnf == TypeNameFormat.wellKnown) {
       final typeStr = String.fromCharCodes(record.type);
       if (typeStr == 'T') {
-        // Text record
         final payload = record.payload;
         final langLen = payload[0] & 0x3F;
         final text = String.fromCharCodes(payload.sublist(1 + langLen));
-        return ScannedTagResult(tagType: 'Text', content: text);
+
+        // Check if content is a timer payload
+        if (text.startsWith('timer://')) {
+          final secs = int.tryParse(text.replaceFirst('timer://', '')) ?? 300;
+          return ScannedTagResult(
+            tagType: 'Timer',
+            content: text,
+            actionLabel: 'Launch ${secs ~/ 60} Min Timer',
+            actionIcon: Icons.timer_rounded,
+          );
+        }
+
+        return ScannedTagResult(
+          tagType: 'Text',
+          content: text,
+          actionLabel: 'Copy Text',
+          actionIcon: Icons.copy_rounded,
+        );
       } else if (typeStr == 'U') {
-        // URI record
         final prefix = _uriPrefixes[record.payload[0]] ?? '';
         final uri = prefix + String.fromCharCodes(record.payload.sublist(1));
-        return ScannedTagResult(tagType: 'URL', content: uri);
+
+        if (uri.startsWith('mailto:')) {
+          return ScannedTagResult(
+            tagType: 'Email',
+            content: uri.replaceFirst('mailto:', ''),
+            actionLabel: 'Compose Email',
+            actionIcon: Icons.email_rounded,
+          );
+        } else if (uri.startsWith('tel:')) {
+          return ScannedTagResult(
+            tagType: 'Phone',
+            content: uri.replaceFirst('tel:', ''),
+            actionLabel: 'Call Phone Number',
+            actionIcon: Icons.phone_rounded,
+          );
+        } else if (uri.startsWith('sms:')) {
+          return ScannedTagResult(
+            tagType: 'SMS',
+            content: uri.replaceFirst('sms:', ''),
+            actionLabel: 'Send SMS Message',
+            actionIcon: Icons.sms_rounded,
+          );
+        }
+
+        return ScannedTagResult(
+          tagType: 'URL',
+          content: uri,
+          actionLabel: 'Open Link in Browser',
+          actionIcon: Icons.open_in_browser_rounded,
+        );
       }
     } else if (tnf == TypeNameFormat.media) {
       final mimeType = String.fromCharCodes(record.type);
       return ScannedTagResult(
         tagType: mimeType,
         content: String.fromCharCodes(record.payload),
+        actionLabel: 'View Data',
+        actionIcon: Icons.file_present_rounded,
       );
     }
 
-    // Fallback: raw hex
     final hex = record.payload
         .map((b) => b.toRadixString(16).padLeft(2, '0'))
         .join(' ');
-    return ScannedTagResult(tagType: 'Raw', content: hex);
+    return ScannedTagResult(
+      tagType: 'Raw Data',
+      content: hex,
+      actionLabel: 'Copy Bytes',
+      actionIcon: Icons.data_object_rounded,
+    );
   }
 
   static const _uriPrefixes = {
@@ -173,14 +256,73 @@ class _NfcScanSheetState extends ConsumerState<NfcScanSheet> {
     0x06: 'mailto:',
   };
 
+  Future<void> _saveTagName(String newName) async {
+    if (_result == null) return;
+    final tagRegistry = await ref.read(tagRegistryRepositoryProvider.future);
+    if (newName.trim().isEmpty) {
+      await tagRegistry.removeTagName(_result!.content);
+      setState(() {
+        _result!.tagName = null;
+      });
+    } else {
+      await tagRegistry.setTagName(_result!.content, newName);
+      setState(() {
+        _result!.tagName = newName.trim();
+      });
+    }
+  }
+
+  Future<void> _executeAction() async {
+    if (_result == null) return;
+    final res = _result!;
+
+    if (res.tagType == 'URL' || res.content.startsWith('http://') || res.content.startsWith('https://')) {
+      final url = Uri.parse(res.content.startsWith('http') ? res.content : 'https://${res.content}');
+      if (await canLaunchUrl(url)) {
+        await launchUrl(url, mode: LaunchMode.externalApplication);
+      }
+    } else if (res.tagType == 'Timer' || res.content.startsWith('timer://')) {
+      final secs = int.tryParse(res.content.replaceFirst('timer://', '')) ?? 300;
+      if (mounted) {
+        Navigator.pop(context);
+        showModalBottomSheet(
+          context: context,
+          isScrollControlled: true,
+          backgroundColor: Colors.transparent,
+          builder: (_) => LaunchTimerSheet(
+            initialSeconds: secs,
+            initialLabel: res.tagName ?? 'NFC Timer Action',
+          ),
+        );
+      }
+    } else if (res.tagType == 'Email') {
+      final url = Uri.parse('mailto:${res.content}');
+      if (await canLaunchUrl(url)) await launchUrl(url);
+    } else if (res.tagType == 'Phone') {
+      final url = Uri.parse('tel:${res.content}');
+      if (await canLaunchUrl(url)) await launchUrl(url);
+    } else if (res.tagType == 'SMS') {
+      final url = Uri.parse('sms:${res.content}');
+      if (await canLaunchUrl(url)) await launchUrl(url);
+    } else {
+      // Default: copy content to clipboard
+      await Clipboard.setData(ClipboardData(text: res.content));
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Copied "${res.content}" to clipboard')),
+        );
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final cs = Theme.of(context).colorScheme;
 
     return DraggableScrollableSheet(
-      initialChildSize: 0.5,
-      minChildSize: 0.35,
-      maxChildSize: 0.85,
+      initialChildSize: 0.6,
+      minChildSize: 0.4,
+      maxChildSize: 0.9,
       builder: (_, ctrl) => Container(
         decoration: BoxDecoration(
           color: cs.surface,
@@ -188,7 +330,6 @@ class _NfcScanSheetState extends ConsumerState<NfcScanSheet> {
         ),
         child: Column(
           children: [
-            // handle
             Container(
               margin: const EdgeInsets.only(top: 12),
               width: 40,
@@ -216,7 +357,7 @@ class _NfcScanSheetState extends ConsumerState<NfcScanSheet> {
       case _ScanState.waiting:
         return _WaitingState(mode: widget.mode);
       case _ScanState.success:
-        return _SuccessState(result: _result!);
+        return _buildSuccessView(cs);
       case _ScanState.error:
         return _ErrorState(
           message: _errorMessage ?? 'Unknown error',
@@ -229,6 +370,184 @@ class _NfcScanSheetState extends ConsumerState<NfcScanSheet> {
           },
         );
     }
+  }
+
+  Widget _buildSuccessView(ColorScheme cs) {
+    final res = _result!;
+    final hasCustomName = res.tagName != null && res.tagName!.isNotEmpty;
+
+    return Column(
+      children: [
+        const SizedBox(height: 12),
+        CircleAvatar(
+          radius: 36,
+          backgroundColor: Colors.green.shade100,
+          child: const Icon(Icons.check_circle, color: Colors.green, size: 40),
+        ).animate().scale(begin: const Offset(0.5, 0.5)).fadeIn(),
+
+        const SizedBox(height: 16),
+        Text(
+          'Tag Read Successfully',
+          style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                fontWeight: FontWeight.bold,
+              ),
+        ),
+
+        const SizedBox(height: 16),
+
+        // Custom Tag Name / Identifier Badge & Edit Button
+        GlassCard(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Row(
+                    children: [
+                      Icon(Icons.sell_rounded, size: 18, color: cs.primary),
+                      const SizedBox(width: 8),
+                      Text(
+                        'TAG IDENTIFIER',
+                        style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                              color: cs.primary,
+                              fontWeight: FontWeight.bold,
+                              letterSpacing: 1.1,
+                            ),
+                      ),
+                    ],
+                  ),
+                  IconButton(
+                    icon: const Icon(Icons.edit_note_rounded, size: 20),
+                    tooltip: 'Assign Name / Alias',
+                    onPressed: _showAssignNameDialog,
+                  ),
+                ],
+              ),
+              const SizedBox(height: 4),
+              Text(
+                hasCustomName ? res.tagName! : 'Unnamed Tag (Tap edit to assign name)',
+                style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                      fontWeight: FontWeight.bold,
+                      color: hasCustomName ? cs.onSurface : cs.outline,
+                    ),
+              ),
+            ],
+          ),
+        ).animate().fadeIn(delay: 150.ms).slideY(begin: 0.15),
+
+        const SizedBox(height: 14),
+
+        // Content & Type Card
+        GlassCard(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                'TYPE',
+                style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                      color: cs.primary,
+                      fontWeight: FontWeight.bold,
+                      letterSpacing: 1.1,
+                    ),
+              ),
+              const SizedBox(height: 4),
+              Text(res.tagType, style: Theme.of(context).textTheme.bodyLarge),
+              const SizedBox(height: 12),
+              Text(
+                'CONTENT',
+                style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                      color: cs.primary,
+                      fontWeight: FontWeight.bold,
+                      letterSpacing: 1.1,
+                    ),
+              ),
+              const SizedBox(height: 4),
+              SelectableText(
+                res.content,
+                style: Theme.of(context).textTheme.bodyMedium,
+              ),
+            ],
+          ),
+        ).animate().fadeIn(delay: 250.ms).slideY(begin: 0.15),
+
+        const SizedBox(height: 24),
+
+        // Action Trigger Button
+        SizedBox(
+          width: double.infinity,
+          child: FilledButton.icon(
+            onPressed: _executeAction,
+            icon: Icon(res.actionIcon),
+            label: Text(
+              'Action: ${res.actionLabel}',
+              style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
+            ),
+            style: FilledButton.styleFrom(
+              padding: const EdgeInsets.symmetric(vertical: 16),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(14),
+              ),
+            ),
+          ),
+        ).animate().fadeIn(delay: 350.ms).scale(),
+
+        const SizedBox(height: 12),
+        Text(
+          'Saved to history.',
+          style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                color: cs.onSurface.withValues(alpha: 0.6),
+              ),
+        ),
+      ],
+    );
+  }
+
+  void _showAssignNameDialog() {
+    showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: const Row(
+          children: [
+            Icon(Icons.sell_rounded),
+            SizedBox(width: 10),
+            Text('Assign Tag Name'),
+          ],
+        ),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Text('Assign a custom identifier or alias for this NFC tag:'),
+            const SizedBox(height: 16),
+            TextField(
+              controller: _nameEditCtrl,
+              autofocus: true,
+              decoration: InputDecoration(
+                labelText: 'Tag Name / Identifier',
+                hintText: 'e.g. Desk NFC, Bedroom Lamp, Wifi Tag',
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+              ),
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx),
+            child: const Text('Cancel'),
+          ),
+          FilledButton(
+            onPressed: () {
+              Navigator.pop(ctx);
+              _saveTagName(_nameEditCtrl.text);
+            },
+            child: const Text('Save Identifier'),
+          ),
+        ],
+      ),
+    );
   }
 }
 
@@ -283,72 +602,6 @@ class _WaitingState extends StatelessWidget {
         ),
         const SizedBox(height: 32),
         const CircularProgressIndicator(),
-      ],
-    );
-  }
-}
-
-class _SuccessState extends StatelessWidget {
-  final ScannedTagResult result;
-  const _SuccessState({required this.result});
-
-  @override
-  Widget build(BuildContext context) {
-    final cs = Theme.of(context).colorScheme;
-    return Column(
-      children: [
-        const SizedBox(height: 16),
-        CircleAvatar(
-          radius: 36,
-          backgroundColor: Colors.green.shade100,
-          child: const Icon(Icons.check_circle, color: Colors.green, size: 40),
-        ).animate().scale(begin: const Offset(0.5, 0.5)).fadeIn(),
-        const SizedBox(height: 20),
-        Text(
-          'Tag ${result.tagType == 'Erased' ? 'Erased' : 'Read'} Successfully',
-          style: Theme.of(context).textTheme.titleLarge?.copyWith(
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-        const SizedBox(height: 20),
-        GlassCard(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                'Type',
-                style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                  color: cs.primary,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              const SizedBox(height: 4),
-              Text(result.tagType, style: Theme.of(context).textTheme.bodyLarge),
-              const SizedBox(height: 12),
-              Text(
-                'Content',
-                style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                  color: cs.primary,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              const SizedBox(height: 4),
-              Text(
-                result.content,
-                style: Theme.of(context).textTheme.bodyMedium,
-                maxLines: 5,
-                overflow: TextOverflow.ellipsis,
-              ),
-            ],
-          ),
-        ).animate().fadeIn(delay: 200.ms).slideY(begin: 0.2),
-        const SizedBox(height: 20),
-        Text(
-          'Saved to history.',
-          style: Theme.of(context).textTheme.bodySmall?.copyWith(
-            color: cs.onSurface.withValues(alpha: 0.6),
-          ),
-        ),
       ],
     );
   }

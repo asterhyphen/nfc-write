@@ -13,6 +13,7 @@ _ScanRecord _$ScanRecordFromJson(Map<String, dynamic> json) => _ScanRecord(
   content: json['content'] as String,
   isFavorite: json['isFavorite'] as bool? ?? false,
   profileName: json['profileName'] as String?,
+  tagName: json['tagName'] as String?,
 );
 
 Map<String, dynamic> _$ScanRecordToJson(_ScanRecord instance) =>
@@ -23,4 +24,5 @@ Map<String, dynamic> _$ScanRecordToJson(_ScanRecord instance) =>
       'content': instance.content,
       'isFavorite': instance.isFavorite,
       'profileName': instance.profileName,
+      'tagName': instance.tagName,
     };

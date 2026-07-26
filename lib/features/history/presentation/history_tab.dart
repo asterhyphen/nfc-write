@@ -32,7 +32,7 @@ class _HistoryTabState extends ConsumerState<HistoryTab> {
               Expanded(
                 child: TextField(
                   decoration: InputDecoration(
-                    hintText: 'Search history…',
+                    hintText: 'Search history or tag name…',
                     prefixIcon: const Icon(Icons.search),
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(14),
@@ -62,7 +62,9 @@ class _HistoryTabState extends ConsumerState<HistoryTab> {
               final filtered = records.where((r) {
                 if (_favOnly && !r.isFavorite) return false;
                 if (_query.isEmpty) return true;
-                return r.content.toLowerCase().contains(_query) ||
+                final tagMatch = r.tagName?.toLowerCase().contains(_query) ?? false;
+                return tagMatch ||
+                    r.content.toLowerCase().contains(_query) ||
                     r.tagType.toLowerCase().contains(_query);
               }).toList();
 
@@ -78,7 +80,7 @@ class _HistoryTabState extends ConsumerState<HistoryTab> {
                       ),
                       const SizedBox(height: 16),
                       Text(
-                        'No records yet',
+                        'No records found',
                         style: Theme.of(context).textTheme.titleMedium
                             ?.copyWith(
                               color: Theme.of(context).colorScheme.outline,
@@ -115,6 +117,8 @@ class _RecordTile extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final cs = Theme.of(context).colorScheme;
+    final hasName = record.tagName != null && record.tagName!.isNotEmpty;
+
     return Card(
       margin: const EdgeInsets.only(bottom: 10),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
@@ -124,13 +128,20 @@ class _RecordTile extends ConsumerWidget {
           child: Icon(_iconFor(record.tagType), size: 18, color: cs.primary),
         ),
         title: Text(
-          record.content,
+          hasName ? '🏷️ ${record.tagName}' : record.content,
           maxLines: 1,
           overflow: TextOverflow.ellipsis,
+          style: TextStyle(
+            fontWeight: hasName ? FontWeight.bold : FontWeight.normal,
+          ),
         ),
         subtitle: Text(
-          '${record.tagType} · ${DateFormat.yMMMd().add_jm().format(record.scannedAt)}',
+          hasName
+              ? '${record.content} · ${record.tagType} · ${DateFormat.yMMMd().add_jm().format(record.scannedAt)}'
+              : '${record.tagType} · ${DateFormat.yMMMd().add_jm().format(record.scannedAt)}',
           style: Theme.of(context).textTheme.bodySmall,
+          maxLines: 2,
+          overflow: TextOverflow.ellipsis,
         ),
         trailing: Row(
           mainAxisSize: MainAxisSize.min,
@@ -168,8 +179,8 @@ class _RecordTile extends ConsumerWidget {
         return Icons.email;
       case 'phone':
         return Icons.phone;
-      case 'sms':
-        return Icons.sms;
+      case 'timer':
+        return Icons.timer_rounded;
       default:
         return Icons.nfc;
     }

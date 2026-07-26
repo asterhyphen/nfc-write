@@ -13,6 +13,7 @@ abstract class ScanRecord with _$ScanRecord {
     required String content,
     @Default(false) bool isFavorite,
     String? profileName,
+    String? tagName,
   }) = _ScanRecord;
 
   factory ScanRecord.fromJson(Map<String, dynamic> json) =>

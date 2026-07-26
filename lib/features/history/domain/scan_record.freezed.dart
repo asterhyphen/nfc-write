@@ -15,7 +15,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$ScanRecord {
 
- String get id; DateTime get scannedAt; String get tagType; String get content; bool get isFavorite; String? get profileName;
+ String get id; DateTime get scannedAt; String get tagType; String get content; bool get isFavorite; String? get profileName; String? get tagName;
 /// Create a copy of ScanRecord
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -28,16 +28,16 @@ $ScanRecordCopyWith<ScanRecord> get copyWith => _$ScanRecordCopyWithImpl<ScanRec
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is ScanRecord&&(identical(other.id, id) || other.id == id)&&(identical(other.scannedAt, scannedAt) || other.scannedAt == scannedAt)&&(identical(other.tagType, tagType) || other.tagType == tagType)&&(identical(other.content, content) || other.content == content)&&(identical(other.isFavorite, isFavorite) || other.isFavorite == isFavorite)&&(identical(other.profileName, profileName) || other.profileName == profileName));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is ScanRecord&&(identical(other.id, id) || other.id == id)&&(identical(other.scannedAt, scannedAt) || other.scannedAt == scannedAt)&&(identical(other.tagType, tagType) || other.tagType == tagType)&&(identical(other.content, content) || other.content == content)&&(identical(other.isFavorite, isFavorite) || other.isFavorite == isFavorite)&&(identical(other.profileName, profileName) || other.profileName == profileName)&&(identical(other.tagName, tagName) || other.tagName == tagName));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,scannedAt,tagType,content,isFavorite,profileName);
+int get hashCode => Object.hash(runtimeType,id,scannedAt,tagType,content,isFavorite,profileName,tagName);
 
 @override
 String toString() {
-  return 'ScanRecord(id: $id, scannedAt: $scannedAt, tagType: $tagType, content: $content, isFavorite: $isFavorite, profileName: $profileName)';
+  return 'ScanRecord(id: $id, scannedAt: $scannedAt, tagType: $tagType, content: $content, isFavorite: $isFavorite, profileName: $profileName, tagName: $tagName)';
 }
 
 
@@ -48,7 +48,7 @@ abstract mixin class $ScanRecordCopyWith<$Res>  {
   factory $ScanRecordCopyWith(ScanRecord value, $Res Function(ScanRecord) _then) = _$ScanRecordCopyWithImpl;
 @useResult
 $Res call({
- String id, DateTime scannedAt, String tagType, String content, bool isFavorite, String? profileName
+ String id, DateTime scannedAt, String tagType, String content, bool isFavorite, String? profileName, String? tagName
 });
 
 
@@ -65,7 +65,7 @@ class _$ScanRecordCopyWithImpl<$Res>
 
 /// Create a copy of ScanRecord
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? scannedAt = null,Object? tagType = null,Object? content = null,Object? isFavorite = null,Object? profileName = freezed,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? scannedAt = null,Object? tagType = null,Object? content = null,Object? isFavorite = null,Object? profileName = freezed,Object? tagName = freezed,}) {
   return _then(_self.copyWith(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as String,scannedAt: null == scannedAt ? _self.scannedAt : scannedAt // ignore: cast_nullable_to_non_nullable
@@ -73,6 +73,7 @@ as DateTime,tagType: null == tagType ? _self.tagType : tagType // ignore: cast_n
 as String,content: null == content ? _self.content : content // ignore: cast_nullable_to_non_nullable
 as String,isFavorite: null == isFavorite ? _self.isFavorite : isFavorite // ignore: cast_nullable_to_non_nullable
 as bool,profileName: freezed == profileName ? _self.profileName : profileName // ignore: cast_nullable_to_non_nullable
+as String?,tagName: freezed == tagName ? _self.tagName : tagName // ignore: cast_nullable_to_non_nullable
 as String?,
   ));
 }
@@ -158,10 +159,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String id,  DateTime scannedAt,  String tagType,  String content,  bool isFavorite,  String? profileName)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String id,  DateTime scannedAt,  String tagType,  String content,  bool isFavorite,  String? profileName,  String? tagName)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _ScanRecord() when $default != null:
-return $default(_that.id,_that.scannedAt,_that.tagType,_that.content,_that.isFavorite,_that.profileName);case _:
+return $default(_that.id,_that.scannedAt,_that.tagType,_that.content,_that.isFavorite,_that.profileName,_that.tagName);case _:
   return orElse();
 
 }
@@ -179,10 +180,10 @@ return $default(_that.id,_that.scannedAt,_that.tagType,_that.content,_that.isFav
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id,  DateTime scannedAt,  String tagType,  String content,  bool isFavorite,  String? profileName)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id,  DateTime scannedAt,  String tagType,  String content,  bool isFavorite,  String? profileName,  String? tagName)  $default,) {final _that = this;
 switch (_that) {
 case _ScanRecord():
-return $default(_that.id,_that.scannedAt,_that.tagType,_that.content,_that.isFavorite,_that.profileName);case _:
+return $default(_that.id,_that.scannedAt,_that.tagType,_that.content,_that.isFavorite,_that.profileName,_that.tagName);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -199,10 +200,10 @@ return $default(_that.id,_that.scannedAt,_that.tagType,_that.content,_that.isFav
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String id,  DateTime scannedAt,  String tagType,  String content,  bool isFavorite,  String? profileName)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String id,  DateTime scannedAt,  String tagType,  String content,  bool isFavorite,  String? profileName,  String? tagName)?  $default,) {final _that = this;
 switch (_that) {
 case _ScanRecord() when $default != null:
-return $default(_that.id,_that.scannedAt,_that.tagType,_that.content,_that.isFavorite,_that.profileName);case _:
+return $default(_that.id,_that.scannedAt,_that.tagType,_that.content,_that.isFavorite,_that.profileName,_that.tagName);case _:
   return null;
 
 }
@@ -214,7 +215,7 @@ return $default(_that.id,_that.scannedAt,_that.tagType,_that.content,_that.isFav
 @JsonSerializable()
 
 class _ScanRecord implements ScanRecord {
-  const _ScanRecord({required this.id, required this.scannedAt, required this.tagType, required this.content, this.isFavorite = false, this.profileName});
+  const _ScanRecord({required this.id, required this.scannedAt, required this.tagType, required this.content, this.isFavorite = false, this.profileName, this.tagName});
   factory _ScanRecord.fromJson(Map<String, dynamic> json) => _$ScanRecordFromJson(json);
 
 @override final  String id;
@@ -223,6 +224,7 @@ class _ScanRecord implements ScanRecord {
 @override final  String content;
 @override@JsonKey() final  bool isFavorite;
 @override final  String? profileName;
+@override final  String? tagName;
 
 /// Create a copy of ScanRecord
 /// with the given fields replaced by the non-null parameter values.
@@ -237,16 +239,16 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _ScanRecord&&(identical(other.id, id) || other.id == id)&&(identical(other.scannedAt, scannedAt) || other.scannedAt == scannedAt)&&(identical(other.tagType, tagType) || other.tagType == tagType)&&(identical(other.content, content) || other.content == content)&&(identical(other.isFavorite, isFavorite) || other.isFavorite == isFavorite)&&(identical(other.profileName, profileName) || other.profileName == profileName));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _ScanRecord&&(identical(other.id, id) || other.id == id)&&(identical(other.scannedAt, scannedAt) || other.scannedAt == scannedAt)&&(identical(other.tagType, tagType) || other.tagType == tagType)&&(identical(other.content, content) || other.content == content)&&(identical(other.isFavorite, isFavorite) || other.isFavorite == isFavorite)&&(identical(other.profileName, profileName) || other.profileName == profileName)&&(identical(other.tagName, tagName) || other.tagName == tagName));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,scannedAt,tagType,content,isFavorite,profileName);
+int get hashCode => Object.hash(runtimeType,id,scannedAt,tagType,content,isFavorite,profileName,tagName);
 
 @override
 String toString() {
-  return 'ScanRecord(id: $id, scannedAt: $scannedAt, tagType: $tagType, content: $content, isFavorite: $isFavorite, profileName: $profileName)';
+  return 'ScanRecord(id: $id, scannedAt: $scannedAt, tagType: $tagType, content: $content, isFavorite: $isFavorite, profileName: $profileName, tagName: $tagName)';
 }
 
 
@@ -257,7 +259,7 @@ abstract mixin class _$ScanRecordCopyWith<$Res> implements $ScanRecordCopyWith<$
   factory _$ScanRecordCopyWith(_ScanRecord value, $Res Function(_ScanRecord) _then) = __$ScanRecordCopyWithImpl;
 @override @useResult
 $Res call({
- String id, DateTime scannedAt, String tagType, String content, bool isFavorite, String? profileName
+ String id, DateTime scannedAt, String tagType, String content, bool isFavorite, String? profileName, String? tagName
 });
 
 
@@ -274,7 +276,7 @@ class __$ScanRecordCopyWithImpl<$Res>
 
 /// Create a copy of ScanRecord
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? scannedAt = null,Object? tagType = null,Object? content = null,Object? isFavorite = null,Object? profileName = freezed,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? scannedAt = null,Object? tagType = null,Object? content = null,Object? isFavorite = null,Object? profileName = freezed,Object? tagName = freezed,}) {
   return _then(_ScanRecord(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as String,scannedAt: null == scannedAt ? _self.scannedAt : scannedAt // ignore: cast_nullable_to_non_nullable
@@ -282,6 +284,7 @@ as DateTime,tagType: null == tagType ? _self.tagType : tagType // ignore: cast_n
 as String,content: null == content ? _self.content : content // ignore: cast_nullable_to_non_nullable
 as String,isFavorite: null == isFavorite ? _self.isFavorite : isFavorite // ignore: cast_nullable_to_non_nullable
 as bool,profileName: freezed == profileName ? _self.profileName : profileName // ignore: cast_nullable_to_non_nullable
+as String?,tagName: freezed == tagName ? _self.tagName : tagName // ignore: cast_nullable_to_non_nullable
 as String?,
   ));
 }
