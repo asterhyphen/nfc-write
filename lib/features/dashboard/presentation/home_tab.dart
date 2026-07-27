@@ -65,17 +65,9 @@ class HomeDashboardTab extends ConsumerWidget {
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
                 _StatBadge(label: 'Total Scans', value: '$totalScans'),
-                Container(
-                  width: 1,
-                  height: 40,
-                  color: cs.outlineVariant,
-                ),
+                Container(width: 1, height: 40, color: cs.outlineVariant),
                 _StatBadge(label: 'Profiles', value: '0'),
-                Container(
-                  width: 1,
-                  height: 40,
-                  color: cs.outlineVariant,
-                ),
+                Container(width: 1, height: 40, color: cs.outlineVariant),
                 _StatBadge(label: 'Favourites', value: '$favorites'),
               ],
             ),
@@ -86,50 +78,66 @@ class HomeDashboardTab extends ConsumerWidget {
           // ── Quick Actions ─────────────────────────────────────────────────
           Text(
             'Quick Actions',
-            style: Theme.of(context).textTheme.titleLarge?.copyWith(
-              fontWeight: FontWeight.bold,
-            ),
+            style: Theme.of(
+              context,
+            ).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
           ).animate().fadeIn(delay: 250.ms),
           const SizedBox(height: 14),
 
           GridView.count(
-            crossAxisCount: 2,
-            shrinkWrap: true,
-            physics: const NeverScrollableScrollPhysics(),
-            mainAxisSpacing: 14,
-            crossAxisSpacing: 14,
-            childAspectRatio: 1.15,
-            children: [
-              _QuickAction(
-                title: 'Read Tag',
-                subtitle: 'Scan & inspect',
-                icon: Icons.nfc_rounded,
-                gradient: [const Color(0xFF4776E6), const Color(0xFF8E54E9)],
-                onTap: () => _openScanSheet(context, ref),
-              ),
-              _QuickAction(
-                title: 'Write Tag',
-                subtitle: 'Create NDEF',
-                icon: Icons.edit_rounded,
-                gradient: [const Color(0xFF11998E), const Color(0xFF38EF7D)],
-                onTap: () => _openWriteSheet(context, ref),
-              ),
-              _QuickAction(
-                title: 'Launch Timer',
-                subtitle: 'Presets & countdown',
-                icon: Icons.timer_rounded,
-                gradient: [const Color(0xFFFF512F), const Color(0xFFDD2476)],
-                onTap: () => _openLaunchTimerSheet(context, 300), // Standard 5m
-              ),
-              _QuickAction(
-                title: 'Erase Tag',
-                subtitle: 'Wipe NDEF',
-                icon: Icons.delete_sweep_rounded,
-                gradient: [const Color(0xFF8E2DE2), const Color(0xFF4A00E0)],
-                onTap: () => _openEraseSheet(context, ref),
-              ),
-            ],
-          ).animate().fadeIn(delay: 350.ms).scale(begin: const Offset(0.95, 0.95)),
+                crossAxisCount: 2,
+                shrinkWrap: true,
+                physics: const NeverScrollableScrollPhysics(),
+                mainAxisSpacing: 14,
+                crossAxisSpacing: 14,
+                childAspectRatio: 1.15,
+                children: [
+                  _QuickAction(
+                    title: 'Read Tag',
+                    subtitle: 'Scan & inspect',
+                    icon: Icons.nfc_rounded,
+                    gradient: [
+                      const Color(0xFF4776E6),
+                      const Color(0xFF8E54E9),
+                    ],
+                    onTap: () => _openScanSheet(context, ref),
+                  ),
+                  _QuickAction(
+                    title: 'Write Tag',
+                    subtitle: 'Create NDEF',
+                    icon: Icons.edit_rounded,
+                    gradient: [
+                      const Color(0xFF11998E),
+                      const Color(0xFF38EF7D),
+                    ],
+                    onTap: () => _openWriteSheet(context, ref),
+                  ),
+                  _QuickAction(
+                    title: 'Launch Timer',
+                    subtitle: 'Presets & countdown',
+                    icon: Icons.timer_rounded,
+                    gradient: [
+                      const Color(0xFFFF512F),
+                      const Color(0xFFDD2476),
+                    ],
+                    onTap: () =>
+                        _openLaunchTimerSheet(context, 300), // Standard 5m
+                  ),
+                  _QuickAction(
+                    title: 'Erase Tag',
+                    subtitle: 'Wipe NDEF',
+                    icon: Icons.delete_sweep_rounded,
+                    gradient: [
+                      const Color(0xFF8E2DE2),
+                      const Color(0xFF4A00E0),
+                    ],
+                    onTap: () => _openEraseSheet(context, ref),
+                  ),
+                ],
+              )
+              .animate()
+              .fadeIn(delay: 350.ms)
+              .scale(begin: const Offset(0.95, 0.95)),
 
           const SizedBox(height: 28),
 
@@ -166,14 +174,19 @@ class HomeDashboardTab extends ConsumerWidget {
                   seconds: 30,
                   icon: Icons.flash_on_rounded,
                   color: Colors.orange,
-                  onTap: () => _openLaunchTimerSheet(context, 30, label: '30s Quick Timer'),
+                  onTap: () => _openLaunchTimerSheet(
+                    context,
+                    30,
+                    label: '30s Quick Timer',
+                  ),
                 ),
                 _TimerPresetCard(
                   label: '1 Min',
                   seconds: 60,
                   icon: Icons.timer_10_rounded,
                   color: Colors.blue,
-                  onTap: () => _openLaunchTimerSheet(context, 60, label: '1 Min Timer'),
+                  onTap: () =>
+                      _openLaunchTimerSheet(context, 60, label: '1 Min Timer'),
                 ),
                 _TimerPresetCard(
                   label: '5 Mins ★',
@@ -181,28 +194,44 @@ class HomeDashboardTab extends ConsumerWidget {
                   icon: Icons.star_rounded,
                   color: Colors.purple,
                   isStandard: true,
-                  onTap: () => _openLaunchTimerSheet(context, 300, label: '5 Mins Focus'),
+                  onTap: () => _openLaunchTimerSheet(
+                    context,
+                    300,
+                    label: '5 Mins Focus',
+                  ),
                 ),
                 _TimerPresetCard(
                   label: '10 Mins',
                   seconds: 600,
                   icon: Icons.timer_rounded,
                   color: Colors.teal,
-                  onTap: () => _openLaunchTimerSheet(context, 600, label: '10 Mins Timer'),
+                  onTap: () => _openLaunchTimerSheet(
+                    context,
+                    600,
+                    label: '10 Mins Timer',
+                  ),
                 ),
                 _TimerPresetCard(
                   label: '15 Mins',
                   seconds: 900,
                   icon: Icons.alarm_rounded,
                   color: Colors.amber,
-                  onTap: () => _openLaunchTimerSheet(context, 900, label: '15 Mins Timer'),
+                  onTap: () => _openLaunchTimerSheet(
+                    context,
+                    900,
+                    label: '15 Mins Timer',
+                  ),
                 ),
                 _TimerPresetCard(
                   label: '30 Mins',
                   seconds: 1800,
                   icon: Icons.hourglass_bottom_rounded,
                   color: Colors.indigo,
-                  onTap: () => _openLaunchTimerSheet(context, 1800, label: '30 Mins Timer'),
+                  onTap: () => _openLaunchTimerSheet(
+                    context,
+                    1800,
+                    label: '30 Mins Timer',
+                  ),
                 ),
               ],
             ),
@@ -216,15 +245,12 @@ class HomeDashboardTab extends ConsumerWidget {
             children: [
               Text(
                 'Recent Activity',
-                style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                  fontWeight: FontWeight.bold,
-                ),
+                style: Theme.of(
+                  context,
+                ).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
               ),
               if (recent.isNotEmpty)
-                TextButton(
-                  onPressed: () {},
-                  child: const Text('See all'),
-                ),
+                TextButton(onPressed: () {}, child: const Text('See all')),
             ],
           ).animate().fadeIn(delay: 500.ms),
           const SizedBox(height: 10),
@@ -261,10 +287,7 @@ class HomeDashboardTab extends ConsumerWidget {
         mode: NfcSheetMode.read,
         onRecordSaved: (r) => ref
             .read(historyProvider.notifier)
-            .addRecord(
-              tagType: r.tagType,
-              content: r.content,
-            ),
+            .addRecord(tagType: r.tagType, content: r.content),
       ),
     );
   }
@@ -283,22 +306,22 @@ class HomeDashboardTab extends ConsumerWidget {
       context: context,
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
-      builder: (_) => NfcScanSheet(
-        mode: NfcSheetMode.erase,
-        onRecordSaved: (_) {},
-      ),
+      builder: (_) =>
+          NfcScanSheet(mode: NfcSheetMode.erase, onRecordSaved: (_) {}),
     );
   }
 
-  void _openLaunchTimerSheet(BuildContext context, int seconds, {String? label}) {
+  void _openLaunchTimerSheet(
+    BuildContext context,
+    int seconds, {
+    String? label,
+  }) {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
-      builder: (_) => LaunchTimerSheet(
-        initialSeconds: seconds,
-        initialLabel: label,
-      ),
+      builder: (_) =>
+          LaunchTimerSheet(initialSeconds: seconds, initialLabel: label),
     );
   }
 }
@@ -516,9 +539,8 @@ class _RecentTile extends ConsumerWidget {
             record.isFavorite ? Icons.star : Icons.star_border,
             color: record.isFavorite ? Colors.amber : null,
           ),
-          onPressed: () => ref
-              .read(historyProvider.notifier)
-              .toggleFavorite(record.id),
+          onPressed: () =>
+              ref.read(historyProvider.notifier).toggleFavorite(record.id),
         ),
       ),
     );

@@ -25,7 +25,11 @@ const List<TimerPreset> kStandardPresets = [
   TimerPreset(label: '5 Mins', seconds: 300, icon: Icons.timer_3_rounded),
   TimerPreset(label: '10 Mins', seconds: 600, icon: Icons.timer_rounded),
   TimerPreset(label: '15 Mins', seconds: 900, icon: Icons.alarm_rounded),
-  TimerPreset(label: '30 Mins', seconds: 1800, icon: Icons.hourglass_bottom_rounded),
+  TimerPreset(
+    label: '30 Mins',
+    seconds: 1800,
+    icon: Icons.hourglass_bottom_rounded,
+  ),
 ];
 
 class LaunchTimerSheet extends ConsumerStatefulWidget {
@@ -206,14 +210,14 @@ class _LaunchTimerSheetState extends ConsumerState<LaunchTimerSheet> {
                 Text(
                   'Launch Timer',
                   style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                        fontWeight: FontWeight.bold,
-                      ),
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
                 Text(
                   'Select a standard duration or set custom',
                   style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                        color: cs.onSurface.withValues(alpha: 0.6),
-                      ),
+                    color: cs.onSurface.withValues(alpha: 0.6),
+                  ),
                 ),
               ],
             ),
@@ -225,9 +229,9 @@ class _LaunchTimerSheetState extends ConsumerState<LaunchTimerSheet> {
         // Presets Grid
         Text(
           'Standard Presets',
-          style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                fontWeight: FontWeight.bold,
-              ),
+          style: Theme.of(
+            context,
+          ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
         ),
         const SizedBox(height: 12),
 
@@ -356,9 +360,9 @@ class _LaunchTimerSheetState extends ConsumerState<LaunchTimerSheet> {
         Text(
           _timerLabel,
           style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                fontWeight: FontWeight.bold,
-                color: cs.onSurface.withValues(alpha: 0.8),
-              ),
+            fontWeight: FontWeight.bold,
+            color: cs.onSurface.withValues(alpha: 0.8),
+          ),
         ),
         const SizedBox(height: 32),
 
@@ -385,35 +389,36 @@ class _LaunchTimerSheetState extends ConsumerState<LaunchTimerSheet> {
               mainAxisSize: MainAxisSize.min,
               children: [
                 if (_isFinished) ...[
-                  const Icon(Icons.check_circle_rounded,
-                      size: 56, color: Colors.green)
-                      .animate()
-                      .scale(begin: const Offset(0.5, 0.5)),
+                  const Icon(
+                    Icons.check_circle_rounded,
+                    size: 56,
+                    color: Colors.green,
+                  ).animate().scale(begin: const Offset(0.5, 0.5)),
                   const SizedBox(height: 8),
                   Text(
                     'Time\'s Up!',
                     style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                          fontWeight: FontWeight.bold,
-                          color: Colors.green,
-                        ),
+                      fontWeight: FontWeight.bold,
+                      color: Colors.green,
+                    ),
                   ),
                 ] else ...[
                   Text(
                     _formatDuration(_remainingSeconds),
                     style: Theme.of(context).textTheme.displayMedium?.copyWith(
-                          fontWeight: FontWeight.bold,
-                          color: cs.primary,
-                          fontFeatures: const [FontFeature.tabularFigures()],
-                        ),
+                      fontWeight: FontWeight.bold,
+                      color: cs.primary,
+                      fontFeatures: const [FontFeature.tabularFigures()],
+                    ),
                   ),
                   const SizedBox(height: 4),
                   Text(
                     _isPaused ? 'PAUSED' : 'RUNNING',
                     style: Theme.of(context).textTheme.labelMedium?.copyWith(
-                          letterSpacing: 1.5,
-                          fontWeight: FontWeight.bold,
-                          color: _isPaused ? Colors.amber : cs.outline,
-                        ),
+                      letterSpacing: 1.5,
+                      fontWeight: FontWeight.bold,
+                      color: _isPaused ? Colors.amber : cs.outline,
+                    ),
                   ),
                 ],
               ],
@@ -439,9 +444,7 @@ class _LaunchTimerSheetState extends ConsumerState<LaunchTimerSheet> {
                 iconSize: 44,
                 padding: const EdgeInsets.all(16),
                 icon: Icon(
-                  _isPaused
-                      ? Icons.play_arrow_rounded
-                      : Icons.pause_rounded,
+                  _isPaused ? Icons.play_arrow_rounded : Icons.pause_rounded,
                 ),
                 onPressed: _isPaused ? _resumeTimer : _pauseTimer,
               ),

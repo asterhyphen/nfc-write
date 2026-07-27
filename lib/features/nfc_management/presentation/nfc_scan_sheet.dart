@@ -105,7 +105,9 @@ class _NfcScanSheetState extends ConsumerState<NfcScanSheet> {
         final result = _parseMessage(msg);
 
         // Fetch assigned tag name from registry if any
-        final tagRegistry = await ref.read(tagRegistryRepositoryProvider.future);
+        final tagRegistry = await ref.read(
+          tagRegistryRepositoryProvider.future,
+        );
         final savedName = tagRegistry.getTagName(result.content);
         if (savedName != null && savedName.isNotEmpty) {
           result.tagName = savedName;
@@ -276,13 +278,18 @@ class _NfcScanSheetState extends ConsumerState<NfcScanSheet> {
     if (_result == null) return;
     final res = _result!;
 
-    if (res.tagType == 'URL' || res.content.startsWith('http://') || res.content.startsWith('https://')) {
-      final url = Uri.parse(res.content.startsWith('http') ? res.content : 'https://${res.content}');
+    if (res.tagType == 'URL' ||
+        res.content.startsWith('http://') ||
+        res.content.startsWith('https://')) {
+      final url = Uri.parse(
+        res.content.startsWith('http') ? res.content : 'https://${res.content}',
+      );
       if (await canLaunchUrl(url)) {
         await launchUrl(url, mode: LaunchMode.externalApplication);
       }
     } else if (res.tagType == 'Timer' || res.content.startsWith('timer://')) {
-      final secs = int.tryParse(res.content.replaceFirst('timer://', '')) ?? 300;
+      final secs =
+          int.tryParse(res.content.replaceFirst('timer://', '')) ?? 300;
       if (mounted) {
         Navigator.pop(context);
         showModalBottomSheet(
@@ -388,9 +395,9 @@ class _NfcScanSheetState extends ConsumerState<NfcScanSheet> {
         const SizedBox(height: 16),
         Text(
           'Tag Read Successfully',
-          style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                fontWeight: FontWeight.bold,
-              ),
+          style: Theme.of(
+            context,
+          ).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
         ),
 
         const SizedBox(height: 16),
@@ -410,10 +417,10 @@ class _NfcScanSheetState extends ConsumerState<NfcScanSheet> {
                       Text(
                         'TAG IDENTIFIER',
                         style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                              color: cs.primary,
-                              fontWeight: FontWeight.bold,
-                              letterSpacing: 1.1,
-                            ),
+                          color: cs.primary,
+                          fontWeight: FontWeight.bold,
+                          letterSpacing: 1.1,
+                        ),
                       ),
                     ],
                   ),
@@ -426,11 +433,13 @@ class _NfcScanSheetState extends ConsumerState<NfcScanSheet> {
               ),
               const SizedBox(height: 4),
               Text(
-                hasCustomName ? res.tagName! : 'Unnamed Tag (Tap edit to assign name)',
+                hasCustomName
+                    ? res.tagName!
+                    : 'Unnamed Tag (Tap edit to assign name)',
                 style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                      fontWeight: FontWeight.bold,
-                      color: hasCustomName ? cs.onSurface : cs.outline,
-                    ),
+                  fontWeight: FontWeight.bold,
+                  color: hasCustomName ? cs.onSurface : cs.outline,
+                ),
               ),
             ],
           ),
@@ -446,10 +455,10 @@ class _NfcScanSheetState extends ConsumerState<NfcScanSheet> {
               Text(
                 'TYPE',
                 style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                      color: cs.primary,
-                      fontWeight: FontWeight.bold,
-                      letterSpacing: 1.1,
-                    ),
+                  color: cs.primary,
+                  fontWeight: FontWeight.bold,
+                  letterSpacing: 1.1,
+                ),
               ),
               const SizedBox(height: 4),
               Text(res.tagType, style: Theme.of(context).textTheme.bodyLarge),
@@ -457,10 +466,10 @@ class _NfcScanSheetState extends ConsumerState<NfcScanSheet> {
               Text(
                 'CONTENT',
                 style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                      color: cs.primary,
-                      fontWeight: FontWeight.bold,
-                      letterSpacing: 1.1,
-                    ),
+                  color: cs.primary,
+                  fontWeight: FontWeight.bold,
+                  letterSpacing: 1.1,
+                ),
               ),
               const SizedBox(height: 4),
               SelectableText(
@@ -496,8 +505,8 @@ class _NfcScanSheetState extends ConsumerState<NfcScanSheet> {
         Text(
           'Saved to history.',
           style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                color: cs.onSurface.withValues(alpha: 0.6),
-              ),
+            color: cs.onSurface.withValues(alpha: 0.6),
+          ),
         ),
       ],
     );
@@ -562,7 +571,10 @@ class _WaitingState extends StatelessWidget {
     final cs = Theme.of(context).colorScheme;
     final (label, icon) = switch (mode) {
       NfcSheetMode.read => ('Waiting to read tag…', Icons.nfc_rounded),
-      NfcSheetMode.erase => ('Waiting to erase tag…', Icons.delete_sweep_rounded),
+      NfcSheetMode.erase => (
+        'Waiting to erase tag…',
+        Icons.delete_sweep_rounded,
+      ),
       NfcSheetMode.inspect => ('Waiting to inspect tag…', Icons.search_rounded),
     };
 
@@ -626,9 +638,9 @@ class _ErrorState extends StatelessWidget {
         const SizedBox(height: 20),
         Text(
           'Something went wrong',
-          style: Theme.of(context).textTheme.titleLarge?.copyWith(
-            fontWeight: FontWeight.bold,
-          ),
+          style: Theme.of(
+            context,
+          ).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
         ),
         const SizedBox(height: 8),
         Text(

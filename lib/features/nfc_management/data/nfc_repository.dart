@@ -34,10 +34,7 @@ class NfcRepository {
       }
 
       await NfcManager.instance.startSession(
-        pollingOptions: {
-          NfcPollingOption.iso14443,
-          NfcPollingOption.iso15693,
-        },
+        pollingOptions: {NfcPollingOption.iso14443, NfcPollingOption.iso15693},
         onDiscovered: (NfcTag tag) async {
           onDiscovered(tag);
         },
@@ -59,10 +56,7 @@ class NfcRepository {
   /// Writes an [NdefMessage] to [tag] on Android.
   ///
   /// Returns `false` if the tag is not NDEF-compatible or is read-only.
-  Future<bool> writeNdefMessageAndroid(
-    NfcTag tag,
-    NdefMessage message,
-  ) async {
+  Future<bool> writeNdefMessageAndroid(NfcTag tag, NdefMessage message) async {
     final ndef = NdefAndroid.from(tag);
     if (ndef == null) return false; // Not NDEF-compatible
     if (!ndef.isWritable) return false; // Read-only

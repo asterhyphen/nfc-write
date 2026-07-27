@@ -17,9 +17,9 @@ class SettingsTab extends ConsumerWidget {
       children: [
         Text(
           'Settings',
-          style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-            fontWeight: FontWeight.bold,
-          ),
+          style: Theme.of(
+            context,
+          ).textTheme.headlineMedium?.copyWith(fontWeight: FontWeight.bold),
         ).animate().fadeIn(duration: 300.ms),
         const SizedBox(height: 24),
 
@@ -56,7 +56,8 @@ class SettingsTab extends ConsumerWidget {
           title: 'Open Source Licenses',
           subtitle: 'Third-party libraries',
           trailing: const Icon(Icons.chevron_right),
-          onTap: () => showLicensePage(context: context, applicationName: 'TapFlow'),
+          onTap: () =>
+              showLicensePage(context: context, applicationName: 'TapFlow'),
         ).animate().fadeIn(delay: 350.ms).slideX(begin: 0.1),
       ],
     );
@@ -67,7 +68,9 @@ class SettingsTab extends ConsumerWidget {
       context: context,
       builder: (_) => AlertDialog(
         title: const Text('Theme'),
-        content: const Text('Theme follows your system setting (light / dark).'),
+        content: const Text(
+          'Theme follows your system setting (light / dark).',
+        ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
@@ -98,9 +101,9 @@ class SettingsTab extends ConsumerWidget {
             onPressed: () {
               Navigator.pop(context);
               ref.read(historyProvider.notifier).clearAll();
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('History cleared.')),
-              );
+              ScaffoldMessenger.of(
+                context,
+              ).showSnackBar(const SnackBar(content: Text('History cleared.')));
             },
             child: const Text('Clear'),
           ),

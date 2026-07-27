@@ -62,7 +62,8 @@ class _HistoryTabState extends ConsumerState<HistoryTab> {
               final filtered = records.where((r) {
                 if (_favOnly && !r.isFavorite) return false;
                 if (_query.isEmpty) return true;
-                final tagMatch = r.tagName?.toLowerCase().contains(_query) ?? false;
+                final tagMatch =
+                    r.tagName?.toLowerCase().contains(_query) ?? false;
                 return tagMatch ||
                     r.content.toLowerCase().contains(_query) ||
                     r.tagType.toLowerCase().contains(_query);
@@ -151,15 +152,13 @@ class _RecordTile extends ConsumerWidget {
                 record.isFavorite ? Icons.star : Icons.star_border,
                 color: record.isFavorite ? Colors.amber : null,
               ),
-              onPressed: () => ref
-                  .read(historyProvider.notifier)
-                  .toggleFavorite(record.id),
+              onPressed: () =>
+                  ref.read(historyProvider.notifier).toggleFavorite(record.id),
             ),
             IconButton(
               icon: const Icon(Icons.delete_outline),
-              onPressed: () => ref
-                  .read(historyProvider.notifier)
-                  .deleteRecord(record.id),
+              onPressed: () =>
+                  ref.read(historyProvider.notifier).deleteRecord(record.id),
             ),
           ],
         ),

@@ -181,7 +181,9 @@ class _NfcWriteSheetState extends ConsumerState<NfcWriteSheet> {
         onSubmit: _startWrite,
       ),
       _WriteState.waiting => _WaitingToWrite(),
-      _WriteState.success => _WriteSuccess(onClose: () => Navigator.pop(context)),
+      _WriteState.success => _WriteSuccess(
+        onClose: () => Navigator.pop(context),
+      ),
       _WriteState.error => _WriteError(
         message: _errorMessage ?? 'Unknown error',
         onRetry: () => setState(() => _state = _WriteState.composing),
@@ -218,15 +220,17 @@ class _ComposingForm extends StatelessWidget {
         children: [
           Text(
             'Write NFC Tag',
-            style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-              fontWeight: FontWeight.bold,
-            ),
+            style: Theme.of(
+              context,
+            ).textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.bold),
           ),
           const SizedBox(height: 6),
           Text(
             'Select a type and enter content to write.',
             style: Theme.of(context).textTheme.bodySmall?.copyWith(
-              color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.6),
+              color: Theme.of(
+                context,
+              ).colorScheme.onSurface.withValues(alpha: 0.6),
             ),
           ),
           const SizedBox(height: 20),
@@ -341,14 +345,13 @@ class _WaitingToWrite extends StatelessWidget {
     return Column(
       children: [
         const SizedBox(height: 32),
-        Icon(Icons.nfc_rounded, size: 80, color: cs.primary)
-            .animate(onPlay: (c) => c.repeat())
-            .shimmer(duration: 1500.ms),
+        Icon(
+          Icons.nfc_rounded,
+          size: 80,
+          color: cs.primary,
+        ).animate(onPlay: (c) => c.repeat()).shimmer(duration: 1500.ms),
         const SizedBox(height: 24),
-        Text(
-          'Ready to write…',
-          style: Theme.of(context).textTheme.titleMedium,
-        ),
+        Text('Ready to write…', style: Theme.of(context).textTheme.titleMedium),
         const SizedBox(height: 8),
         Text(
           'Hold your phone near an NFC tag to write.',
@@ -383,16 +386,18 @@ class _WriteSuccess extends StatelessWidget {
         const SizedBox(height: 20),
         Text(
           'Written Successfully!',
-          style: Theme.of(context).textTheme.titleLarge?.copyWith(
-            fontWeight: FontWeight.bold,
-          ),
+          style: Theme.of(
+            context,
+          ).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
         ).animate().fadeIn(delay: 200.ms),
         const SizedBox(height: 8),
         Text(
           'The NDEF record was written to the tag.',
           textAlign: TextAlign.center,
           style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-            color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.6),
+            color: Theme.of(
+              context,
+            ).colorScheme.onSurface.withValues(alpha: 0.6),
           ),
         ).animate().fadeIn(delay: 300.ms),
         const SizedBox(height: 32),
@@ -433,9 +438,9 @@ class _WriteError extends StatelessWidget {
         const SizedBox(height: 20),
         Text(
           'Write Failed',
-          style: Theme.of(context).textTheme.titleLarge?.copyWith(
-            fontWeight: FontWeight.bold,
-          ),
+          style: Theme.of(
+            context,
+          ).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
         ),
         const SizedBox(height: 8),
         Text(

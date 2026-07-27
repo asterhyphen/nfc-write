@@ -19,9 +19,9 @@ class AutomationsTab extends ConsumerWidget {
         children: [
           Text(
             'Automations',
-            style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-              fontWeight: FontWeight.bold,
-            ),
+            style: Theme.of(
+              context,
+            ).textTheme.headlineMedium?.copyWith(fontWeight: FontWeight.bold),
           ).animate().fadeIn(duration: 300.ms),
 
           const SizedBox(height: 8),
