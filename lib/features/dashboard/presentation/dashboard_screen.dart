@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../automation/presentation/automations_tab.dart';
 import '../../history/presentation/history_tab.dart';
 import '../../settings/presentation/settings_tab.dart';
+import '../../templates/presentation/templates_tab.dart';
 import 'home_tab.dart';
 
 /// Root shell widget with a Material 3 [NavigationBar].
@@ -22,6 +23,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
   static const List<Widget> _tabs = [
     HomeDashboardTab(),
     AutomationsTab(),
+    TemplatesTab(),
     HistoryTab(),
     SettingsTab(),
   ];
@@ -46,6 +48,11 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
             icon: Icon(Icons.auto_awesome_outlined),
             selectedIcon: Icon(Icons.auto_awesome),
             label: 'Automations',
+          ),
+          NavigationDestination(
+            icon: Icon(Icons.widgets_outlined),
+            selectedIcon: Icon(Icons.widgets),
+            label: 'Templates',
           ),
           NavigationDestination(
             icon: Icon(Icons.history_outlined),
