@@ -120,7 +120,7 @@ class SettingsTab extends ConsumerWidget {
             const Text('Here is your formatted backup JSON payload:'),
             const SizedBox(height: 12),
             Container(
-              maxHeight: 180,
+              constraints: const BoxConstraints(maxHeight: 180),
               padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
                 color: Theme.of(context).colorScheme.surfaceContainerHigh,

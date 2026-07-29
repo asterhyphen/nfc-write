@@ -1,6 +1,5 @@
 import 'dart:convert';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../history/data/history_repository.dart';
 import '../../history/domain/scan_record.dart';
@@ -9,11 +8,10 @@ import '../../nfc_management/data/tag_registry_repository.dart';
 part 'backup_service.g.dart';
 
 class BackupService {
-  final SharedPreferences _prefs;
   final HistoryRepository _historyRepo;
   final TagRegistryRepository _tagRegistryRepo;
 
-  BackupService(this._prefs, this._historyRepo, this._tagRegistryRepo);
+  BackupService(this._historyRepo, this._tagRegistryRepo);
 
   /// Exports all app data (scan history & tag registry) into a JSON string.
   Future<String> exportBackupJson() async {
@@ -77,9 +75,8 @@ class BackupService {
 
 @riverpod
 Future<BackupService> backupService(Ref ref) async {
-  final prefs = await SharedPreferences.getInstance();
   final historyRepo = await ref.watch(historyRepositoryProvider.future);
   final tagRegistryRepo =
       await ref.watch(tagRegistryRepositoryProvider.future);
-  return BackupService(prefs, historyRepo, tagRegistryRepo);
+  return BackupService(historyRepo, tagRegistryRepo);
 }

@@ -190,6 +190,7 @@ class _CreateProfileSheetState extends ConsumerState<CreateProfileSheet> {
                         shrinkWrap: true,
                         physics: const NeverScrollableScrollPhysics(),
                         itemCount: _actions.length,
+                        // ignore: deprecated_member_use
                         onReorder: (oldIndex, newIndex) {
                           setState(() {
                             if (newIndex > oldIndex) newIndex -= 1;
