@@ -10,7 +10,8 @@ abstract class NfcTemplate with _$NfcTemplate {
     required String id,
     required String title,
     required String description,
-    required String category, // 'Network', 'Social', 'Contact', 'Utility', 'Automation'
+    required String
+    category, // 'Network', 'Social', 'Contact', 'Utility', 'Automation'
     required String payloadType, // 'wifi', 'vcard', 'url', 'timer', 'text'
     required String defaultPayload,
     required String iconName,

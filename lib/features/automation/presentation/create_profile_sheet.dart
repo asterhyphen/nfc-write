@@ -63,17 +63,15 @@ class _CreateProfileSheetState extends ConsumerState<CreateProfileSheet> {
                   children: [
                     Text(
                       'Create Automation Profile',
-                      style: Theme.of(context)
-                          .textTheme
-                          .headlineSmall
+                      style: Theme.of(context).textTheme.headlineSmall
                           ?.copyWith(fontWeight: FontWeight.bold),
                     ),
                     const SizedBox(height: 4),
                     Text(
                       'Chain multiple actions executed sequentially when tag is tapped.',
                       style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                            color: cs.onSurface.withValues(alpha: 0.6),
-                          ),
+                        color: cs.onSurface.withValues(alpha: 0.6),
+                      ),
                     ),
                     const SizedBox(height: 20),
 
@@ -98,10 +96,8 @@ class _CreateProfileSheetState extends ConsumerState<CreateProfileSheet> {
                       children: [
                         Text(
                           'Action Sequence (${_actions.length})',
-                          style:
-                              Theme.of(context).textTheme.titleMedium?.copyWith(
-                                    fontWeight: FontWeight.bold,
-                                  ),
+                          style: Theme.of(context).textTheme.titleMedium
+                              ?.copyWith(fontWeight: FontWeight.bold),
                         ),
                         PopupMenuButton<String>(
                           icon: const Icon(Icons.add_circle_rounded),
@@ -142,8 +138,10 @@ class _CreateProfileSheetState extends ConsumerState<CreateProfileSheet> {
                               value: 'brightness',
                               child: Row(
                                 children: [
-                                  Icon(Icons.brightness_medium_rounded,
-                                      size: 20),
+                                  Icon(
+                                    Icons.brightness_medium_rounded,
+                                    size: 20,
+                                  ),
                                   SizedBox(width: 10),
                                   Text('Set Brightness'),
                                 ],
@@ -170,8 +168,11 @@ class _CreateProfileSheetState extends ConsumerState<CreateProfileSheet> {
                         ),
                         child: Column(
                           children: [
-                            Icon(Icons.playlist_add_rounded,
-                                size: 40, color: cs.outline),
+                            Icon(
+                              Icons.playlist_add_rounded,
+                              size: 40,
+                              color: cs.outline,
+                            ),
                             const SizedBox(height: 8),
                             Text(
                               'No actions added yet',
@@ -207,9 +208,13 @@ class _CreateProfileSheetState extends ConsumerState<CreateProfileSheet> {
                               leading: CircleAvatar(
                                 radius: 14,
                                 backgroundColor: cs.primaryContainer,
-                                child: Text('${i + 1}',
-                                    style: TextStyle(
-                                        fontSize: 12, color: cs.primary)),
+                                child: Text(
+                                  '${i + 1}',
+                                  style: TextStyle(
+                                    fontSize: 12,
+                                    color: cs.primary,
+                                  ),
+                                ),
                               ),
                               title: Text(_actionTitle(action)),
                               subtitle: Text(_actionSubtitle(action)),
@@ -271,20 +276,20 @@ class _CreateProfileSheetState extends ConsumerState<CreateProfileSheet> {
   }
 
   String _actionTitle(AutomationAction a) => a.map(
-        openUrl: (_) => 'Open Web URL',
-        showNotification: (_) => 'Show Notification',
-        launchApp: (_) => 'Launch App',
-        setBrightness: (_) => 'Set Brightness',
-        delayTimer: (_) => 'Delay Timer',
-      );
+    openUrl: (_) => 'Open Web URL',
+    showNotification: (_) => 'Show Notification',
+    launchApp: (_) => 'Launch App',
+    setBrightness: (_) => 'Set Brightness',
+    delayTimer: (_) => 'Delay Timer',
+  );
 
   String _actionSubtitle(AutomationAction a) => a.map(
-        openUrl: (x) => x.url,
-        showNotification: (x) => '${x.title}: ${x.body}',
-        launchApp: (x) => x.packageName,
-        setBrightness: (x) => '${(x.level * 100).toInt()}%',
-        delayTimer: (x) => '${x.seconds} seconds',
-      );
+    openUrl: (x) => x.url,
+    showNotification: (x) => '${x.title}: ${x.body}',
+    launchApp: (x) => x.packageName,
+    setBrightness: (x) => '${(x.level * 100).toInt()}%',
+    delayTimer: (x) => '${x.seconds} seconds',
+  );
 
   void _showAddActionDialog(String type) {
     final ctrl1 = TextEditingController();
@@ -310,22 +315,25 @@ class _CreateProfileSheetState extends ConsumerState<CreateProfileSheet> {
             ] else if (type == 'url') ...[
               TextField(
                 controller: ctrl1,
-                decoration:
-                    const InputDecoration(labelText: 'URL (https://...)'),
+                decoration: const InputDecoration(
+                  labelText: 'URL (https://...)',
+                ),
               ),
             ] else if (type == 'timer') ...[
               TextField(
                 controller: ctrl1,
                 keyboardType: TextInputType.number,
                 decoration: const InputDecoration(
-                    labelText: 'Duration in seconds (e.g. 60)'),
+                  labelText: 'Duration in seconds (e.g. 60)',
+                ),
               ),
             ] else if (type == 'brightness') ...[
               TextField(
                 controller: ctrl1,
                 keyboardType: TextInputType.number,
                 decoration: const InputDecoration(
-                    labelText: 'Brightness % (0 - 100)'),
+                  labelText: 'Brightness % (0 - 100)',
+                ),
               ),
             ],
           ],
@@ -339,20 +347,28 @@ class _CreateProfileSheetState extends ConsumerState<CreateProfileSheet> {
             onPressed: () {
               Navigator.pop(ctx);
               if (type == 'notification') {
-                _addAction(AutomationAction.showNotification(
-                  title: ctrl1.text.isEmpty ? 'TapFlow' : ctrl1.text,
-                  body: ctrl2.text.isEmpty ? 'Automation triggered!' : ctrl2.text,
-                ));
+                _addAction(
+                  AutomationAction.showNotification(
+                    title: ctrl1.text.isEmpty ? 'TapFlow' : ctrl1.text,
+                    body: ctrl2.text.isEmpty
+                        ? 'Automation triggered!'
+                        : ctrl2.text,
+                  ),
+                );
               } else if (type == 'url') {
-                _addAction(AutomationAction.openUrl(
-                  url: ctrl1.text.isEmpty ? 'https://google.com' : ctrl1.text,
-                ));
+                _addAction(
+                  AutomationAction.openUrl(
+                    url: ctrl1.text.isEmpty ? 'https://google.com' : ctrl1.text,
+                  ),
+                );
               } else if (type == 'timer') {
                 final secs = int.tryParse(ctrl1.text) ?? 5;
                 _addAction(AutomationAction.delayTimer(seconds: secs));
               } else if (type == 'brightness') {
                 final percent = double.tryParse(ctrl1.text) ?? 80;
-                _addAction(AutomationAction.setBrightness(level: percent / 100));
+                _addAction(
+                  AutomationAction.setBrightness(level: percent / 100),
+                );
               }
             },
             child: const Text('Add Step'),

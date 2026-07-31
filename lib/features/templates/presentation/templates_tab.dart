@@ -39,7 +39,8 @@ const List<NfcTemplate> kBuiltInTemplates = [
   NfcTemplate(
     id: 'social_profile',
     title: 'Social Media Link',
-    description: 'Direct users to your Instagram, LinkedIn, or YouTube profile.',
+    description:
+        'Direct users to your Instagram, LinkedIn, or YouTube profile.',
     category: 'Social',
     payloadType: 'url',
     defaultPayload: 'https://instagram.com/tapflow_app',
@@ -57,7 +58,8 @@ const List<NfcTemplate> kBuiltInTemplates = [
   NfcTemplate(
     id: 'emergency_info',
     title: 'Emergency Medical Note',
-    description: 'Write critical ICE medical details or emergency contact info.',
+    description:
+        'Write critical ICE medical details or emergency contact info.',
     category: 'Utility',
     payloadType: 'text',
     defaultPayload: 'ICE Contact: Jane Doe (+1-555-0123) | Blood Type: O+',
@@ -92,7 +94,8 @@ class _TemplatesTabState extends ConsumerState<TemplatesTab> {
     final filtered = kBuiltInTemplates.where((t) {
       final categoryMatch =
           _selectedCategory == 'All' || t.category == _selectedCategory;
-      final searchMatch = _searchQuery.isEmpty ||
+      final searchMatch =
+          _searchQuery.isEmpty ||
           t.title.toLowerCase().contains(_searchQuery) ||
           t.description.toLowerCase().contains(_searchQuery);
       return categoryMatch && searchMatch;
@@ -105,16 +108,16 @@ class _TemplatesTabState extends ConsumerState<TemplatesTab> {
         children: [
           Text(
             'Templates Library',
-            style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                  fontWeight: FontWeight.bold,
-                ),
+            style: Theme.of(
+              context,
+            ).textTheme.headlineMedium?.copyWith(fontWeight: FontWeight.bold),
           ).animate().fadeIn(duration: 300.ms),
           const SizedBox(height: 6),
           Text(
             'Pre-built NFC configurations ready to write to any tag.',
             style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                  color: cs.onSurface.withValues(alpha: 0.6),
-                ),
+              color: cs.onSurface.withValues(alpha: 0.6),
+            ),
           ).animate().fadeIn(delay: 100.ms),
 
           const SizedBox(height: 18),
@@ -162,9 +165,9 @@ class _TemplatesTabState extends ConsumerState<TemplatesTab> {
                 ? Center(
                     child: Text(
                       'No matching templates found',
-                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                            color: cs.outline,
-                          ),
+                      style: Theme.of(
+                        context,
+                      ).textTheme.bodyMedium?.copyWith(color: cs.outline),
                     ),
                   )
                 : ListView.builder(
@@ -173,9 +176,9 @@ class _TemplatesTabState extends ConsumerState<TemplatesTab> {
                     itemBuilder: (ctx, i) {
                       final template = filtered[i];
                       return _TemplateCard(
-                        template: template,
-                        onUse: () => _useTemplate(template),
-                      )
+                            template: template,
+                            onUse: () => _useTemplate(template),
+                          )
                           .animate()
                           .fadeIn(delay: Duration(milliseconds: 250 + i * 50))
                           .slideY(begin: 0.1);
@@ -201,10 +204,7 @@ class _TemplateCard extends StatelessWidget {
   final NfcTemplate template;
   final VoidCallback onUse;
 
-  const _TemplateCard({
-    required this.template,
-    required this.onUse,
-  });
+  const _TemplateCard({required this.template, required this.onUse});
 
   @override
   Widget build(BuildContext context) {
@@ -225,8 +225,11 @@ class _TemplateCard extends StatelessWidget {
                     color: cs.primaryContainer,
                     shape: BoxShape.circle,
                   ),
-                  child: Icon(_getIcon(template.iconName),
-                      color: cs.primary, size: 22),
+                  child: Icon(
+                    _getIcon(template.iconName),
+                    color: cs.primary,
+                    size: 22,
+                  ),
                 ),
                 const SizedBox(width: 14),
                 Expanded(
@@ -243,7 +246,9 @@ class _TemplateCard extends StatelessWidget {
                       const SizedBox(height: 2),
                       Container(
                         padding: const EdgeInsets.symmetric(
-                            horizontal: 8, vertical: 2),
+                          horizontal: 8,
+                          vertical: 2,
+                        ),
                         decoration: BoxDecoration(
                           color: cs.secondaryContainer,
                           borderRadius: BorderRadius.circular(6),
@@ -267,8 +272,8 @@ class _TemplateCard extends StatelessWidget {
             Text(
               template.description,
               style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                    color: cs.onSurface.withValues(alpha: 0.7),
-                  ),
+                color: cs.onSurface.withValues(alpha: 0.7),
+              ),
             ),
             const SizedBox(height: 16),
             SizedBox(
@@ -291,12 +296,12 @@ class _TemplateCard extends StatelessWidget {
   }
 
   IconData _getIcon(String iconName) => switch (iconName) {
-        'wifi' => Icons.wifi_rounded,
-        'contact' => Icons.badge_rounded,
-        'timer' => Icons.timer_rounded,
-        'social' => Icons.share_rounded,
-        'home' => Icons.home_rounded,
-        'medical' => Icons.medical_services_rounded,
-        _ => Icons.widgets_rounded,
-      };
+    'wifi' => Icons.wifi_rounded,
+    'contact' => Icons.badge_rounded,
+    'timer' => Icons.timer_rounded,
+    'social' => Icons.share_rounded,
+    'home' => Icons.home_rounded,
+    'medical' => Icons.medical_services_rounded,
+    _ => Icons.widgets_rounded,
+  };
 }

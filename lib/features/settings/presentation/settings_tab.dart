@@ -19,9 +19,9 @@ class SettingsTab extends ConsumerWidget {
       children: [
         Text(
           'Settings',
-          style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                fontWeight: FontWeight.bold,
-              ),
+          style: Theme.of(
+            context,
+          ).textTheme.headlineMedium?.copyWith(fontWeight: FontWeight.bold),
         ).animate().fadeIn(duration: 300.ms),
         const SizedBox(height: 24),
 
@@ -86,7 +86,9 @@ class SettingsTab extends ConsumerWidget {
       context: context,
       builder: (_) => AlertDialog(
         title: const Text('Theme'),
-        content: const Text('Theme follows your system setting (light / dark).'),
+        content: const Text(
+          'Theme follows your system setting (light / dark).',
+        ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
@@ -147,7 +149,9 @@ class SettingsTab extends ConsumerWidget {
               Clipboard.setData(ClipboardData(text: jsonStr));
               Navigator.pop(ctx);
               ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('Backup JSON copied to clipboard!')),
+                const SnackBar(
+                  content: Text('Backup JSON copied to clipboard!'),
+                ),
               );
             },
           ),
@@ -199,8 +203,7 @@ class SettingsTab extends ConsumerWidget {
               if (text.isEmpty) return;
 
               try {
-                final backupSvc =
-                    await ref.read(backupServiceProvider.future);
+                final backupSvc = await ref.read(backupServiceProvider.future);
                 await backupSvc.restoreBackupJson(text);
 
                 if (!ctx.mounted) return;
@@ -209,13 +212,14 @@ class SettingsTab extends ConsumerWidget {
 
                 ScaffoldMessenger.of(context).showSnackBar(
                   const SnackBar(
-                      content: Text('Backup restored successfully!')),
+                    content: Text('Backup restored successfully!'),
+                  ),
                 );
               } catch (e) {
                 if (!ctx.mounted) return;
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(content: Text('Import error: $e')),
-                );
+                ScaffoldMessenger.of(
+                  context,
+                ).showSnackBar(SnackBar(content: Text('Import error: $e')));
               }
             },
             child: const Text('Restore Data'),
@@ -245,9 +249,9 @@ class SettingsTab extends ConsumerWidget {
             onPressed: () {
               Navigator.pop(context);
               ref.read(historyProvider.notifier).clearAll();
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('History cleared.')),
-              );
+              ScaffoldMessenger.of(
+                context,
+              ).showSnackBar(const SnackBar(content: Text('History cleared.')));
             },
             child: const Text('Clear'),
           ),
@@ -268,10 +272,10 @@ class _SectionHeader extends StatelessWidget {
       child: Text(
         title.toUpperCase(),
         style: Theme.of(context).textTheme.labelSmall?.copyWith(
-              color: Theme.of(context).colorScheme.primary,
-              fontWeight: FontWeight.bold,
-              letterSpacing: 1.2,
-            ),
+          color: Theme.of(context).colorScheme.primary,
+          fontWeight: FontWeight.bold,
+          letterSpacing: 1.2,
+        ),
       ),
     );
   }

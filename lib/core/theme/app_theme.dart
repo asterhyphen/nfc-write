@@ -21,9 +21,7 @@ class AppTheme {
         backgroundColor: Colors.transparent,
       ),
       chipTheme: ChipThemeData(
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(12),
-        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
         side: BorderSide.none,
       ),
       elevatedButtonTheme: ElevatedButtonThemeData(
@@ -58,9 +56,7 @@ class AppTheme {
       ),
       scaffoldBackgroundColor: const Color(0xFF0B0F19),
       chipTheme: ChipThemeData(
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(12),
-        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
         side: BorderSide.none,
       ),
       elevatedButtonTheme: ElevatedButtonThemeData(

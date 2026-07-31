@@ -34,7 +34,9 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
     final isDark = cs.brightness == Brightness.dark;
 
     return Scaffold(
-      backgroundColor: isDark ? const Color(0xFF0B0F19) : const Color(0xFFF8FAFC),
+      backgroundColor: isDark
+          ? const Color(0xFF0B0F19)
+          : const Color(0xFFF8FAFC),
       body: SafeArea(
         bottom: false,
         child: IndexedStack(index: _currentIndex, children: _tabs),

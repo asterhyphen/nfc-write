@@ -53,7 +53,8 @@ final List<AutomationProfile> kStarterProfiles = [
         body: 'Connecting smart home scene…',
       ),
       AutomationAction.openUrl(
-          url: 'https://home-assistant.local:8123/api/webhook/arrived_home'),
+        url: 'https://home-assistant.local:8123/api/webhook/arrived_home',
+      ),
     ],
   ),
 ];
@@ -76,8 +77,8 @@ class AutomationsTab extends ConsumerWidget {
               Text(
                 'Automations',
                 style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                      fontWeight: FontWeight.bold,
-                    ),
+                  fontWeight: FontWeight.bold,
+                ),
               ),
               FilledButton.icon(
                 onPressed: () => _openCreateProfile(context),
@@ -91,8 +92,8 @@ class AutomationsTab extends ConsumerWidget {
           Text(
             'Map NFC tags to run multi-step action sequences.',
             style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                  color: cs.onSurface.withValues(alpha: 0.6),
-                ),
+              color: cs.onSurface.withValues(alpha: 0.6),
+            ),
           ).animate().fadeIn(delay: 100.ms),
 
           const SizedBox(height: 20),
@@ -104,16 +105,20 @@ class AutomationsTab extends ConsumerWidget {
               itemBuilder: (ctx, i) {
                 final profile = kStarterProfiles[i];
                 return _ProfileCard(
-                  profile: profile,
-                  onRun: () {
-                    ref.read(automationEngineProvider).executeProfile(profile);
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
-                          content:
-                              Text('Running automation: ${profile.name}')),
-                    );
-                  },
-                )
+                      profile: profile,
+                      onRun: () {
+                        ref
+                            .read(automationEngineProvider)
+                            .executeProfile(profile);
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text(
+                              'Running automation: ${profile.name}',
+                            ),
+                          ),
+                        );
+                      },
+                    )
                     .animate()
                     .fadeIn(delay: Duration(milliseconds: 150 + i * 60))
                     .slideY(begin: 0.1);
@@ -139,10 +144,7 @@ class _ProfileCard extends StatelessWidget {
   final AutomationProfile profile;
   final VoidCallback onRun;
 
-  const _ProfileCard({
-    required this.profile,
-    required this.onRun,
-  });
+  const _ProfileCard({required this.profile, required this.onRun});
 
   @override
   Widget build(BuildContext context) {
@@ -168,8 +170,10 @@ class _ProfileCard extends StatelessWidget {
                   ),
                 ),
                 Container(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 10,
+                    vertical: 4,
+                  ),
                   decoration: BoxDecoration(
                     color: cs.primaryContainer,
                     borderRadius: BorderRadius.circular(12),
@@ -195,16 +199,19 @@ class _ProfileCard extends StatelessWidget {
                   padding: const EdgeInsets.only(bottom: 4),
                   child: Row(
                     children: [
-                      Icon(Icons.check_circle_outline_rounded,
-                          size: 14, color: cs.primary),
+                      Icon(
+                        Icons.check_circle_outline_rounded,
+                        size: 14,
+                        color: cs.primary,
+                      ),
                       const SizedBox(width: 8),
                       Expanded(
                         child: Text(
                           _describeAction(action),
-                          style:
-                              Theme.of(context).textTheme.bodySmall?.copyWith(
-                                    color: cs.onSurface.withValues(alpha: 0.7),
-                                  ),
+                          style: Theme.of(context).textTheme.bodySmall
+                              ?.copyWith(
+                                color: cs.onSurface.withValues(alpha: 0.7),
+                              ),
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                         ),
@@ -240,10 +247,10 @@ class _ProfileCard extends StatelessWidget {
   }
 
   String _describeAction(AutomationAction a) => a.map(
-        openUrl: (x) => 'Open URL: ${x.url}',
-        showNotification: (x) => 'Notification: ${x.title}',
-        launchApp: (x) => 'Launch App: ${x.packageName}',
-        setBrightness: (x) => 'Set Brightness to ${(x.level * 100).toInt()}%',
-        delayTimer: (x) => 'Wait ${x.seconds}s',
-      );
+    openUrl: (x) => 'Open URL: ${x.url}',
+    showNotification: (x) => 'Notification: ${x.title}',
+    launchApp: (x) => 'Launch App: ${x.packageName}',
+    setBrightness: (x) => 'Set Brightness to ${(x.level * 100).toInt()}%',
+    delayTimer: (x) => 'Wait ${x.seconds}s',
+  );
 }

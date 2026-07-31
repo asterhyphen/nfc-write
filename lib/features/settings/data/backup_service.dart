@@ -36,7 +36,9 @@ class BackupService {
     final Map<String, dynamic> data = jsonDecode(jsonStr);
 
     if (data['app'] != 'TapFlow') {
-      throw const FormatException('Invalid backup file. App signature mismatch.');
+      throw const FormatException(
+        'Invalid backup file. App signature mismatch.',
+      );
     }
 
     // Restore history
@@ -64,8 +66,7 @@ class BackupService {
     if (data.containsKey('tagRegistry') && data['tagRegistry'] is Map) {
       final Map<String, dynamic> reg = data['tagRegistry'];
       for (final entry in reg.entries) {
-        await _tagRegistryRepo.setTagName(
-            entry.key, entry.value.toString());
+        await _tagRegistryRepo.setTagName(entry.key, entry.value.toString());
       }
     }
 
@@ -76,7 +77,6 @@ class BackupService {
 @riverpod
 Future<BackupService> backupService(Ref ref) async {
   final historyRepo = await ref.watch(historyRepositoryProvider.future);
-  final tagRegistryRepo =
-      await ref.watch(tagRegistryRepositoryProvider.future);
+  final tagRegistryRepo = await ref.watch(tagRegistryRepositoryProvider.future);
   return BackupService(historyRepo, tagRegistryRepo);
 }
