@@ -8,7 +8,6 @@ class AutomationEngine {
   Future<void> executeProfile(AutomationProfile profile) async {
     debugPrint('Executing profile: ${profile.name}');
   }
-
 }
 
 @riverpod
