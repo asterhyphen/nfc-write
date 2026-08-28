@@ -39,45 +39,46 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
     final isDark = cs.brightness == Brightness.dark;
 
     return Scaffold(
-      backgroundColor: isDark ? const Color(0xFF0B0F19) : const Color(0xFFF8FAFC),
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       body: SafeArea(
         bottom: false,
         child: IndexedStack(index: _currentIndex, children: _tabs),
       ),
       bottomNavigationBar: Container(
-        margin: const EdgeInsets.fromLTRB(16, 0, 16, 20),
+        margin: const EdgeInsets.fromLTRB(24, 0, 24, 28),
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(24),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withValues(alpha: isDark ? 0.35 : 0.06),
-              blurRadius: 20,
-              offset: const Offset(0, 6),
+              color: Colors.black.withValues(alpha: isDark ? 0.3 : 0.04),
+              blurRadius: 24,
+              offset: const Offset(0, 8),
             ),
           ],
         ),
         child: ClipRRect(
           borderRadius: BorderRadius.circular(24),
           child: NavigationBar(
-            backgroundColor: isDark ? const Color(0xFF1E293B) : Colors.white,
+            backgroundColor: isDark ? const Color(0xFF0E111A) : Colors.white,
             elevation: 0,
             selectedIndex: _currentIndex,
             onDestinationSelected: (i) => setState(() => _currentIndex = i),
             labelBehavior: NavigationDestinationLabelBehavior.onlyShowSelected,
-            destinations: const [
+            indicatorColor: cs.primary.withValues(alpha: 0.1),
+            destinations: [
               NavigationDestination(
-                icon: Icon(Icons.home_outlined),
-                selectedIcon: Icon(Icons.home),
+                icon: const Icon(Icons.home_outlined),
+                selectedIcon: Icon(Icons.home_rounded, color: cs.primary),
                 label: 'Home',
               ),
               NavigationDestination(
-                icon: Icon(Icons.widgets_outlined),
-                selectedIcon: Icon(Icons.widgets),
+                icon: const Icon(Icons.widgets_outlined),
+                selectedIcon: Icon(Icons.widgets_rounded, color: cs.primary),
                 label: 'Templates',
               ),
               NavigationDestination(
-                icon: Icon(Icons.settings_outlined),
-                selectedIcon: Icon(Icons.settings),
+                icon: const Icon(Icons.settings_outlined),
+                selectedIcon: Icon(Icons.settings_rounded, color: cs.primary),
                 label: 'Settings',
               ),
             ],

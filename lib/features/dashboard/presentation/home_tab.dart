@@ -501,10 +501,10 @@ class _TimerProgramDialogState extends State<_TimerProgramDialog> {
       child: Container(
         padding: const EdgeInsets.all(24),
         decoration: BoxDecoration(
-          color: isDark ? const Color(0xFF1E293B) : Colors.white,
+          color: isDark ? const Color(0xFF0E111A) : Colors.white,
           borderRadius: BorderRadius.circular(28),
           border: Border.all(
-            color: isDark ? Colors.white10 : Colors.black.withValues(alpha: 0.05),
+            color: cs.outline,
             width: 1.5,
           ),
           boxShadow: [
@@ -725,9 +725,9 @@ class _NotificationProgramDialogState extends State<_NotificationProgramDialog> 
       child: Container(
         padding: const EdgeInsets.all(24),
         decoration: BoxDecoration(
-          color: isDark ? const Color(0xFF1E293B) : Colors.white,
+          color: isDark ? const Color(0xFF0E111A) : Colors.white,
           borderRadius: BorderRadius.circular(28),
-          border: Border.all(color: isDark ? Colors.white10 : Colors.black.withValues(alpha: 0.05), width: 1.5),
+          border: Border.all(color: cs.outline, width: 1.5),
         ),
         child: Column(
           mainAxisSize: MainAxisSize.min,
@@ -804,9 +804,9 @@ class _DndProgramDialog extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.all(24),
         decoration: BoxDecoration(
-          color: isDark ? const Color(0xFF1E293B) : Colors.white,
+          color: isDark ? const Color(0xFF0E111A) : Colors.white,
           borderRadius: BorderRadius.circular(28),
-          border: Border.all(color: isDark ? Colors.white10 : Colors.black.withValues(alpha: 0.05), width: 1.5),
+          border: Border.all(color: cs.outline, width: 1.5),
         ),
         child: Column(
           mainAxisSize: MainAxisSize.min,
@@ -884,9 +884,9 @@ class _UrlProgramDialogState extends State<_UrlProgramDialog> {
       child: Container(
         padding: const EdgeInsets.all(24),
         decoration: BoxDecoration(
-          color: isDark ? const Color(0xFF1E293B) : Colors.white,
+          color: isDark ? const Color(0xFF0E111A) : Colors.white,
           borderRadius: BorderRadius.circular(28),
-          border: Border.all(color: isDark ? Colors.white10 : Colors.black.withValues(alpha: 0.05), width: 1.5),
+          border: Border.all(color: cs.outline, width: 1.5),
         ),
         child: Column(
           mainAxisSize: MainAxisSize.min,
@@ -969,9 +969,9 @@ class _WifiProgramDialogState extends State<_WifiProgramDialog> {
       child: Container(
         padding: const EdgeInsets.all(24),
         decoration: BoxDecoration(
-          color: isDark ? const Color(0xFF1E293B) : Colors.white,
+          color: isDark ? const Color(0xFF0E111A) : Colors.white,
           borderRadius: BorderRadius.circular(28),
-          border: Border.all(color: isDark ? Colors.white10 : Colors.black.withValues(alpha: 0.05), width: 1.5),
+          border: Border.all(color: cs.outline, width: 1.5),
         ),
         child: Column(
           mainAxisSize: MainAxisSize.min,
@@ -1063,9 +1063,9 @@ class _ContactProgramDialogState extends State<_ContactProgramDialog> {
       child: Container(
         padding: const EdgeInsets.all(24),
         decoration: BoxDecoration(
-          color: isDark ? const Color(0xFF1E293B) : Colors.white,
+          color: isDark ? const Color(0xFF0E111A) : Colors.white,
           borderRadius: BorderRadius.circular(28),
-          border: Border.all(color: isDark ? Colors.white10 : Colors.black.withValues(alpha: 0.05), width: 1.5),
+          border: Border.all(color: cs.outline, width: 1.5),
         ),
         child: Column(
           mainAxisSize: MainAxisSize.min,
@@ -1156,7 +1156,7 @@ class _DesignerActionTile extends StatelessWidget {
       margin: const EdgeInsets.only(bottom: 14),
       elevation: 0,
       color: isDark
-          ? const Color(0xFF1E293B).withValues(alpha: 0.45)
+          ? const Color(0xFF0E111A).withValues(alpha: 0.45)
           : cs.surfaceContainerLow.withValues(alpha: 0.9),
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(24),

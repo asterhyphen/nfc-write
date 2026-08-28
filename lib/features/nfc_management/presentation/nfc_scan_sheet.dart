@@ -445,7 +445,7 @@ class _NfcScanSheetState extends ConsumerState<NfcScanSheet> {
         const SizedBox(height: 12),
         CircleAvatar(
           radius: 36,
-          backgroundColor: Colors.green.shade100,
+          backgroundColor: Colors.green.withValues(alpha: 0.15),
           child: const Icon(Icons.check_circle, color: Colors.green, size: 40),
         ).animate().scale(begin: const Offset(0.5, 0.5)).fadeIn(),
 
@@ -689,7 +689,7 @@ class _ErrorState extends StatelessWidget {
         const SizedBox(height: 20),
         CircleAvatar(
           radius: 36,
-          backgroundColor: cs.errorContainer,
+          backgroundColor: cs.error.withValues(alpha: 0.12),
           child: Icon(Icons.error_outline, color: cs.error, size: 40),
         ).animate().scale(begin: const Offset(0.5, 0.5)).fadeIn(),
         const SizedBox(height: 20),

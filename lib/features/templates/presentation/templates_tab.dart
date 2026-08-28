@@ -126,13 +126,22 @@ class _TemplatesTabState extends ConsumerState<TemplatesTab> {
           TextField(
             decoration: InputDecoration(
               hintText: 'Search templates…',
-              prefixIcon: const Icon(Icons.search_rounded),
+              prefixIcon: Icon(Icons.search_rounded, color: cs.primary.withValues(alpha: 0.6)),
               border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(14),
-                borderSide: BorderSide.none,
+                borderRadius: BorderRadius.circular(16),
+                borderSide: BorderSide(color: cs.outline),
+              ),
+              enabledBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(16),
+                borderSide: BorderSide(color: cs.outline),
+              ),
+              focusedBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(16),
+                borderSide: BorderSide(color: cs.primary, width: 1.5),
               ),
               filled: true,
-              contentPadding: const EdgeInsets.symmetric(vertical: 0),
+              fillColor: cs.surfaceContainerLow,
+              contentPadding: const EdgeInsets.symmetric(vertical: 14, horizontal: 16),
             ),
             onChanged: (v) => setState(() => _searchQuery = v.toLowerCase()),
           ).animate().fadeIn(delay: 150.ms),
@@ -225,16 +234,16 @@ class _TemplateCard extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.only(bottom: 12),
       child: GlassCard(
-        padding: const EdgeInsets.all(18),
+        padding: const EdgeInsets.all(20),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Row(
               children: [
                 Container(
-                  padding: const EdgeInsets.all(10),
+                  padding: const EdgeInsets.all(12),
                   decoration: BoxDecoration(
-                    color: cs.primaryContainer,
+                    color: cs.primary.withValues(alpha: 0.08),
                     shape: BoxShape.circle,
                   ),
                   child: Icon(
@@ -243,33 +252,32 @@ class _TemplateCard extends StatelessWidget {
                     size: 22,
                   ),
                 ),
-                const SizedBox(width: 14),
+                const SizedBox(width: 16),
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
                         template.title,
-                        style: const TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 16,
-                        ),
+                        style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                              fontWeight: FontWeight.bold,
+                            ),
                       ),
-                      const SizedBox(height: 2),
+                      const SizedBox(height: 4),
                       Container(
                         padding: const EdgeInsets.symmetric(
                           horizontal: 8,
-                          vertical: 2,
+                          vertical: 3,
                         ),
                         decoration: BoxDecoration(
-                          color: cs.secondaryContainer,
-                          borderRadius: BorderRadius.circular(6),
+                          color: cs.secondary.withValues(alpha: 0.08),
+                          borderRadius: BorderRadius.circular(8),
                         ),
                         child: Text(
                           template.category.toUpperCase(),
                           style: TextStyle(
-                            fontSize: 10,
-                            fontWeight: FontWeight.bold,
+                            fontSize: 9,
+                            fontWeight: FontWeight.w800,
                             color: cs.secondary,
                             letterSpacing: 0.8,
                           ),
@@ -280,14 +288,14 @@ class _TemplateCard extends StatelessWidget {
                 ),
               ],
             ),
-            const SizedBox(height: 12),
+            const SizedBox(height: 14),
             Text(
               template.description,
-              style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                color: cs.onSurface.withValues(alpha: 0.7),
-              ),
+              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                    color: cs.onSurface.withValues(alpha: 0.65),
+                  ),
             ),
-            const SizedBox(height: 16),
+            const SizedBox(height: 20),
             SizedBox(
               width: double.infinity,
               child: OutlinedButton.icon(
@@ -295,8 +303,9 @@ class _TemplateCard extends StatelessWidget {
                 icon: const Icon(Icons.nfc_rounded, size: 18),
                 label: const Text('Use Template & Write Tag'),
                 style: OutlinedButton.styleFrom(
+                  padding: const EdgeInsets.symmetric(vertical: 14),
                   shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
+                    borderRadius: BorderRadius.circular(14),
                   ),
                 ),
               ),

@@ -268,13 +268,13 @@ class _SectionHeader extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.only(bottom: 8),
+      padding: const EdgeInsets.only(bottom: 10, top: 12),
       child: Text(
         title.toUpperCase(),
         style: Theme.of(context).textTheme.labelSmall?.copyWith(
           color: Theme.of(context).colorScheme.primary,
-          fontWeight: FontWeight.bold,
-          letterSpacing: 1.2,
+          fontWeight: FontWeight.w800,
+          letterSpacing: 1.5,
         ),
       ),
     );
@@ -302,18 +302,51 @@ class _SettingCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final cs = Theme.of(context).colorScheme;
     return Card(
-      margin: const EdgeInsets.only(bottom: 8),
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-      child: ListTile(
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-        leading: CircleAvatar(
-          backgroundColor: (iconColor ?? cs.primary).withValues(alpha: 0.12),
-          child: Icon(icon, color: iconColor ?? cs.primary, size: 20),
-        ),
-        title: Text(title, style: const TextStyle(fontWeight: FontWeight.w600)),
-        subtitle: Text(subtitle, style: Theme.of(context).textTheme.bodySmall),
-        trailing: trailing,
+      margin: const EdgeInsets.only(bottom: 12),
+      child: InkWell(
+        borderRadius: BorderRadius.circular(20),
         onTap: onTap,
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+          child: Row(
+            children: [
+              Container(
+                padding: const EdgeInsets.all(10),
+                decoration: BoxDecoration(
+                  color: (iconColor ?? cs.primary).withValues(alpha: 0.08),
+                  shape: BoxShape.circle,
+                ),
+                child: Icon(icon, color: iconColor ?? cs.primary, size: 20),
+              ),
+              const SizedBox(width: 16),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      title,
+                      style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                            fontWeight: FontWeight.w600,
+                          ),
+                    ),
+                    const SizedBox(height: 2),
+                    Text(
+                      subtitle,
+                      style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                            color: cs.onSurface.withValues(alpha: 0.55),
+                          ),
+                    ),
+                  ],
+                ),
+              ),
+              if (trailing != null)
+                IconTheme(
+                  data: IconThemeData(color: cs.onSurface.withValues(alpha: 0.35)),
+                  child: trailing!,
+                ),
+            ],
+          ),
+        ),
       ),
     );
   }

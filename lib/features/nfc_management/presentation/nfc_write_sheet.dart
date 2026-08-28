@@ -467,7 +467,7 @@ class _WriteSuccess extends StatelessWidget {
         const SizedBox(height: 32),
         CircleAvatar(
           radius: 40,
-          backgroundColor: Colors.green.shade100,
+          backgroundColor: Colors.green.withValues(alpha: 0.15),
           child: const Icon(Icons.check, color: Colors.green, size: 44),
         ).animate().scale(begin: const Offset(0.4, 0.4)).fadeIn(),
         const SizedBox(height: 20),
@@ -519,7 +519,7 @@ class _WriteError extends StatelessWidget {
         const SizedBox(height: 32),
         CircleAvatar(
           radius: 40,
-          backgroundColor: cs.errorContainer,
+          backgroundColor: cs.error.withValues(alpha: 0.12),
           child: Icon(Icons.error_outline, color: cs.error, size: 44),
         ).animate().scale(begin: const Offset(0.4, 0.4)).fadeIn(),
         const SizedBox(height: 20),
