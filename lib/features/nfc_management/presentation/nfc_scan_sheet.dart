@@ -185,6 +185,24 @@ class _NfcScanSheetState extends ConsumerState<NfcScanSheet> {
             actionLabel: 'Launch ${secs ~/ 60} Min Timer',
             actionIcon: Icons.timer_rounded,
           );
+        } else if (text.startsWith('notification://')) {
+          final uri = Uri.parse(text);
+          final title = uri.queryParameters['title'] ?? 'Notification';
+          return ScannedTagResult(
+            tagType: 'Notification',
+            content: text,
+            actionLabel: 'Trigger Notification "$title"',
+            actionIcon: Icons.notifications_active_rounded,
+          );
+        } else if (text.startsWith('dnd://')) {
+          final uri = Uri.parse(text);
+          final state = uri.queryParameters['state'] ?? 'toggle';
+          return ScannedTagResult(
+            tagType: 'Do Not Disturb',
+            content: text,
+            actionLabel: 'Switch DND: ${state.toUpperCase()}',
+            actionIcon: Icons.do_not_disturb_on_rounded,
+          );
         }
 
         return ScannedTagResult(
@@ -277,6 +295,7 @@ class _NfcScanSheetState extends ConsumerState<NfcScanSheet> {
   Future<void> _executeAction() async {
     if (_result == null) return;
     final res = _result!;
+    final cs = Theme.of(context).colorScheme;
 
     if (res.tagType == 'URL' ||
         res.content.startsWith('http://') ||
@@ -299,6 +318,50 @@ class _NfcScanSheetState extends ConsumerState<NfcScanSheet> {
           builder: (_) => LaunchTimerSheet(
             initialSeconds: secs,
             initialLabel: res.tagName ?? 'NFC Timer Action',
+          ),
+        );
+      }
+    } else if (res.content.startsWith('notification://')) {
+      final uri = Uri.parse(res.content);
+      final title = uri.queryParameters['title'] ?? 'NFC Notification';
+      final body = uri.queryParameters['body'] ?? 'Automation Action Completed!';
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            backgroundColor: cs.primary,
+            content: Row(
+              children: [
+                const Icon(Icons.notifications_active_rounded, color: Colors.white),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text(title, style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.white)),
+                      Text(body, style: const TextStyle(fontSize: 12, color: Colors.white70)),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+        );
+      }
+    } else if (res.content.startsWith('dnd://')) {
+      final uri = Uri.parse(res.content);
+      final state = uri.queryParameters['state'] ?? 'toggle';
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            backgroundColor: cs.secondary,
+            content: Row(
+              children: [
+                const Icon(Icons.do_not_disturb_on_rounded, color: Colors.white),
+                const SizedBox(width: 12),
+                Text('Do Not Disturb: ${state.toUpperCase()} Activated!', style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.white)),
+              ],
+            ),
           ),
         );
       }
