@@ -33,6 +33,7 @@ class _NfcWriteSheetState extends ConsumerState<NfcWriteSheet> {
 
   _WriteState _state = _WriteState.composing;
   String? _errorMessage;
+  bool _lockTag = false;
 
   @override
   void initState() {
@@ -72,8 +73,14 @@ class _NfcWriteSheetState extends ConsumerState<NfcWriteSheet> {
         try {
           if (Theme.of(context).platform == TargetPlatform.android) {
             ok = await repo.writeNdefMessageAndroid(tag, message);
+            if (ok && _lockTag) {
+              ok = await repo.makeReadOnlyAndroid(tag);
+            }
           } else {
             ok = await repo.writeNdefMessageIos(tag, message);
+            if (ok && _lockTag) {
+              ok = await repo.makeReadOnlyIos(tag);
+            }
           }
         } catch (e) {
           ok = false;
@@ -192,6 +199,8 @@ class _NfcWriteSheetState extends ConsumerState<NfcWriteSheet> {
         type: _type,
         contentCtrl: _contentCtrl,
         onTypeChanged: (t) => setState(() => _type = t),
+        lockTag: _lockTag,
+        onLockTagChanged: (v) => setState(() => _lockTag = v),
         onSubmit: _startWrite,
       ),
       _WriteState.waiting => _WaitingToWrite(),
@@ -215,6 +224,8 @@ class _ComposingForm extends StatelessWidget {
   final WriteType type;
   final TextEditingController contentCtrl;
   final void Function(WriteType) onTypeChanged;
+  final bool lockTag;
+  final void Function(bool) onLockTagChanged;
   final VoidCallback onSubmit;
 
   const _ComposingForm({
@@ -222,6 +233,8 @@ class _ComposingForm extends StatelessWidget {
     required this.type,
     required this.contentCtrl,
     required this.onTypeChanged,
+    required this.lockTag,
+    required this.onLockTagChanged,
     required this.onSubmit,
   });
 
@@ -285,6 +298,66 @@ class _ComposingForm extends StatelessWidget {
                 ? 'Please enter some content'
                 : null,
             keyboardType: _keyboardType(type),
+          ),
+
+          const SizedBox(height: 20),
+
+          // Lock Tag (Read-Only) Option
+          Container(
+            padding: const EdgeInsets.all(12),
+            decoration: BoxDecoration(
+              color: Theme.of(context).colorScheme.errorContainer.withValues(alpha: 0.15),
+              borderRadius: BorderRadius.circular(16),
+              border: Border.all(
+                color: Theme.of(context).colorScheme.error.withValues(alpha: 0.2),
+                width: 1,
+              ),
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                SwitchListTile.adaptive(
+                  contentPadding: EdgeInsets.zero,
+                  title: Row(
+                    children: [
+                      Icon(Icons.lock_rounded, color: Theme.of(context).colorScheme.error),
+                      const SizedBox(width: 10),
+                      const Text(
+                        'Lock Tag (Read-Only)',
+                        style: TextStyle(fontWeight: FontWeight.bold),
+                      ),
+                    ],
+                  ),
+                  subtitle: const Text(
+                    'Make this tag permanently write-protected.',
+                    style: TextStyle(fontSize: 12),
+                  ),
+                  value: lockTag,
+                  activeThumbColor: Theme.of(context).colorScheme.error,
+                  onChanged: (val) => onLockTagChanged(val),
+                ),
+                if (lockTag) ...[
+                  const Divider(height: 16),
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Icon(Icons.warning_amber_rounded, size: 16, color: Theme.of(context).colorScheme.error),
+                      const SizedBox(width: 8),
+                      Expanded(
+                        child: Text(
+                          'WARNING: Locking an NFC tag is permanent and irreversible. You will never be able to rewrite or erase this tag again.',
+                          style: TextStyle(
+                            fontSize: 11,
+                            color: Theme.of(context).colorScheme.error,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ],
+            ),
           ),
 
           const SizedBox(height: 28),

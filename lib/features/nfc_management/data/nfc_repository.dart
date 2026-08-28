@@ -86,6 +86,33 @@ class NfcRepository {
     }
   }
 
+  /// Locks an Android NDEF tag, making it permanently read-only.
+  Future<bool> makeReadOnlyAndroid(NfcTag tag) async {
+    final ndef = NdefAndroid.from(tag);
+    if (ndef == null) return false;
+    if (!ndef.isWritable) return false;
+    try {
+      await ndef.makeReadOnly();
+      return true;
+    } catch (e) {
+      debugPrint('Error locking tag (Android): $e');
+      return false;
+    }
+  }
+
+  /// Locks an iOS NDEF tag, making it permanently read-only.
+  Future<bool> makeReadOnlyIos(NfcTag tag) async {
+    final ndef = NdefIos.from(tag);
+    if (ndef == null) return false;
+    try {
+      await ndef.writeLock();
+      return true;
+    } catch (e) {
+      debugPrint('Error locking tag (iOS): $e');
+      return false;
+    }
+  }
+
   /// Reads the cached [NdefMessage] from [tag], if available.
   /// Works on both Android and iOS.
   NdefMessage? readNdefMessage(NfcTag tag) {
