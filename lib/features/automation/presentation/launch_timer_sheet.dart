@@ -56,7 +56,7 @@ class _LaunchTimerSheetState extends ConsumerState<LaunchTimerSheet> {
   void initState() {
     super.initState();
     _selectedSeconds = widget.initialSeconds;
-    _timerLabel = widget.initialLabel ?? 'Focus Session';
+    _timerLabel = widget.initialLabel ?? 'TIMER';
   }
 
   @override

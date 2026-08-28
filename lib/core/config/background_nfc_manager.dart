@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../features/automation/presentation/timer_notifier.dart';
 import '../../features/automation/presentation/flip_clock_timer_screen.dart';
+import '../../features/nfc_management/data/tag_registry_repository.dart';
 
 /// Handles background and cold-start NFC scanning via MethodChannel.
 class BackgroundNfcManager {
@@ -28,13 +29,17 @@ class BackgroundNfcManager {
     });
   }
 
-  static void _handlePayload(String payload, WidgetRef ref, BuildContext context) {
+  static Future<void> _handlePayload(String payload, WidgetRef ref, BuildContext context) async {
     if (payload.startsWith('timer://')) {
       final secs = int.tryParse(payload.replaceFirst('timer://', '')) ?? 300;
-      ref.read(timerProvider.notifier).start(secs, 'NFC Focus Session');
+      final registry = await ref.read(tagRegistryRepositoryProvider.future);
+      final tagName = registry.getTagName(payload);
+      ref.read(timerProvider.notifier).start(secs, tagName ?? 'TIMER');
       
-      // Push Flip Clock Screen
-      Navigator.push(context, FlipClockTimerScreen.route());
+      if (context.mounted) {
+        // Push Flip Clock Screen
+        Navigator.push(context, FlipClockTimerScreen.route());
+      }
     } else if (payload.startsWith('notification://')) {
       final uri = Uri.parse(payload);
       final title = uri.queryParameters['title'] ?? 'NFC Notification';

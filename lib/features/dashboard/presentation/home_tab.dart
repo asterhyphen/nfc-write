@@ -328,7 +328,7 @@ class HomeDashboardTab extends ConsumerWidget {
         },
         onStartNow: (seconds) {
           Navigator.pop(ctx);
-          ref.read(timerProvider.notifier).start(seconds, 'Focus Session');
+          ref.read(timerProvider.notifier).start(seconds, 'TIMER');
           Navigator.push(context, FlipClockTimerScreen.route());
         },
       ),

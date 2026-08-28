@@ -34,7 +34,7 @@ class TimerNotifier extends _$TimerNotifier {
       isRunning: false,
       isPaused: false,
       isFinished: false,
-      label: 'Focus Session',
+      label: 'TIMER',
     );
   }
 
