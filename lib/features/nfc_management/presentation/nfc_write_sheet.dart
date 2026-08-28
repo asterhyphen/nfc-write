@@ -26,8 +26,6 @@ class NfcWriteSheet extends ConsumerStatefulWidget {
   ConsumerState<NfcWriteSheet> createState() => _NfcWriteSheetState();
 }
 
-class _WriteStateState {} // placeholder for matching signature if needed, but not used
-
 class _NfcWriteSheetState extends ConsumerState<NfcWriteSheet> {
   late WriteType _type;
   late final TextEditingController _contentCtrl;

@@ -2,9 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../../automation/presentation/launch_timer_sheet.dart';
 import '../../history/presentation/history_notifier.dart';
-import '../../../core/widgets/glass_card.dart';
 import '../../nfc_management/presentation/nfc_scan_sheet.dart';
 import '../../nfc_management/presentation/nfc_write_sheet.dart';
 
@@ -15,7 +13,6 @@ class HomeDashboardTab extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final cs = Theme.of(context).colorScheme;
-    final isDark = cs.brightness == Brightness.dark;
 
     return Scaffold(
       backgroundColor: Colors.transparent,
@@ -139,7 +136,7 @@ class HomeDashboardTab extends ConsumerWidget {
                                 color: Colors.white70,
                                 fontSize: 13,
                               ),
-                              textAlign: Center,
+                              textAlign: TextAlign.center,
                             ),
                           ],
                         ),
@@ -244,7 +241,7 @@ class HomeDashboardTab extends ConsumerWidget {
               const Text('Set timer duration to write to NFC tag:'),
               const SizedBox(height: 16),
               DropdownButtonFormField<int>(
-                value: selectedMins,
+                initialValue: selectedMins,
                 items: const [
                   DropdownMenuItem(value: 1, child: Text('1 Minute')),
                   DropdownMenuItem(value: 5, child: Text('5 Minutes')),
