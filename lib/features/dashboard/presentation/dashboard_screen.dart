@@ -45,44 +45,40 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
         child: IndexedStack(index: _currentIndex, children: _tabs),
       ),
       bottomNavigationBar: Container(
-        margin: const EdgeInsets.fromLTRB(24, 0, 24, 28),
         decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(24),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withValues(alpha: isDark ? 0.3 : 0.04),
-              blurRadius: 24,
-              offset: const Offset(0, 8),
+          color: isDark ? const Color(0xFF0E111A) : Colors.white,
+          border: Border(
+            top: BorderSide(
+              color: cs.outline,
+              width: 1.0,
+            ),
+          ),
+        ),
+        child: NavigationBar(
+          backgroundColor: isDark ? const Color(0xFF0E111A) : Colors.white,
+          elevation: 0,
+          height: 70,
+          selectedIndex: _currentIndex,
+          onDestinationSelected: (i) => setState(() => _currentIndex = i),
+          labelBehavior: NavigationDestinationLabelBehavior.alwaysShow,
+          indicatorColor: cs.primary.withValues(alpha: 0.08),
+          destinations: [
+            NavigationDestination(
+              icon: const Icon(Icons.home_outlined, size: 22),
+              selectedIcon: Icon(Icons.home_rounded, size: 22, color: cs.primary),
+              label: 'Home',
+            ),
+            NavigationDestination(
+              icon: const Icon(Icons.widgets_outlined, size: 22),
+              selectedIcon: Icon(Icons.widgets_rounded, size: 22, color: cs.primary),
+              label: 'Templates',
+            ),
+            NavigationDestination(
+              icon: const Icon(Icons.settings_outlined, size: 22),
+              selectedIcon: Icon(Icons.settings_rounded, size: 22, color: cs.primary),
+              label: 'Settings',
             ),
           ],
-        ),
-        child: ClipRRect(
-          borderRadius: BorderRadius.circular(24),
-          child: NavigationBar(
-            backgroundColor: isDark ? const Color(0xFF0E111A) : Colors.white,
-            elevation: 0,
-            selectedIndex: _currentIndex,
-            onDestinationSelected: (i) => setState(() => _currentIndex = i),
-            labelBehavior: NavigationDestinationLabelBehavior.onlyShowSelected,
-            indicatorColor: cs.primary.withValues(alpha: 0.1),
-            destinations: [
-              NavigationDestination(
-                icon: const Icon(Icons.home_outlined),
-                selectedIcon: Icon(Icons.home_rounded, color: cs.primary),
-                label: 'Home',
-              ),
-              NavigationDestination(
-                icon: const Icon(Icons.widgets_outlined),
-                selectedIcon: Icon(Icons.widgets_rounded, color: cs.primary),
-                label: 'Templates',
-              ),
-              NavigationDestination(
-                icon: const Icon(Icons.settings_outlined),
-                selectedIcon: Icon(Icons.settings_rounded, color: cs.primary),
-                label: 'Settings',
-              ),
-            ],
-          ),
         ),
       ),
     );

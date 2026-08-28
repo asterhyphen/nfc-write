@@ -15,7 +15,6 @@ class HomeDashboardTab extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final cs = Theme.of(context).colorScheme;
-    final isDark = cs.brightness == Brightness.dark;
 
     return Scaffold(
       backgroundColor: Colors.transparent,
@@ -99,89 +98,50 @@ class HomeDashboardTab extends ConsumerWidget {
 
                   const SizedBox(height: 28),
 
-                  // ── Premium Pulsating Scan NFC Tag Button ────────────────────
-                  Center(
-                    child: GestureDetector(
+                  // ── Premium Sleek Scan NFC Card ────────────────────
+                  Card(
+                    elevation: 0,
+                    margin: EdgeInsets.zero,
+                    child: InkWell(
+                      borderRadius: BorderRadius.circular(16),
                       onTap: () => _openScanSheet(context, ref),
-                      child: Container(
-                        width: double.infinity,
-                        height: 200,
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(32),
-                          gradient: LinearGradient(
-                            colors: isDark
-                                ? [const Color(0xFF4F46E5), const Color(0xFF7C3AED)]
-                                : [const Color(0xFF6366F1), const Color(0xFF8B5CF6)],
-                            begin: Alignment.topLeft,
-                            end: Alignment.bottomRight,
-                          ),
-                          boxShadow: [
-                            BoxShadow(
-                              color: cs.primary.withValues(alpha: 0.35),
-                              blurRadius: 30,
-                              offset: const Offset(0, 10),
-                            ),
-                          ],
-                        ),
-                        child: Stack(
-                          clipBehavior: Clip.none,
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 28),
+                        child: Row(
                           children: [
-                            // Glass shine wave lines
-                            Positioned(
-                              top: -40,
-                              left: -30,
-                              child: Container(
-                                width: 140,
-                                height: 140,
-                                decoration: BoxDecoration(
-                                  shape: BoxShape.circle,
-                                  color: Colors.white.withValues(alpha: 0.08),
-                                ),
+                            Container(
+                              padding: const EdgeInsets.all(12),
+                              decoration: BoxDecoration(
+                                color: cs.primary.withValues(alpha: 0.08),
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                              child: Icon(
+                                Icons.nfc_rounded,
+                                color: cs.primary,
+                                size: 30,
                               ),
                             ),
-                            // Content
-                            Center(
+                            const SizedBox(width: 20),
+                            Expanded(
                               child: Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
+                                crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  // Morphing wave icon
-                                  Container(
-                                    padding: const EdgeInsets.all(20),
-                                    decoration: BoxDecoration(
-                                      color: Colors.white.withValues(alpha: 0.16),
-                                      shape: BoxShape.circle,
-                                      border: Border.all(
-                                        color: Colors.white.withValues(alpha: 0.25),
-                                        width: 1.5,
-                                      ),
-                                    ),
-                                    child: const Icon(
-                                      Icons.nfc_rounded,
-                                      color: Colors.white,
-                                      size: 38,
-                                    ),
-                                  ).animate(onPlay: (c) => c.repeat()).shimmer(
-                                        duration: 1800.ms,
-                                        color: Colors.white.withValues(alpha: 0.4),
-                                      ),
-                                  const SizedBox(height: 16),
-                                  const Text(
-                                    'TAP TO SCAN TAG',
-                                    style: TextStyle(
-                                      color: Colors.white,
-                                      fontWeight: FontWeight.w800,
-                                      fontSize: 16,
-                                      letterSpacing: 1.2,
-                                    ),
-                                  ),
-                                  const SizedBox(height: 6),
-                                  // Pulsing status dot
                                   Row(
-                                    mainAxisSize: MainAxisSize.min,
                                     children: [
+                                      Text(
+                                        'READY TO SCAN',
+                                        style: TextStyle(
+                                          fontSize: 9,
+                                          fontWeight: FontWeight.w800,
+                                          color: cs.primary,
+                                          letterSpacing: 1.5,
+                                        ),
+                                      ),
+                                      const SizedBox(width: 8),
+                                      // Pulsing status dot
                                       Container(
-                                        width: 8,
-                                        height: 8,
+                                        width: 6,
+                                        height: 6,
                                         decoration: const BoxDecoration(
                                           shape: BoxShape.circle,
                                           color: Color(0xFF10B981),
@@ -192,25 +152,30 @@ class HomeDashboardTab extends ConsumerWidget {
                                             duration: 800.ms,
                                             curve: Curves.easeOut,
                                           ),
-                                      const SizedBox(width: 8),
-                                      const Text(
-                                        'Ready to Scan',
-                                        style: TextStyle(
-                                          color: Colors.white70,
-                                          fontSize: 12,
-                                          fontWeight: FontWeight.w600,
-                                        ),
-                                      ),
                                     ],
+                                  ),
+                                  const SizedBox(height: 6),
+                                  Text(
+                                    'Tap to Scan NFC Tag',
+                                    style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                                          fontSize: 18,
+                                          fontWeight: FontWeight.bold,
+                                          letterSpacing: -0.3,
+                                        ),
                                   ),
                                 ],
                               ),
+                            ),
+                            Icon(
+                              Icons.arrow_forward_ios_rounded,
+                              size: 14,
+                              color: cs.onSurface.withValues(alpha: 0.35),
                             ),
                           ],
                         ),
                       ),
                     ),
-                  ).animate().fadeIn(delay: 200.ms).scale(begin: const Offset(0.96, 0.96)),
+                  ).animate().fadeIn(delay: 200.ms).slideY(begin: 0.05),
 
                   const SizedBox(height: 36),
 
