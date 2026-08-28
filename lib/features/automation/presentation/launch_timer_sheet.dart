@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_ringtone_player/flutter_ringtone_player.dart';
 
 import '../../../core/widgets/glass_card.dart';
 import '../../nfc_management/presentation/nfc_write_sheet.dart';
@@ -69,7 +70,25 @@ class _LaunchTimerSheetState extends ConsumerState<LaunchTimerSheet> {
   void dispose() {
     _ticker?.cancel();
     _customCtrl.dispose();
+    FlutterRingtonePlayer().stop();
     super.dispose();
+  }
+
+  void _onTick(Timer timer) {
+    if (!mounted) return;
+    if (_remainingSeconds > 1) {
+      setState(() {
+        _remainingSeconds--;
+      });
+    } else {
+      timer.cancel();
+      setState(() {
+        _remainingSeconds = 0;
+        _isRunning = false;
+        _isFinished = true;
+      });
+      FlutterRingtonePlayer().playAlarm(looping: false);
+    }
   }
 
   void _startTimer() {
@@ -81,21 +100,7 @@ class _LaunchTimerSheetState extends ConsumerState<LaunchTimerSheet> {
     });
 
     _ticker?.cancel();
-    _ticker = Timer.periodic(const Duration(seconds: 1), (timer) {
-      if (!mounted) return;
-      if (_remainingSeconds > 1) {
-        setState(() {
-          _remainingSeconds--;
-        });
-      } else {
-        timer.cancel();
-        setState(() {
-          _remainingSeconds = 0;
-          _isRunning = false;
-          _isFinished = true;
-        });
-      }
-    });
+    _ticker = Timer.periodic(const Duration(seconds: 1), _onTick);
   }
 
   void _pauseTimer() {
@@ -103,31 +108,19 @@ class _LaunchTimerSheetState extends ConsumerState<LaunchTimerSheet> {
     setState(() {
       _isPaused = true;
     });
+    FlutterRingtonePlayer().stop();
   }
 
   void _resumeTimer() {
     setState(() {
       _isPaused = false;
     });
-    _ticker = Timer.periodic(const Duration(seconds: 1), (timer) {
-      if (!mounted) return;
-      if (_remainingSeconds > 1) {
-        setState(() {
-          _remainingSeconds--;
-        });
-      } else {
-        timer.cancel();
-        setState(() {
-          _remainingSeconds = 0;
-          _isRunning = false;
-          _isFinished = true;
-        });
-      }
-    });
+    _ticker = Timer.periodic(const Duration(seconds: 1), _onTick);
   }
 
   void _resetTimer() {
     _ticker?.cancel();
+    FlutterRingtonePlayer().stop();
     setState(() {
       _isRunning = false;
       _isPaused = false;
