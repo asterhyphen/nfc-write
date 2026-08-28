@@ -443,11 +443,20 @@ class _NfcScanSheetState extends ConsumerState<NfcScanSheet> {
     return Column(
       children: [
         const SizedBox(height: 12),
-        CircleAvatar(
-          radius: 36,
-          backgroundColor: Colors.green.withValues(alpha: 0.15),
-          child: const Icon(Icons.check_circle, color: Colors.green, size: 40),
-        ).animate().scale(begin: const Offset(0.5, 0.5)).fadeIn(),
+        Container(
+          width: 80,
+          height: 80,
+          decoration: BoxDecoration(
+            color: const Color(0xFF22C55E).withValues(alpha: 0.1),
+            shape: BoxShape.circle,
+            border: Border.all(color: const Color(0xFF22C55E), width: 2),
+          ),
+          child: const Icon(Icons.check_rounded, color: Color(0xFF22C55E), size: 40),
+        ).animate().scale(
+          duration: 400.ms,
+          curve: Curves.easeOutBack, // overshoot spring easing
+          begin: const Offset(0.5, 0.5),
+        ).fadeIn(),
 
         const SizedBox(height: 16),
         Text(
@@ -637,25 +646,20 @@ class _WaitingState extends StatelessWidget {
 
     return Column(
       children: [
-        const SizedBox(height: 20),
-        Icon(icon, size: 80, color: cs.primary)
-            .animate(onPlay: (c) => c.repeat())
-            .shimmer(duration: 1500.ms)
-            .then()
-            .scaleXY(
-              begin: 1,
-              end: 1.08,
-              duration: 700.ms,
-              curve: Curves.easeInOut,
-            )
-            .then()
-            .scaleXY(
-              begin: 1.08,
-              end: 1,
-              duration: 700.ms,
-              curve: Curves.easeInOut,
+        const SizedBox(height: 32),
+        PulsingScanRing(
+          child: Container(
+            width: 100,
+            height: 100,
+            decoration: BoxDecoration(
+              color: cs.primary.withValues(alpha: 0.08),
+              shape: BoxShape.circle,
+              border: Border.all(color: cs.primary.withValues(alpha: 0.25), width: 1.5),
             ),
-        const SizedBox(height: 24),
+            child: Icon(icon, size: 40, color: cs.primary),
+          ),
+        ),
+        const SizedBox(height: 48), // Spacing for expanding pulsing ring
         Text(
           label,
           style: Theme.of(context).textTheme.titleMedium,
@@ -676,6 +680,73 @@ class _WaitingState extends StatelessWidget {
   }
 }
 
+class PulsingScanRing extends StatefulWidget {
+  final Widget child;
+  const PulsingScanRing({super.key, required this.child});
+
+  @override
+  State<PulsingScanRing> createState() => _PulsingScanRingState();
+}
+
+class _PulsingScanRingState extends State<PulsingScanRing> with SingleTickerProviderStateMixin {
+  late AnimationController _controller;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(
+      vsync: this,
+      duration: const Duration(seconds: 2),
+    )..repeat();
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final cs = Theme.of(context).colorScheme;
+    return AnimatedBuilder(
+      animation: _controller,
+      builder: (context, child) {
+        return Stack(
+          alignment: Alignment.center,
+          children: [
+            // Outer expanding ring
+            Container(
+              width: 100 + (_controller.value * 100),
+              height: 100 + (_controller.value * 100),
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                border: Border.all(
+                  color: cs.primary.withValues(alpha: 0.25 * (1.0 - _controller.value)),
+                  width: 3,
+                ),
+              ),
+            ),
+            // Inner expanding ring
+            Container(
+              width: 100 + (_controller.value * 50),
+              height: 100 + (_controller.value * 50),
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                border: Border.all(
+                  color: cs.primary.withValues(alpha: 0.15 * (1.0 - _controller.value)),
+                  width: 2,
+                ),
+              ),
+            ),
+            widget.child,
+          ],
+        );
+      },
+    );
+  }
+}
+
 class _ErrorState extends StatelessWidget {
   final String message;
   final VoidCallback onRetry;
@@ -687,11 +758,20 @@ class _ErrorState extends StatelessWidget {
     return Column(
       children: [
         const SizedBox(height: 20),
-        CircleAvatar(
-          radius: 36,
-          backgroundColor: cs.error.withValues(alpha: 0.12),
-          child: Icon(Icons.error_outline, color: cs.error, size: 40),
-        ).animate().scale(begin: const Offset(0.5, 0.5)).fadeIn(),
+        Container(
+          width: 80,
+          height: 80,
+          decoration: BoxDecoration(
+            color: const Color(0xFFEF4444).withValues(alpha: 0.1),
+            shape: BoxShape.circle,
+            border: Border.all(color: const Color(0xFFEF4444), width: 2),
+          ),
+          child: const Icon(Icons.close_rounded, color: Color(0xFFEF4444), size: 40),
+        ).animate().shake(
+          hz: 8,
+          offset: const Offset(3, 0),
+          duration: 200.ms,
+        ).fadeIn(),
         const SizedBox(height: 20),
         Text(
           'Something went wrong',

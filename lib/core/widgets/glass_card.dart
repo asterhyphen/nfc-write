@@ -1,8 +1,9 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
 
-/// A premium reusable glassmorphism card that applies a frosted-glass effect
-/// with subtle shadows, translucent overlays, and polished borders.
+/// A premium reusable glassmorphism card styled exactly according to the
+/// "Pulse" design system specification (Level 1 shadow, 16px border radius,
+/// 16px internal padding, and customized light/dark borders).
 class GlassCard extends StatelessWidget {
   final Widget child;
   final double borderRadius;
@@ -13,10 +14,10 @@ class GlassCard extends StatelessWidget {
   const GlassCard({
     super.key,
     required this.child,
-    this.borderRadius = 12.0, // Sleek, modern border radius
-    this.padding = const EdgeInsets.all(20.0),
+    this.borderRadius = 16.0, // Conform to Medium radius (16px)
+    this.padding = const EdgeInsets.all(16.0), // Conform to Card internal padding (16px)
     this.blur = 8.0,
-    this.opacity = 0.65,
+    this.opacity = 0.85,
   });
 
   @override
@@ -28,12 +29,16 @@ class GlassCard extends StatelessWidget {
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(borderRadius),
         boxShadow: [
+          // Level 1 Shadow
           BoxShadow(
-            color: isDark
-                ? Colors.black.withValues(alpha: 0.15)
-                : colorScheme.shadow.withValues(alpha: 0.03),
-            blurRadius: 16,
-            offset: const Offset(0, 4),
+            color: Colors.black.withValues(alpha: isDark ? 0.4 : 0.04),
+            blurRadius: 3,
+            offset: const Offset(0, 1),
+          ),
+          BoxShadow(
+            color: Colors.black.withValues(alpha: isDark ? 0.3 : 0.03),
+            blurRadius: 2,
+            offset: const Offset(0, 1),
           ),
         ],
       ),
@@ -44,11 +49,11 @@ class GlassCard extends StatelessWidget {
           child: Container(
             padding: padding,
             decoration: BoxDecoration(
-              color: (isDark ? const Color(0xFF0E111A) : Colors.white)
+              color: (isDark ? const Color(0xFF17171D) : Colors.white)
                   .withValues(alpha: opacity),
               borderRadius: BorderRadius.circular(borderRadius),
               border: Border.all(
-                color: colorScheme.outline,
+                color: isDark ? const Color(0xFF28282F) : const Color(0xFFECECF2),
                 width: 1.0,
               ),
             ),
