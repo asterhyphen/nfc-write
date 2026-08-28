@@ -18,7 +18,7 @@ abstract class TimerState with _$TimerState {
   }) = _TimerState;
 }
 
-@riverpod
+@Riverpod(keepAlive: true)
 class TimerNotifier extends _$TimerNotifier {
   Timer? _ticker;
 
