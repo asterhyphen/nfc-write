@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../../automation/presentation/automations_tab.dart';
-import '../../history/presentation/history_tab.dart';
 import '../../settings/presentation/settings_tab.dart';
 import '../../templates/presentation/templates_tab.dart';
 import 'home_tab.dart';
@@ -22,9 +20,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
 
   static const List<Widget> _tabs = [
     HomeDashboardTab(),
-    AutomationsTab(),
     TemplatesTab(),
-    HistoryTab(),
     SettingsTab(),
   ];
 
@@ -34,9 +30,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
     final isDark = cs.brightness == Brightness.dark;
 
     return Scaffold(
-      backgroundColor: isDark
-          ? const Color(0xFF0B0F19)
-          : const Color(0xFFF8FAFC),
+      backgroundColor: isDark ? const Color(0xFF0B0F19) : const Color(0xFFF8FAFC),
       body: SafeArea(
         bottom: false,
         child: IndexedStack(index: _currentIndex, children: _tabs),
@@ -68,19 +62,9 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                 label: 'Home',
               ),
               NavigationDestination(
-                icon: Icon(Icons.auto_awesome_outlined),
-                selectedIcon: Icon(Icons.auto_awesome),
-                label: 'Automations',
-              ),
-              NavigationDestination(
                 icon: Icon(Icons.widgets_outlined),
                 selectedIcon: Icon(Icons.widgets),
                 label: 'Templates',
-              ),
-              NavigationDestination(
-                icon: Icon(Icons.history_outlined),
-                selectedIcon: Icon(Icons.history),
-                label: 'History',
               ),
               NavigationDestination(
                 icon: Icon(Icons.settings_outlined),
