@@ -13,19 +13,35 @@ enum WriteType { text, url, email, phone, sms }
 
 /// Bottom sheet for composing and writing an NDEF record to a tag.
 class NfcWriteSheet extends ConsumerStatefulWidget {
-  const NfcWriteSheet({super.key});
+  final WriteType? initialType;
+  final String? initialContent;
+
+  const NfcWriteSheet({
+    super.key,
+    this.initialType,
+    this.initialContent,
+  });
 
   @override
   ConsumerState<NfcWriteSheet> createState() => _NfcWriteSheetState();
 }
 
+class _WriteStateState {} // placeholder for matching signature if needed, but not used
+
 class _NfcWriteSheetState extends ConsumerState<NfcWriteSheet> {
-  WriteType _type = WriteType.text;
-  final _contentCtrl = TextEditingController();
+  late WriteType _type;
+  late final TextEditingController _contentCtrl;
   final _formKey = GlobalKey<FormState>();
 
   _WriteState _state = _WriteState.composing;
   String? _errorMessage;
+
+  @override
+  void initState() {
+    super.initState();
+    _type = widget.initialType ?? WriteType.text;
+    _contentCtrl = TextEditingController(text: widget.initialContent ?? '');
+  }
 
   @override
   void dispose() {

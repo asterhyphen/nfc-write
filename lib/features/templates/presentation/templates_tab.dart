@@ -191,11 +191,23 @@ class _TemplatesTabState extends ConsumerState<TemplatesTab> {
   }
 
   void _useTemplate(NfcTemplate template) {
+    WriteType type;
+    switch (template.payloadType) {
+      case 'url':
+        type = WriteType.url;
+        break;
+      default:
+        type = WriteType.text;
+    }
+
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
-      builder: (_) => const NfcWriteSheet(),
+      builder: (_) => NfcWriteSheet(
+        initialType: type,
+        initialContent: template.defaultPayload,
+      ),
     );
   }
 }
