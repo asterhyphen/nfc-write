@@ -6,52 +6,53 @@ import '../../history/presentation/history_notifier.dart';
 import '../../nfc_management/presentation/nfc_scan_sheet.dart';
 import '../../nfc_management/presentation/nfc_write_sheet.dart';
 
-/// Clean, simple Homepage for scanning and programming NFC actions.
+/// Designer-grade, modern and clean Homepage for scanning & programming NFC.
 class HomeDashboardTab extends ConsumerWidget {
   const HomeDashboardTab({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final cs = Theme.of(context).colorScheme;
+    final isDark = cs.brightness == Brightness.dark;
 
     return Scaffold(
       backgroundColor: Colors.transparent,
       body: Stack(
         children: [
-          // ── Glowing Background Lights ──────────────────────────────────────
+          // ── Ambient Glassmorphic Background Blur Lights ────────────────────
           Positioned(
-            top: -120,
-            right: -100,
+            top: -100,
+            right: -80,
             child: Container(
-              width: 300,
-              height: 300,
+              width: 320,
+              height: 320,
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
-                color: cs.primary.withValues(alpha: 0.15),
+                color: cs.primary.withValues(alpha: 0.16),
               ),
             ),
-          ).animate().fadeIn(duration: 800.ms),
+          ).animate().fadeIn(duration: 900.ms),
           Positioned(
-            bottom: 60,
-            left: -150,
+            bottom: 40,
+            left: -120,
             child: Container(
-              width: 380,
-              height: 380,
+              width: 360,
+              height: 360,
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
-                color: cs.tertiary.withValues(alpha: 0.1),
+                color: cs.tertiary.withValues(alpha: 0.12),
               ),
             ),
-          ).animate().fadeIn(duration: 1000.ms),
+          ).animate().fadeIn(duration: 1100.ms),
 
-          // ── Content Layout ──────────────────────────────────────────────────
+          // ── Main Page Layout ───────────────────────────────────────────────
           SafeArea(
             child: SingleChildScrollView(
-              padding: const EdgeInsets.fromLTRB(20, 20, 20, 24),
+              padding: const EdgeInsets.fromLTRB(22, 24, 22, 32),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // Minimalistic Header
+                  // ── Designer Welcoming Header ──────────────────────────────
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
@@ -59,150 +60,229 @@ class HomeDashboardTab extends ConsumerWidget {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            'TapFlow Studio',
-                            style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                              color: cs.onSurface.withValues(alpha: 0.6),
-                              fontWeight: FontWeight.w500,
+                            'STUDIO WORKSPACE',
+                            style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                              color: cs.primary,
+                              fontWeight: FontWeight.w700,
+                              letterSpacing: 1.5,
                             ),
                           ),
+                          const SizedBox(height: 4),
                           Text(
-                            'NFC Tool',
+                            'TapFlow NFC',
                             style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                              fontWeight: FontWeight.bold,
-                              letterSpacing: -0.5,
+                              fontWeight: FontWeight.w900,
+                              letterSpacing: -0.8,
                             ),
                           ),
                         ],
                       ),
-                      CircleAvatar(
-                        radius: 24,
-                        backgroundColor: cs.primaryContainer,
-                        child: Icon(Icons.nfc_rounded, color: cs.primary, size: 24),
+                      Container(
+                        padding: const EdgeInsets.all(4),
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          border: Border.all(
+                            color: cs.primary.withValues(alpha: 0.2),
+                            width: 1.5,
+                          ),
+                        ),
+                        child: CircleAvatar(
+                          radius: 20,
+                          backgroundColor: cs.primaryContainer,
+                          child: Icon(Icons.bolt, color: cs.primary, size: 20),
+                        ),
                       ),
                     ],
-                  ).animate().fadeIn(duration: 400.ms),
+                  ).animate().fadeIn(duration: 400.ms).slideY(begin: -0.05),
 
-                  const SizedBox(height: 24),
+                  const SizedBox(height: 28),
 
-                  // ── Large Clean Scan Card ──────────────────────────────────────
-                  GestureDetector(
-                    onTap: () => _openScanSheet(context, ref),
-                    child: Container(
-                      width: double.infinity,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(24),
-                        gradient: LinearGradient(
-                          colors: [cs.primary, cs.secondary],
-                          begin: Alignment.topLeft,
-                          end: Alignment.bottomRight,
-                        ),
-                        boxShadow: [
-                          BoxShadow(
-                            color: cs.primary.withValues(alpha: 0.3),
-                            blurRadius: 20,
-                            offset: const Offset(0, 8),
+                  // ── Premium Pulsating Scan NFC Tag Button ────────────────────
+                  Center(
+                    child: GestureDetector(
+                      onTap: () => _openScanSheet(context, ref),
+                      child: Container(
+                        width: double.infinity,
+                        height: 200,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(32),
+                          gradient: LinearGradient(
+                            colors: isDark
+                                ? [const Color(0xFF4F46E5), const Color(0xFF7C3AED)]
+                                : [const Color(0xFF6366F1), const Color(0xFF8B5CF6)],
+                            begin: Alignment.topLeft,
+                            end: Alignment.bottomRight,
                           ),
-                        ],
-                      ),
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 36, horizontal: 24),
-                        child: Column(
+                          boxShadow: [
+                            BoxShadow(
+                              color: cs.primary.withValues(alpha: 0.35),
+                              blurRadius: 30,
+                              offset: const Offset(0, 10),
+                            ),
+                          ],
+                        ),
+                        child: Stack(
+                          clipBehavior: Clip.none,
                           children: [
-                            Container(
-                              padding: const EdgeInsets.all(16),
-                              decoration: BoxDecoration(
-                                color: Colors.white.withValues(alpha: 0.2),
-                                shape: BoxShape.circle,
-                              ),
-                              child: const Icon(
-                                Icons.nfc_rounded,
-                                color: Colors.white,
-                                size: 48,
-                              ),
-                            ).animate(onPlay: (c) => c.repeat()).shimmer(duration: 2000.ms),
-                            const SizedBox(height: 16),
-                            const Text(
-                              'Tap to Scan NFC Tag',
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontWeight: FontWeight.bold,
-                                fontSize: 18,
+                            // Glass shine wave lines
+                            Positioned(
+                              top: -40,
+                              left: -30,
+                              child: Container(
+                                width: 140,
+                                height: 140,
+                                decoration: BoxDecoration(
+                                  shape: BoxShape.circle,
+                                  color: Colors.white.withValues(alpha: 0.08),
+                                ),
                               ),
                             ),
-                            const SizedBox(height: 4),
-                            const Text(
-                              'Reads payload and executes associated actions',
-                              style: TextStyle(
-                                color: Colors.white70,
-                                fontSize: 13,
+                            // Content
+                            Center(
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  // Morphing wave icon
+                                  Container(
+                                    padding: const EdgeInsets.all(20),
+                                    decoration: BoxDecoration(
+                                      color: Colors.white.withValues(alpha: 0.16),
+                                      shape: BoxShape.circle,
+                                      border: Border.all(
+                                        color: Colors.white.withValues(alpha: 0.25),
+                                        width: 1.5,
+                                      ),
+                                    ),
+                                    child: const Icon(
+                                      Icons.nfc_rounded,
+                                      color: Colors.white,
+                                      size: 38,
+                                    ),
+                                  ).animate(onPlay: (c) => c.repeat()).shimmer(
+                                        duration: 1800.ms,
+                                        color: Colors.white.withValues(alpha: 0.4),
+                                      ),
+                                  const SizedBox(height: 16),
+                                  const Text(
+                                    'TAP TO SCAN TAG',
+                                    style: TextStyle(
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.w800,
+                                      fontSize: 16,
+                                      letterSpacing: 1.2,
+                                    ),
+                                  ),
+                                  const SizedBox(height: 6),
+                                  // Pulsing status dot
+                                  Row(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      Container(
+                                        width: 8,
+                                        height: 8,
+                                        decoration: const BoxDecoration(
+                                          shape: BoxShape.circle,
+                                          color: Color(0xFF10B981),
+                                        ),
+                                      ).animate(onPlay: (c) => c.repeat()).scale(
+                                            begin: const Offset(1, 1),
+                                            end: const Offset(1.5, 1.5),
+                                            duration: 800.ms,
+                                            curve: Curves.easeOut,
+                                          ),
+                                      const SizedBox(width: 8),
+                                      const Text(
+                                        'Ready to Scan',
+                                        style: TextStyle(
+                                          color: Colors.white70,
+                                          fontSize: 12,
+                                          fontWeight: FontWeight.w600,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ],
                               ),
-                              textAlign: TextAlign.center,
                             ),
                           ],
                         ),
                       ),
                     ),
-                  ).animate().fadeIn(delay: 150.ms).scale(begin: const Offset(0.98, 0.98)),
+                  ).animate().fadeIn(delay: 200.ms).scale(begin: const Offset(0.96, 0.96)),
 
-                  const SizedBox(height: 32),
+                  const SizedBox(height: 36),
 
-                  // ── Vertical list of actions ──────────────────────────────
+                  // ── Section Header ─────────────────────────────────────────
                   Text(
                     'Program Actions to Tag',
                     style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ).animate().fadeIn(delay: 250.ms),
-                  const SizedBox(height: 12),
+                          fontWeight: FontWeight.w800,
+                          letterSpacing: -0.5,
+                        ),
+                  ).animate().fadeIn(delay: 300.ms),
+                  const SizedBox(height: 14),
 
+                  // ── Actions Vertical List ──────────────────────────────────
                   ListView(
                     shrinkWrap: true,
                     physics: const NeverScrollableScrollPhysics(),
                     children: [
-                      _ActionTile(
-                        title: 'Start Timer',
-                        subtitle: 'Run countdown focus/timer alert',
+                      _DesignerActionTile(
+                        index: 0,
+                        title: 'Launch Timer Alert',
+                        subtitle: 'Starts a countdown focus timer',
+                        tag: 'UTILITY',
                         icon: Icons.timer_rounded,
-                        color: Colors.orange,
+                        color: const Color(0xFFF59E0B),
                         onTap: () => _programTimer(context),
                       ),
-                      _ActionTile(
-                        title: 'Send Notification',
-                        subtitle: 'Trigger a customized local push notification',
+                      _DesignerActionTile(
+                        index: 1,
+                        title: 'Trigger Notification',
+                        subtitle: 'Shows a customizable push text',
+                        tag: 'SYSTEM',
                         icon: Icons.notifications_active_rounded,
-                        color: Colors.blue,
+                        color: const Color(0xFF3B82F6),
                         onTap: () => _programNotification(context),
                       ),
-                      _ActionTile(
+                      _DesignerActionTile(
+                        index: 2,
                         title: 'Switch on DND',
-                        subtitle: 'Mute sounds and toggle Do Not Disturb mode',
+                        subtitle: 'Toggle phone sound/vibration status',
+                        tag: 'MUTE',
                         icon: Icons.do_not_disturb_on_rounded,
-                        color: Colors.redAccent,
+                        color: const Color(0xFFEF4444),
                         onTap: () => _programDnd(context),
                       ),
-                      _ActionTile(
+                      _DesignerActionTile(
+                        index: 3,
                         title: 'Open Web URL',
-                        subtitle: 'Launch website or link in system browser',
+                        subtitle: 'Launch links in system browser',
+                        tag: 'NETWORK',
                         icon: Icons.link_rounded,
-                        color: Colors.teal,
+                        color: const Color(0xFF10B981),
                         onTap: () => _programUrl(context),
                       ),
-                      _ActionTile(
+                      _DesignerActionTile(
+                        index: 4,
                         title: 'Share Wi-Fi Network',
-                        subtitle: 'Write credentials for quick guest login',
+                        subtitle: 'Guest login details config',
+                        tag: 'NETWORKING',
                         icon: Icons.wifi_rounded,
-                        color: Colors.purple,
+                        color: const Color(0xFF8B5CF6),
                         onTap: () => _programWifi(context),
                       ),
-                      _ActionTile(
-                        title: 'Share Contact card',
-                        subtitle: 'Write business vCard metadata to tag',
+                      _DesignerActionTile(
+                        index: 5,
+                        title: 'Share Contact Card',
+                        subtitle: 'Write business contact vCard card',
+                        tag: 'CONTACT',
                         icon: Icons.badge_rounded,
-                        color: Colors.indigo,
+                        color: const Color(0xFFEC4899),
                         onTap: () => _programContact(context),
                       ),
                     ],
-                  ).animate().fadeIn(delay: 350.ms),
+                  ),
                 ],
               ),
             ),
@@ -226,7 +306,7 @@ class HomeDashboardTab extends ConsumerWidget {
     );
   }
 
-  // ── Action configuration modal helper triggers ──────────────────────────────
+  // ── Dialog Action Logic ────────────────────────────────────────────────────
 
   void _programTimer(BuildContext context) {
     showDialog(
@@ -474,16 +554,20 @@ class HomeDashboardTab extends ConsumerWidget {
   }
 }
 
-class _ActionTile extends StatelessWidget {
+class _DesignerActionTile extends StatelessWidget {
+  final int index;
   final String title;
   final String subtitle;
+  final String tag;
   final IconData icon;
   final Color color;
   final VoidCallback onTap;
 
-  const _ActionTile({
+  const _DesignerActionTile({
+    required this.index,
     required this.title,
     required this.subtitle,
+    required this.tag,
     required this.icon,
     required this.color,
     required this.onTap,
@@ -495,35 +579,97 @@ class _ActionTile extends StatelessWidget {
     final isDark = cs.brightness == Brightness.dark;
 
     return Card(
-      margin: const EdgeInsets.only(bottom: 12),
+      margin: const EdgeInsets.only(bottom: 14),
       elevation: 0,
-      color: isDark ? const Color(0xFF1E293B).withValues(alpha: 0.4) : cs.surfaceContainerLow,
+      color: isDark
+          ? const Color(0xFF1E293B).withValues(alpha: 0.45)
+          : cs.surfaceContainerLow.withValues(alpha: 0.9),
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(18),
+        borderRadius: BorderRadius.circular(24),
         side: BorderSide(
-          color: isDark ? Colors.white.withValues(alpha: 0.05) : Colors.black.withValues(alpha: 0.04),
-          width: 1,
+          color: isDark
+              ? Colors.white.withValues(alpha: 0.05)
+              : Colors.black.withValues(alpha: 0.04),
+          width: 1.2,
         ),
       ),
-      child: ListTile(
-        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
-        leading: CircleAvatar(
-          backgroundColor: color.withValues(alpha: 0.15),
-          child: Icon(icon, color: color, size: 20),
-        ),
-        title: Text(
-          title,
-          style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
-        ),
-        subtitle: Text(
-          subtitle,
-          style: Theme.of(context).textTheme.bodySmall?.copyWith(
-            color: cs.onSurface.withValues(alpha: 0.6),
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(24),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 16),
+          child: Row(
+            children: [
+              // Icon block
+              Container(
+                width: 48,
+                height: 48,
+                decoration: BoxDecoration(
+                  color: color.withValues(alpha: 0.12),
+                  borderRadius: BorderRadius.circular(16),
+                ),
+                child: Icon(icon, color: color, size: 22),
+              ),
+              const SizedBox(width: 16),
+              // Text descriptions
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Row(
+                      children: [
+                        Text(
+                          title,
+                          style: const TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 15,
+                            letterSpacing: -0.2,
+                          ),
+                        ),
+                        const SizedBox(width: 8),
+                        // Mini category pill
+                        Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                          decoration: BoxDecoration(
+                            color: color.withValues(alpha: 0.15),
+                            borderRadius: BorderRadius.circular(6),
+                          ),
+                          child: Text(
+                            tag,
+                            style: TextStyle(
+                              fontSize: 9,
+                              fontWeight: FontWeight.w800,
+                              color: color,
+                              letterSpacing: 0.5,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      subtitle,
+                      style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                            color: cs.onSurface.withValues(alpha: 0.55),
+                            fontSize: 12,
+                          ),
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(width: 8),
+              Icon(Icons.chevron_right_rounded, size: 20, color: cs.outline),
+            ],
           ),
         ),
-        trailing: Icon(Icons.arrow_forward_ios_rounded, size: 14, color: cs.outline),
-        onTap: onTap,
       ),
-    );
+    ).animate().fadeIn(
+          delay: Duration(milliseconds: 350 + (index * 60)),
+        ).slideY(
+          begin: 0.08,
+          curve: Curves.easeOutQuad,
+          duration: 400.ms,
+        );
   }
 }
