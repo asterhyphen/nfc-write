@@ -9,7 +9,6 @@ val newBuildDir: Directory =
     rootProject.layout.buildDirectory
         .dir("../../build")
         .get()
-// Set the build directory at the root project level.
 rootProject.layout.buildDirectory.value(newBuildDir)
 
 subprojects {
@@ -22,11 +21,19 @@ subprojects {
 }
 
 subprojects {
-    afterEvaluate {
-        if (plugins.hasPlugin("com.android.application") || plugins.hasPlugin("com.android.library")) {
-            configure<com.android.build.gradle.BaseExtension> {
-                compileSdkVersion(34)
+    val configureProject = { proj: Project ->
+        if (proj.plugins.hasPlugin("com.android.application") || proj.plugins.hasPlugin("com.android.library")) {
+            proj.configure<com.android.build.gradle.BaseExtension> {
+                compileSdkVersion(36)
             }
+        }
+    }
+
+    if (project.state.executed) {
+        configureProject(project)
+    } else {
+        project.afterEvaluate {
+            configureProject(project)
         }
     }
 }
