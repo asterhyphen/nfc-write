@@ -7,7 +7,8 @@ import 'package:nfc_manager/nfc_manager.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../../../core/widgets/glass_card.dart';
-import '../../automation/presentation/launch_timer_sheet.dart';
+import '../../automation/presentation/flip_clock_timer_screen.dart';
+import '../../automation/presentation/timer_notifier.dart';
 import '../data/nfc_repository.dart';
 import '../data/tag_registry_repository.dart';
 
@@ -311,15 +312,8 @@ class _NfcScanSheetState extends ConsumerState<NfcScanSheet> {
           int.tryParse(res.content.replaceFirst('timer://', '')) ?? 300;
       if (mounted) {
         Navigator.pop(context);
-        showModalBottomSheet(
-          context: context,
-          isScrollControlled: true,
-          backgroundColor: Colors.transparent,
-          builder: (_) => LaunchTimerSheet(
-            initialSeconds: secs,
-            initialLabel: res.tagName ?? 'NFC Timer Action',
-          ),
-        );
+        ref.read(timerProvider.notifier).start(secs, res.tagName ?? 'NFC Timer Action');
+        Navigator.push(context, FlipClockTimerScreen.route());
       }
     } else if (res.content.startsWith('notification://')) {
       final uri = Uri.parse(res.content);

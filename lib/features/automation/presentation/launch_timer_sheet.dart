@@ -1,11 +1,11 @@
-import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_ringtone_player/flutter_ringtone_player.dart';
 
 import '../../../core/widgets/glass_card.dart';
 import '../../nfc_management/presentation/nfc_write_sheet.dart';
+import 'timer_notifier.dart';
+import 'flip_clock_timer_screen.dart';
 
 /// Preset timer options in seconds.
 class TimerPreset {
@@ -52,13 +52,6 @@ class _LaunchTimerSheetState extends ConsumerState<LaunchTimerSheet> {
   late String _timerLabel;
   final TextEditingController _customCtrl = TextEditingController();
 
-  // Timer state
-  Timer? _ticker;
-  int _remainingSeconds = 0;
-  bool _isRunning = false;
-  bool _isPaused = false;
-  bool _isFinished = false;
-
   @override
   void initState() {
     super.initState();
@@ -68,65 +61,25 @@ class _LaunchTimerSheetState extends ConsumerState<LaunchTimerSheet> {
 
   @override
   void dispose() {
-    _ticker?.cancel();
     _customCtrl.dispose();
-    FlutterRingtonePlayer().stop();
     super.dispose();
   }
 
-  void _onTick(Timer timer) {
-    if (!mounted) return;
-    if (_remainingSeconds > 1) {
-      setState(() {
-        _remainingSeconds--;
-      });
-    } else {
-      timer.cancel();
-      setState(() {
-        _remainingSeconds = 0;
-        _isRunning = false;
-        _isFinished = true;
-      });
-      FlutterRingtonePlayer().playAlarm(looping: false);
-    }
-  }
-
   void _startTimer() {
-    setState(() {
-      _remainingSeconds = _selectedSeconds;
-      _isRunning = true;
-      _isPaused = false;
-      _isFinished = false;
-    });
-
-    _ticker?.cancel();
-    _ticker = Timer.periodic(const Duration(seconds: 1), _onTick);
+    ref.read(timerProvider.notifier).start(_selectedSeconds, _timerLabel);
+    Navigator.push(context, FlipClockTimerScreen.route());
   }
 
   void _pauseTimer() {
-    _ticker?.cancel();
-    setState(() {
-      _isPaused = true;
-    });
-    FlutterRingtonePlayer().stop();
+    ref.read(timerProvider.notifier).pause();
   }
 
   void _resumeTimer() {
-    setState(() {
-      _isPaused = false;
-    });
-    _ticker = Timer.periodic(const Duration(seconds: 1), _onTick);
+    ref.read(timerProvider.notifier).resume();
   }
 
   void _resetTimer() {
-    _ticker?.cancel();
-    FlutterRingtonePlayer().stop();
-    setState(() {
-      _isRunning = false;
-      _isPaused = false;
-      _isFinished = false;
-      _remainingSeconds = _selectedSeconds;
-    });
+    ref.read(timerProvider.notifier).reset();
   }
 
   String _formatDuration(int totalSecs) {
@@ -143,6 +96,8 @@ class _LaunchTimerSheetState extends ConsumerState<LaunchTimerSheet> {
   @override
   Widget build(BuildContext context) {
     final cs = Theme.of(context).colorScheme;
+    final timerState = ref.watch(timerProvider);
+    final isActive = timerState.isRunning || timerState.isPaused || timerState.isFinished;
 
     return DraggableScrollableSheet(
       initialChildSize: 0.75,
@@ -169,8 +124,8 @@ class _LaunchTimerSheetState extends ConsumerState<LaunchTimerSheet> {
               child: SingleChildScrollView(
                 controller: ctrl,
                 padding: const EdgeInsets.all(24),
-                child: _isRunning || _isFinished || _isPaused
-                    ? _buildActiveTimerView(cs)
+                child: isActive
+                    ? _buildActiveTimerView(cs, timerState)
                     : _buildSetupView(cs),
               ),
             ),
@@ -341,9 +296,9 @@ class _LaunchTimerSheetState extends ConsumerState<LaunchTimerSheet> {
 
   // ── Active Timer View ──────────────────────────────────────────────────────
 
-  Widget _buildActiveTimerView(ColorScheme cs) {
-    final progress = _selectedSeconds > 0
-        ? _remainingSeconds / _selectedSeconds
+  Widget _buildActiveTimerView(ColorScheme cs, TimerState timerState) {
+    final progress = timerState.duration > 0
+        ? timerState.remainingSeconds / timerState.duration
         : 0.0;
 
     return Column(
@@ -351,7 +306,7 @@ class _LaunchTimerSheetState extends ConsumerState<LaunchTimerSheet> {
       children: [
         const SizedBox(height: 10),
         Text(
-          _timerLabel,
+          timerState.label,
           style: Theme.of(context).textTheme.titleLarge?.copyWith(
             fontWeight: FontWeight.bold,
             color: cs.onSurface.withValues(alpha: 0.8),
@@ -371,9 +326,9 @@ class _LaunchTimerSheetState extends ConsumerState<LaunchTimerSheet> {
                 strokeWidth: 12,
                 backgroundColor: cs.outlineVariant.withValues(alpha: 0.3),
                 valueColor: AlwaysStoppedAnimation<Color>(
-                  _isFinished
+                  timerState.isFinished
                       ? Colors.green
-                      : (_isPaused ? Colors.amber : cs.primary),
+                      : (timerState.isPaused ? Colors.amber : cs.primary),
                 ),
                 strokeCap: StrokeCap.round,
               ),
@@ -381,7 +336,7 @@ class _LaunchTimerSheetState extends ConsumerState<LaunchTimerSheet> {
             Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                if (_isFinished) ...[
+                if (timerState.isFinished) ...[
                   const Icon(
                     Icons.check_circle_rounded,
                     size: 56,
@@ -397,7 +352,7 @@ class _LaunchTimerSheetState extends ConsumerState<LaunchTimerSheet> {
                   ),
                 ] else ...[
                   Text(
-                    _formatDuration(_remainingSeconds),
+                    _formatDuration(timerState.remainingSeconds),
                     style: Theme.of(context).textTheme.displayMedium?.copyWith(
                       fontWeight: FontWeight.bold,
                       color: cs.primary,
@@ -406,11 +361,11 @@ class _LaunchTimerSheetState extends ConsumerState<LaunchTimerSheet> {
                   ),
                   const SizedBox(height: 4),
                   Text(
-                    _isPaused ? 'PAUSED' : 'RUNNING',
+                    timerState.isPaused ? 'PAUSED' : 'RUNNING',
                     style: Theme.of(context).textTheme.labelMedium?.copyWith(
                       letterSpacing: 1.5,
                       fontWeight: FontWeight.bold,
-                      color: _isPaused ? Colors.amber : cs.outline,
+                      color: timerState.isPaused ? Colors.amber : cs.outline,
                     ),
                   ),
                 ],
@@ -425,32 +380,39 @@ class _LaunchTimerSheetState extends ConsumerState<LaunchTimerSheet> {
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            if (_isRunning || _isPaused) ...[
+            if (timerState.isRunning || timerState.isPaused) ...[
               IconButton.filledTonal(
                 iconSize: 32,
                 icon: const Icon(Icons.refresh_rounded),
                 onPressed: _resetTimer,
                 tooltip: 'Reset',
               ),
-              const SizedBox(width: 24),
+              const SizedBox(width: 16),
               IconButton.filled(
                 iconSize: 44,
                 padding: const EdgeInsets.all(16),
                 icon: Icon(
-                  _isPaused ? Icons.play_arrow_rounded : Icons.pause_rounded,
+                  timerState.isPaused ? Icons.play_arrow_rounded : Icons.pause_rounded,
                 ),
-                onPressed: _isPaused ? _resumeTimer : _pauseTimer,
+                onPressed: timerState.isPaused ? _resumeTimer : _pauseTimer,
               ),
-              const SizedBox(width: 24),
+              const SizedBox(width: 16),
               IconButton.filledTonal(
                 iconSize: 32,
                 icon: const Icon(Icons.stop_rounded),
-                onPressed: () {
-                  _resetTimer();
-                },
+                onPressed: _resetTimer,
                 tooltip: 'Stop',
               ),
-            ] else if (_isFinished) ...[
+              const SizedBox(width: 16),
+              IconButton.filledTonal(
+                iconSize: 32,
+                icon: const Icon(Icons.fullscreen_rounded),
+                onPressed: () {
+                  Navigator.push(context, FlipClockTimerScreen.route());
+                },
+                tooltip: 'Fullscreen Clock',
+              ),
+            ] else if (timerState.isFinished) ...[
               FilledButton.icon(
                 onPressed: _resetTimer,
                 icon: const Icon(Icons.replay_rounded),
