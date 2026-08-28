@@ -230,8 +230,8 @@ class HomeDashboardTab extends ConsumerWidget {
                       _DesignerActionTile(
                         index: 0,
                         title: 'Launch Timer Alert',
-                        subtitle: 'Starts a countdown focus timer',
-                        tag: 'UTILITY',
+                        subtitle: 'Starts a custom countdown focus timer',
+                        tag: 'TIMER',
                         icon: Icons.timer_rounded,
                         color: const Color(0xFFF59E0B),
                         onTap: () => _programTimer(context),
@@ -311,96 +311,41 @@ class HomeDashboardTab extends ConsumerWidget {
   void _programTimer(BuildContext context) {
     showDialog(
       context: context,
-      builder: (ctx) {
-        int selectedMins = 5;
-        return AlertDialog(
-          title: const Text('Program Timer Tag'),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              const Text('Set timer duration to write to NFC tag:'),
-              const SizedBox(height: 16),
-              DropdownButtonFormField<int>(
-                initialValue: selectedMins,
-                items: const [
-                  DropdownMenuItem(value: 1, child: Text('1 Minute')),
-                  DropdownMenuItem(value: 5, child: Text('5 Minutes')),
-                  DropdownMenuItem(value: 10, child: Text('10 Minutes')),
-                  DropdownMenuItem(value: 15, child: Text('15 Minutes')),
-                  DropdownMenuItem(value: 30, child: Text('30 Minutes')),
-                ],
-                onChanged: (val) {
-                  if (val != null) selectedMins = val;
-                },
-                decoration: const InputDecoration(border: OutlineInputBorder()),
-              ),
-            ],
-          ),
-          actions: [
-            TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('Cancel')),
-            FilledButton(
-              onPressed: () {
-                Navigator.pop(ctx);
-                showModalBottomSheet(
-                  context: context,
-                  isScrollControlled: true,
-                  backgroundColor: Colors.transparent,
-                  builder: (_) => NfcWriteSheet(
-                    initialType: WriteType.text,
-                    initialContent: 'timer://${selectedMins * 60}',
-                  ),
-                );
-              },
-              child: const Text('Confirm'),
+      builder: (ctx) => _TimerProgramDialog(
+        onConfirm: (seconds) {
+          Navigator.pop(ctx);
+          showModalBottomSheet(
+            context: context,
+            isScrollControlled: true,
+            backgroundColor: Colors.transparent,
+            builder: (_) => NfcWriteSheet(
+              initialType: WriteType.text,
+              initialContent: 'timer://$seconds',
             ),
-          ],
-        );
-      },
+          );
+        },
+      ),
     );
   }
 
   void _programNotification(BuildContext context) {
-    final titleCtrl = TextEditingController(text: 'Focus Mode');
-    final bodyCtrl = TextEditingController(text: 'Your action sequence triggered successfully!');
-
     showDialog(
       context: context,
-      builder: (ctx) => AlertDialog(
-        title: const Text('Program Notification Tag'),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            TextField(
-              controller: titleCtrl,
-              decoration: const InputDecoration(labelText: 'Notification Title'),
+      builder: (ctx) => _NotificationProgramDialog(
+        onConfirm: (title, body) {
+          Navigator.pop(ctx);
+          final encodedTitle = Uri.encodeComponent(title.trim());
+          final encodedBody = Uri.encodeComponent(body.trim());
+          showModalBottomSheet(
+            context: context,
+            isScrollControlled: true,
+            backgroundColor: Colors.transparent,
+            builder: (_) => NfcWriteSheet(
+              initialType: WriteType.text,
+              initialContent: 'notification://?title=$encodedTitle&body=$encodedBody',
             ),
-            const SizedBox(height: 10),
-            TextField(
-              controller: bodyCtrl,
-              decoration: const InputDecoration(labelText: 'Notification Message'),
-            ),
-          ],
-        ),
-        actions: [
-          TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('Cancel')),
-          FilledButton(
-            onPressed: () {
-              Navigator.pop(ctx);
-              final encodedTitle = Uri.encodeComponent(titleCtrl.text.trim());
-              final encodedBody = Uri.encodeComponent(bodyCtrl.text.trim());
-              showModalBottomSheet(
-                context: context,
-                isScrollControlled: true,
-                backgroundColor: Colors.transparent,
-                builder: (_) => NfcWriteSheet(
-                  initialType: WriteType.text,
-                  initialContent: 'notification://?title=$encodedTitle&body=$encodedBody',
-                ),
-              );
-            },
-            child: const Text('Confirm'),
-          ),
-        ],
+          );
+        },
       ),
     );
   }
@@ -408,147 +353,756 @@ class HomeDashboardTab extends ConsumerWidget {
   void _programDnd(BuildContext context) {
     showDialog(
       context: context,
-      builder: (ctx) => AlertDialog(
-        title: const Text('Program DND Tag'),
-        content: const Text('Do you want to program Do Not Disturb DND Toggle to this tag?'),
-        actions: [
-          TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('Cancel')),
-          FilledButton(
-            onPressed: () {
-              Navigator.pop(ctx);
-              showModalBottomSheet(
-                context: context,
-                isScrollControlled: true,
-                backgroundColor: Colors.transparent,
-                builder: (_) => const NfcWriteSheet(
-                  initialType: WriteType.text,
-                  initialContent: 'dnd://?state=on',
-                ),
-              );
-            },
-            child: const Text('Confirm'),
-          ),
-        ],
+      builder: (ctx) => _DndProgramDialog(
+        onConfirm: () {
+          Navigator.pop(ctx);
+          showModalBottomSheet(
+            context: context,
+            isScrollControlled: true,
+            backgroundColor: Colors.transparent,
+            builder: (_) => const NfcWriteSheet(
+              initialType: WriteType.text,
+              initialContent: 'dnd://?state=on',
+            ),
+          );
+        },
       ),
     );
   }
 
   void _programUrl(BuildContext context) {
-    final urlCtrl = TextEditingController(text: 'https://example.com');
     showDialog(
       context: context,
-      builder: (ctx) => AlertDialog(
-        title: const Text('Program URL Tag'),
-        content: TextField(
-          controller: urlCtrl,
-          decoration: const InputDecoration(labelText: 'Web URL Address'),
-        ),
-        actions: [
-          TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('Cancel')),
-          FilledButton(
-            onPressed: () {
-              Navigator.pop(ctx);
-              showModalBottomSheet(
-                context: context,
-                isScrollControlled: true,
-                backgroundColor: Colors.transparent,
-                builder: (_) => NfcWriteSheet(
-                  initialType: WriteType.url,
-                  initialContent: urlCtrl.text.trim(),
-                ),
-              );
-            },
-            child: const Text('Confirm'),
-          ),
-        ],
+      builder: (ctx) => _UrlProgramDialog(
+        onConfirm: (url) {
+          Navigator.pop(ctx);
+          showModalBottomSheet(
+            context: context,
+            isScrollControlled: true,
+            backgroundColor: Colors.transparent,
+            builder: (_) => NfcWriteSheet(
+              initialType: WriteType.url,
+              initialContent: url.trim(),
+            ),
+          );
+        },
       ),
     );
   }
 
   void _programWifi(BuildContext context) {
-    final ssidCtrl = TextEditingController(text: 'HomeWiFi');
-    final passCtrl = TextEditingController(text: 'SSIDPassword');
     showDialog(
       context: context,
-      builder: (ctx) => AlertDialog(
-        title: const Text('Program Wi-Fi Tag'),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            TextField(
-              controller: ssidCtrl,
-              decoration: const InputDecoration(labelText: 'Wi-Fi Name (SSID)'),
+      builder: (ctx) => _WifiProgramDialog(
+        onConfirm: (ssid, pass) {
+          Navigator.pop(ctx);
+          final payload = 'WIFI:S:${ssid.trim()};T:WPA;P:${pass.trim()};;';
+          showModalBottomSheet(
+            context: context,
+            isScrollControlled: true,
+            backgroundColor: Colors.transparent,
+            builder: (_) => NfcWriteSheet(
+              initialType: WriteType.text,
+              initialContent: payload,
             ),
-            const SizedBox(height: 10),
-            TextField(
-              controller: passCtrl,
-              decoration: const InputDecoration(labelText: 'Password'),
-            ),
-          ],
-        ),
-        actions: [
-          TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('Cancel')),
-          FilledButton(
-            onPressed: () {
-              Navigator.pop(ctx);
-              final payload = 'WIFI:S:${ssidCtrl.text.trim()};T:WPA;P:${passCtrl.text.trim()};;';
-              showModalBottomSheet(
-                context: context,
-                isScrollControlled: true,
-                backgroundColor: Colors.transparent,
-                builder: (_) => NfcWriteSheet(
-                  initialType: WriteType.text,
-                  initialContent: payload,
-                ),
-              );
-            },
-            child: const Text('Confirm'),
-          ),
-        ],
+          );
+        },
       ),
     );
   }
 
   void _programContact(BuildContext context) {
-    final nameCtrl = TextEditingController(text: 'John Doe');
-    final phoneCtrl = TextEditingController(text: '+15550199');
     showDialog(
       context: context,
-      builder: (ctx) => AlertDialog(
-        title: const Text('Program Contact Tag'),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            TextField(
-              controller: nameCtrl,
-              decoration: const InputDecoration(labelText: 'Full Name'),
+      builder: (ctx) => _ContactProgramDialog(
+        onConfirm: (name, phone) {
+          Navigator.pop(ctx);
+          final vcard = 'BEGIN:VCARD\nVERSION:3.0\nN:${name.trim()}\nTEL;TYPE=CELL:${phone.trim()}\nEND:VCARD';
+          showModalBottomSheet(
+            context: context,
+            isScrollControlled: true,
+            backgroundColor: Colors.transparent,
+            builder: (_) => NfcWriteSheet(
+              initialType: WriteType.text,
+              initialContent: vcard,
             ),
-            const SizedBox(height: 10),
-            TextField(
-              controller: phoneCtrl,
-              decoration: const InputDecoration(labelText: 'Phone Number'),
+          );
+        },
+      ),
+    );
+  }
+}
+
+// ── Custom Stateful Programming Dialogs ──────────────────────────────────────
+
+class _TimerProgramDialog extends StatefulWidget {
+  final void Function(int seconds) onConfirm;
+  const _TimerProgramDialog({required this.onConfirm});
+
+  @override
+  State<_TimerProgramDialog> createState() => _TimerProgramDialogState();
+}
+
+class _TimerProgramDialogState extends State<_TimerProgramDialog> {
+  int _minutes = 5;
+  int _seconds = 0;
+  late final TextEditingController _minCtrl;
+  late final TextEditingController _secCtrl;
+
+  @override
+  void initState() {
+    super.initState();
+    _minCtrl = TextEditingController(text: '5');
+    _secCtrl = TextEditingController(text: '0');
+  }
+
+  @override
+  void dispose() {
+    _minCtrl.dispose();
+    _secCtrl.dispose();
+    super.dispose();
+  }
+
+  void _updateFromInputs() {
+    final m = int.tryParse(_minCtrl.text) ?? 0;
+    final s = int.tryParse(_secCtrl.text) ?? 0;
+    setState(() {
+      _minutes = m.clamp(0, 999);
+      _seconds = s.clamp(0, 59);
+    });
+  }
+
+  void _setPreset(int mins) {
+    setState(() {
+      _minutes = mins;
+      _seconds = 0;
+      _minCtrl.text = mins.toString();
+      _secCtrl.text = '0';
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final cs = Theme.of(context).colorScheme;
+    final isDark = cs.brightness == Brightness.dark;
+    final totalSeconds = (_minutes * 60) + _seconds;
+
+    return Dialog(
+      backgroundColor: Colors.transparent,
+      insetPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 24),
+      child: Container(
+        padding: const EdgeInsets.all(24),
+        decoration: BoxDecoration(
+          color: isDark ? const Color(0xFF1E293B) : Colors.white,
+          borderRadius: BorderRadius.circular(28),
+          border: Border.all(
+            color: isDark ? Colors.white10 : Colors.black.withValues(alpha: 0.05),
+            width: 1.5,
+          ),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withValues(alpha: isDark ? 0.3 : 0.1),
+              blurRadius: 30,
+              offset: const Offset(0, 10),
             ),
           ],
         ),
-        actions: [
-          TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('Cancel')),
-          FilledButton(
-            onPressed: () {
-              Navigator.pop(ctx);
-              final vcard = 'BEGIN:VCARD\nVERSION:3.0\nN:${nameCtrl.text.trim()}\nTEL;TYPE=CELL:${phoneCtrl.text.trim()}\nEND:VCARD';
-              showModalBottomSheet(
-                context: context,
-                isScrollControlled: true,
-                backgroundColor: Colors.transparent,
-                builder: (_) => NfcWriteSheet(
-                  initialType: WriteType.text,
-                  initialContent: vcard,
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // Header
+            Row(
+              children: [
+                Container(
+                  padding: const EdgeInsets.all(8),
+                  decoration: BoxDecoration(
+                    color: Colors.orange.withValues(alpha: 0.15),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: const Icon(Icons.timer_rounded, color: Colors.orange, size: 20),
                 ),
-              );
-            },
-            child: const Text('Confirm'),
-          ),
-        ],
+                const SizedBox(width: 12),
+                const Text(
+                  'Program Timer Action',
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.w800),
+                ),
+              ],
+            ),
+            const SizedBox(height: 20),
+
+            // Preset Chips
+            const Text(
+              'Presets',
+              style: TextStyle(fontSize: 11, fontWeight: FontWeight.bold, color: Colors.grey),
+            ),
+            const SizedBox(height: 8),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                _presetChip(1, '1m'),
+                _presetChip(5, '5m'),
+                _presetChip(10, '10m'),
+                _presetChip(25, '25m (Pomo)'),
+                _presetChip(60, '1h'),
+              ],
+            ),
+            const SizedBox(height: 20),
+
+            // Live Time Display
+            Center(
+              child: Container(
+                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                decoration: BoxDecoration(
+                  color: Colors.orange.withValues(alpha: 0.1),
+                  borderRadius: BorderRadius.circular(16),
+                  border: Border.all(color: Colors.orange.withValues(alpha: 0.3), width: 1.2),
+                ),
+                child: Text(
+                  '${_minutes.toString().padLeft(2, '0')}:${_seconds.toString().padLeft(2, '0')}',
+                  style: const TextStyle(
+                    fontSize: 32,
+                    fontWeight: FontWeight.w900,
+                    fontFamily: 'monospace',
+                    color: Colors.orange,
+                  ),
+                ),
+              ),
+            ),
+            const SizedBox(height: 20),
+
+            // Input Fields
+            Row(
+              children: [
+                Expanded(
+                  child: TextField(
+                    controller: _minCtrl,
+                    keyboardType: TextInputType.number,
+                    onChanged: (_) => _updateFromInputs(),
+                    decoration: InputDecoration(
+                      labelText: 'Minutes',
+                      border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+                      contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 16),
+                Expanded(
+                  child: TextField(
+                    controller: _secCtrl,
+                    keyboardType: TextInputType.number,
+                    onChanged: (_) => _updateFromInputs(),
+                    decoration: InputDecoration(
+                      labelText: 'Seconds',
+                      border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+                      contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 20),
+
+            // Slider
+            SliderTheme(
+              data: SliderThemeData(
+                activeTrackColor: Colors.orange,
+                inactiveTrackColor: Colors.orange.withValues(alpha: 0.2),
+                thumbColor: Colors.orange,
+                overlayColor: Colors.orange.withValues(alpha: 0.1),
+              ),
+              child: Slider(
+                value: _minutes.toDouble().clamp(1.0, 120.0),
+                min: 1,
+                max: 120,
+                divisions: 119,
+                onChanged: (val) {
+                  setState(() {
+                    _minutes = val.round();
+                    _minCtrl.text = _minutes.toString();
+                  });
+                },
+              ),
+            ),
+
+            const SizedBox(height: 24),
+
+            // Buttons
+            Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                TextButton(
+                  onPressed: () => Navigator.pop(context),
+                  child: const Text('Cancel', style: TextStyle(color: Colors.grey)),
+                ),
+                const SizedBox(width: 12),
+                FilledButton(
+                  onPressed: totalSeconds > 0
+                      ? () => widget.onConfirm(totalSeconds)
+                      : null,
+                  style: FilledButton.styleFrom(
+                    backgroundColor: Colors.orange,
+                    foregroundColor: Colors.white,
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+                  ),
+                  child: const Text('Confirm Duration'),
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _presetChip(int mins, String label) {
+    final isSelected = _minutes == mins && _seconds == 0;
+    return ChoiceChip(
+      label: Text(
+        label,
+        style: TextStyle(
+          fontSize: 11,
+          fontWeight: FontWeight.bold,
+          color: isSelected ? Colors.white : Colors.orange,
+        ),
+      ),
+      selected: isSelected,
+      onSelected: (_) => _setPreset(mins),
+      selectedColor: Colors.orange,
+      backgroundColor: Colors.orange.withValues(alpha: 0.1),
+      showCheckmark: false,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+    );
+  }
+}
+
+class _NotificationProgramDialog extends StatefulWidget {
+  final void Function(String title, String body) onConfirm;
+  const _NotificationProgramDialog({required this.onConfirm});
+
+  @override
+  State<_NotificationProgramDialog> createState() => _NotificationProgramDialogState();
+}
+
+class _NotificationProgramDialogState extends State<_NotificationProgramDialog> {
+  final _titleCtrl = TextEditingController(text: 'Focus Mode');
+  final _bodyCtrl = TextEditingController(text: 'NFC action sequence triggered successfully!');
+
+  @override
+  void dispose() {
+    _titleCtrl.dispose();
+    _bodyCtrl.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final cs = Theme.of(context).colorScheme;
+    final isDark = cs.brightness == Brightness.dark;
+
+    return Dialog(
+      backgroundColor: Colors.transparent,
+      child: Container(
+        padding: const EdgeInsets.all(24),
+        decoration: BoxDecoration(
+          color: isDark ? const Color(0xFF1E293B) : Colors.white,
+          borderRadius: BorderRadius.circular(28),
+          border: Border.all(color: isDark ? Colors.white10 : Colors.black.withValues(alpha: 0.05), width: 1.5),
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                Container(
+                  padding: const EdgeInsets.all(8),
+                  decoration: BoxDecoration(
+                    color: Colors.blue.withValues(alpha: 0.15),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: const Icon(Icons.notifications_active_rounded, color: Colors.blue, size: 20),
+                ),
+                const SizedBox(width: 12),
+                const Text('Program Notification', style: TextStyle(fontSize: 18, fontWeight: FontWeight.w800)),
+              ],
+            ),
+            const SizedBox(height: 20),
+            TextField(
+              controller: _titleCtrl,
+              decoration: InputDecoration(
+                labelText: 'Notification Title',
+                border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+              ),
+            ),
+            const SizedBox(height: 16),
+            TextField(
+              controller: _bodyCtrl,
+              maxLines: 2,
+              decoration: InputDecoration(
+                labelText: 'Message Body',
+                border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+              ),
+            ),
+            const SizedBox(height: 24),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                TextButton(
+                  onPressed: () => Navigator.pop(context),
+                  child: const Text('Cancel', style: TextStyle(color: Colors.grey)),
+                ),
+                const SizedBox(width: 12),
+                FilledButton(
+                  onPressed: () => widget.onConfirm(_titleCtrl.text, _bodyCtrl.text),
+                  style: FilledButton.styleFrom(
+                    backgroundColor: Colors.blue,
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+                  ),
+                  child: const Text('Confirm Action'),
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _DndProgramDialog extends StatelessWidget {
+  final VoidCallback onConfirm;
+  const _DndProgramDialog({required this.onConfirm});
+
+  @override
+  Widget build(BuildContext context) {
+    final cs = Theme.of(context).colorScheme;
+    final isDark = cs.brightness == Brightness.dark;
+
+    return Dialog(
+      backgroundColor: Colors.transparent,
+      child: Container(
+        padding: const EdgeInsets.all(24),
+        decoration: BoxDecoration(
+          color: isDark ? const Color(0xFF1E293B) : Colors.white,
+          borderRadius: BorderRadius.circular(28),
+          border: Border.all(color: isDark ? Colors.white10 : Colors.black.withValues(alpha: 0.05), width: 1.5),
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                Container(
+                  padding: const EdgeInsets.all(8),
+                  decoration: BoxDecoration(
+                    color: Colors.redAccent.withValues(alpha: 0.15),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: const Icon(Icons.do_not_disturb_on_rounded, color: Colors.redAccent, size: 20),
+                ),
+                const SizedBox(width: 12),
+                const Text('Program DND Action', style: TextStyle(fontSize: 18, fontWeight: FontWeight.w800)),
+              ],
+            ),
+            const SizedBox(height: 16),
+            const Text(
+              'This will program a Do Not Disturb toggle action to the NFC tag. When tapped, the system will switch the DND silence mode.',
+              style: TextStyle(fontSize: 13, height: 1.4, color: Colors.grey),
+            ),
+            const SizedBox(height: 24),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                TextButton(
+                  onPressed: () => Navigator.pop(context),
+                  child: const Text('Cancel', style: TextStyle(color: Colors.grey)),
+                ),
+                const SizedBox(width: 12),
+                FilledButton(
+                  onPressed: onConfirm,
+                  style: FilledButton.styleFrom(
+                    backgroundColor: Colors.redAccent,
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+                  ),
+                  child: const Text('Confirm Action'),
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _UrlProgramDialog extends StatefulWidget {
+  final void Function(String url) onConfirm;
+  const _UrlProgramDialog({required this.onConfirm});
+
+  @override
+  State<_UrlProgramDialog> createState() => _UrlProgramDialogState();
+}
+
+class _UrlProgramDialogState extends State<_UrlProgramDialog> {
+  final _urlCtrl = TextEditingController(text: 'https://example.com');
+
+  @override
+  void dispose() {
+    _urlCtrl.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final cs = Theme.of(context).colorScheme;
+    final isDark = cs.brightness == Brightness.dark;
+
+    return Dialog(
+      backgroundColor: Colors.transparent,
+      child: Container(
+        padding: const EdgeInsets.all(24),
+        decoration: BoxDecoration(
+          color: isDark ? const Color(0xFF1E293B) : Colors.white,
+          borderRadius: BorderRadius.circular(28),
+          border: Border.all(color: isDark ? Colors.white10 : Colors.black.withValues(alpha: 0.05), width: 1.5),
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                Container(
+                  padding: const EdgeInsets.all(8),
+                  decoration: BoxDecoration(
+                    color: Colors.teal.withValues(alpha: 0.15),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: const Icon(Icons.link_rounded, color: Colors.teal, size: 20),
+                ),
+                const SizedBox(width: 12),
+                const Text('Program URL Link', style: TextStyle(fontSize: 18, fontWeight: FontWeight.w800)),
+              ],
+            ),
+            const SizedBox(height: 20),
+            TextField(
+              controller: _urlCtrl,
+              decoration: InputDecoration(
+                labelText: 'Web URL Address',
+                border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+              ),
+            ),
+            const SizedBox(height: 24),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                TextButton(
+                  onPressed: () => Navigator.pop(context),
+                  child: const Text('Cancel', style: TextStyle(color: Colors.grey)),
+                ),
+                const SizedBox(width: 12),
+                FilledButton(
+                  onPressed: () => widget.onConfirm(_urlCtrl.text),
+                  style: FilledButton.styleFrom(
+                    backgroundColor: Colors.teal,
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+                  ),
+                  child: const Text('Confirm Link'),
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _WifiProgramDialog extends StatefulWidget {
+  final void Function(String ssid, String pass) onConfirm;
+  const _WifiProgramDialog({required this.onConfirm});
+
+  @override
+  State<_WifiProgramDialog> createState() => _WifiProgramDialogState();
+}
+
+class _WifiProgramDialogState extends State<_WifiProgramDialog> {
+  final _ssidCtrl = TextEditingController(text: 'HomeWiFi');
+  final _passCtrl = TextEditingController(text: 'SSIDPassword');
+
+  @override
+  void dispose() {
+    _ssidCtrl.dispose();
+    _passCtrl.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final cs = Theme.of(context).colorScheme;
+    final isDark = cs.brightness == Brightness.dark;
+
+    return Dialog(
+      backgroundColor: Colors.transparent,
+      child: Container(
+        padding: const EdgeInsets.all(24),
+        decoration: BoxDecoration(
+          color: isDark ? const Color(0xFF1E293B) : Colors.white,
+          borderRadius: BorderRadius.circular(28),
+          border: Border.all(color: isDark ? Colors.white10 : Colors.black.withValues(alpha: 0.05), width: 1.5),
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                Container(
+                  padding: const EdgeInsets.all(8),
+                  decoration: BoxDecoration(
+                    color: Colors.purple.withValues(alpha: 0.15),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: const Icon(Icons.wifi_rounded, color: Colors.purple, size: 20),
+                ),
+                const SizedBox(width: 12),
+                const Text('Program Wi-Fi Login', style: TextStyle(fontSize: 18, fontWeight: FontWeight.w800)),
+              ],
+            ),
+            const SizedBox(height: 20),
+            TextField(
+              controller: _ssidCtrl,
+              decoration: InputDecoration(
+                labelText: 'Wi-Fi Name (SSID)',
+                border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+              ),
+            ),
+            const SizedBox(height: 16),
+            TextField(
+              controller: _passCtrl,
+              obscureText: true,
+              decoration: InputDecoration(
+                labelText: 'Password',
+                border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+              ),
+            ),
+            const SizedBox(height: 24),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                TextButton(
+                  onPressed: () => Navigator.pop(context),
+                  child: const Text('Cancel', style: TextStyle(color: Colors.grey)),
+                ),
+                const SizedBox(width: 12),
+                FilledButton(
+                  onPressed: () => widget.onConfirm(_ssidCtrl.text, _passCtrl.text),
+                  style: FilledButton.styleFrom(
+                    backgroundColor: Colors.purple,
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+                  ),
+                  child: const Text('Confirm Action'),
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _ContactProgramDialog extends StatefulWidget {
+  final void Function(String name, String phone) onConfirm;
+  const _ContactProgramDialog({required this.onConfirm});
+
+  @override
+  State<_ContactProgramDialog> createState() => _ContactProgramDialogState();
+}
+
+class _ContactProgramDialogState extends State<_ContactProgramDialog> {
+  final _nameCtrl = TextEditingController(text: 'John Doe');
+  final _phoneCtrl = TextEditingController(text: '+15550199');
+
+  @override
+  void dispose() {
+    _nameCtrl.dispose();
+    _phoneCtrl.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final cs = Theme.of(context).colorScheme;
+    final isDark = cs.brightness == Brightness.dark;
+
+    return Dialog(
+      backgroundColor: Colors.transparent,
+      child: Container(
+        padding: const EdgeInsets.all(24),
+        decoration: BoxDecoration(
+          color: isDark ? const Color(0xFF1E293B) : Colors.white,
+          borderRadius: BorderRadius.circular(28),
+          border: Border.all(color: isDark ? Colors.white10 : Colors.black.withValues(alpha: 0.05), width: 1.5),
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                Container(
+                  padding: const EdgeInsets.all(8),
+                  decoration: BoxDecoration(
+                    color: Colors.pink.withValues(alpha: 0.15),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: const Icon(Icons.badge_rounded, color: Colors.pink, size: 20),
+                ),
+                const SizedBox(width: 12),
+                const Text('Program Contact Card', style: TextStyle(fontSize: 18, fontWeight: FontWeight.w800)),
+              ],
+            ),
+            const SizedBox(height: 20),
+            TextField(
+              controller: _nameCtrl,
+              decoration: InputDecoration(
+                labelText: 'Full Name',
+                border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+              ),
+            ),
+            const SizedBox(height: 16),
+            TextField(
+              controller: _phoneCtrl,
+              keyboardType: TextInputType.phone,
+              decoration: InputDecoration(
+                labelText: 'Phone Number',
+                border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+              ),
+            ),
+            const SizedBox(height: 24),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                TextButton(
+                  onPressed: () => Navigator.pop(context),
+                  child: const Text('Cancel', style: TextStyle(color: Colors.grey)),
+                ),
+                const SizedBox(width: 12),
+                FilledButton(
+                  onPressed: () => widget.onConfirm(_nameCtrl.text, _phoneCtrl.text),
+                  style: FilledButton.styleFrom(
+                    backgroundColor: Colors.pink,
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+                  ),
+                  child: const Text('Confirm Action'),
+                ),
+              ],
+            ),
+          ],
+        ),
       ),
     );
   }
