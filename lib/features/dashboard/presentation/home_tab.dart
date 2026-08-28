@@ -5,6 +5,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../history/presentation/history_notifier.dart';
 import '../../nfc_management/presentation/nfc_scan_sheet.dart';
 import '../../nfc_management/presentation/nfc_write_sheet.dart';
+import '../../automation/presentation/timer_notifier.dart';
+import '../../automation/presentation/flip_clock_timer_screen.dart';
 
 /// Designer-grade, modern and clean Homepage for scanning & programming NFC.
 class HomeDashboardTab extends ConsumerWidget {
@@ -234,7 +236,7 @@ class HomeDashboardTab extends ConsumerWidget {
                         tag: 'TIMER',
                         icon: Icons.timer_rounded,
                         color: const Color(0xFFF59E0B),
-                        onTap: () => _programTimer(context),
+                        onTap: () => _programTimer(context, ref),
                       ),
                       _DesignerActionTile(
                         index: 1,
@@ -308,11 +310,11 @@ class HomeDashboardTab extends ConsumerWidget {
 
   // ── Dialog Action Logic ────────────────────────────────────────────────────
 
-  void _programTimer(BuildContext context) {
+  void _programTimer(BuildContext context, WidgetRef ref) {
     showDialog(
       context: context,
       builder: (ctx) => _TimerProgramDialog(
-        onConfirm: (seconds) {
+        onWriteTag: (seconds) {
           Navigator.pop(ctx);
           showModalBottomSheet(
             context: context,
@@ -323,6 +325,11 @@ class HomeDashboardTab extends ConsumerWidget {
               initialContent: 'timer://$seconds',
             ),
           );
+        },
+        onStartNow: (seconds) {
+          Navigator.pop(ctx);
+          ref.read(timerProvider.notifier).start(seconds, 'Focus Session');
+          Navigator.push(context, FlipClockTimerScreen.route());
         },
       ),
     );
@@ -436,8 +443,9 @@ class HomeDashboardTab extends ConsumerWidget {
 // ── Custom Stateful Programming Dialogs ──────────────────────────────────────
 
 class _TimerProgramDialog extends StatefulWidget {
-  final void Function(int seconds) onConfirm;
-  const _TimerProgramDialog({required this.onConfirm});
+  final void Function(int seconds) onWriteTag;
+  final void Function(int seconds) onStartNow;
+  const _TimerProgramDialog({required this.onWriteTag, required this.onStartNow});
 
   @override
   State<_TimerProgramDialog> createState() => _TimerProgramDialogState();
@@ -635,17 +643,29 @@ class _TimerProgramDialogState extends State<_TimerProgramDialog> {
                   onPressed: () => Navigator.pop(context),
                   child: const Text('Cancel', style: TextStyle(color: Colors.grey)),
                 ),
-                const SizedBox(width: 12),
+                const SizedBox(width: 8),
+                OutlinedButton(
+                  onPressed: totalSeconds > 0
+                      ? () => widget.onWriteTag(totalSeconds)
+                      : null,
+                  style: OutlinedButton.styleFrom(
+                    foregroundColor: Colors.orange,
+                    side: const BorderSide(color: Colors.orange),
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                  ),
+                  child: const Text('Write to Tag'),
+                ),
+                const SizedBox(width: 8),
                 FilledButton(
                   onPressed: totalSeconds > 0
-                      ? () => widget.onConfirm(totalSeconds)
+                      ? () => widget.onStartNow(totalSeconds)
                       : null,
                   style: FilledButton.styleFrom(
                     backgroundColor: Colors.orange,
                     foregroundColor: Colors.white,
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                   ),
-                  child: const Text('Confirm Duration'),
+                  child: const Text('Start Now'),
                 ),
               ],
             ),

@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../settings/presentation/settings_tab.dart';
 import '../../templates/presentation/templates_tab.dart';
+import '../../../core/config/background_nfc_manager.dart';
 import 'home_tab.dart';
 
 /// Root shell widget with a premium floating [NavigationBar].
@@ -17,6 +18,14 @@ class DashboardScreen extends ConsumerStatefulWidget {
 
 class _DashboardScreenState extends ConsumerState<DashboardScreen> {
   int _currentIndex = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      BackgroundNfcManager.initialize(ref, context);
+    });
+  }
 
   static const List<Widget> _tabs = [
     HomeDashboardTab(),
