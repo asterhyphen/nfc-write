@@ -39,8 +39,12 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
     final cs = Theme.of(context).colorScheme;
     final isDark = cs.brightness == Brightness.dark;
 
-    final activeBg = isDark ? cs.primary.withValues(alpha: 0.15) : const Color(0xFFEDEEFE);
-    final inactiveColor = isDark ? const Color(0xFF5C5C66) : const Color(0xFFA6A6B0);
+    final activeBg = isDark
+        ? cs.primary.withValues(alpha: 0.15)
+        : const Color(0xFFEDEEFE);
+    final inactiveColor = isDark
+        ? const Color(0xFF5C5C66)
+        : const Color(0xFFA6A6B0);
 
     return Scaffold(
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
@@ -103,18 +107,42 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
               indicatorColor: activeBg,
               destinations: [
                 NavigationDestination(
-                  icon: Icon(Icons.home_outlined, size: 22, color: inactiveColor),
-                  selectedIcon: Icon(Icons.home_rounded, size: 22, color: cs.primary),
+                  icon: Icon(
+                    Icons.home_outlined,
+                    size: 22,
+                    color: inactiveColor,
+                  ),
+                  selectedIcon: Icon(
+                    Icons.home_rounded,
+                    size: 22,
+                    color: cs.primary,
+                  ),
                   label: 'HOME',
                 ),
                 NavigationDestination(
-                  icon: Icon(Icons.widgets_outlined, size: 22, color: inactiveColor),
-                  selectedIcon: Icon(Icons.widgets_rounded, size: 22, color: cs.primary),
+                  icon: Icon(
+                    Icons.widgets_outlined,
+                    size: 22,
+                    color: inactiveColor,
+                  ),
+                  selectedIcon: Icon(
+                    Icons.widgets_rounded,
+                    size: 22,
+                    color: cs.primary,
+                  ),
                   label: 'TEMPLATES',
                 ),
                 NavigationDestination(
-                  icon: Icon(Icons.settings_outlined, size: 22, color: inactiveColor),
-                  selectedIcon: Icon(Icons.settings_rounded, size: 22, color: cs.primary),
+                  icon: Icon(
+                    Icons.settings_outlined,
+                    size: 22,
+                    color: inactiveColor,
+                  ),
+                  selectedIcon: Icon(
+                    Icons.settings_rounded,
+                    size: 22,
+                    color: cs.primary,
+                  ),
                   label: 'SETTINGS',
                 ),
               ],

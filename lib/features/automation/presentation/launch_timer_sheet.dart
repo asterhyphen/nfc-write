@@ -97,7 +97,8 @@ class _LaunchTimerSheetState extends ConsumerState<LaunchTimerSheet> {
   Widget build(BuildContext context) {
     final cs = Theme.of(context).colorScheme;
     final timerState = ref.watch(timerProvider);
-    final isActive = timerState.isRunning || timerState.isPaused || timerState.isFinished;
+    final isActive =
+        timerState.isRunning || timerState.isPaused || timerState.isFinished;
 
     return DraggableScrollableSheet(
       initialChildSize: 0.75,
@@ -392,7 +393,9 @@ class _LaunchTimerSheetState extends ConsumerState<LaunchTimerSheet> {
                 iconSize: 44,
                 padding: const EdgeInsets.all(16),
                 icon: Icon(
-                  timerState.isPaused ? Icons.play_arrow_rounded : Icons.pause_rounded,
+                  timerState.isPaused
+                      ? Icons.play_arrow_rounded
+                      : Icons.pause_rounded,
                 ),
                 onPressed: timerState.isPaused ? _resumeTimer : _pauseTimer,
               ),

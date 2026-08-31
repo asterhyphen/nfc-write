@@ -126,7 +126,10 @@ class _TemplatesTabState extends ConsumerState<TemplatesTab> {
           TextField(
             decoration: InputDecoration(
               hintText: 'Search templates…',
-              prefixIcon: Icon(Icons.search_rounded, color: cs.primary.withValues(alpha: 0.6)),
+              prefixIcon: Icon(
+                Icons.search_rounded,
+                color: cs.primary.withValues(alpha: 0.6),
+              ),
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(16),
                 borderSide: BorderSide(color: cs.outline),
@@ -141,7 +144,10 @@ class _TemplatesTabState extends ConsumerState<TemplatesTab> {
               ),
               filled: true,
               fillColor: cs.surfaceContainerLow,
-              contentPadding: const EdgeInsets.symmetric(vertical: 14, horizontal: 16),
+              contentPadding: const EdgeInsets.symmetric(
+                vertical: 14,
+                horizontal: 16,
+              ),
             ),
             onChanged: (v) => setState(() => _searchQuery = v.toLowerCase()),
           ).animate().fadeIn(delay: 150.ms),
@@ -259,9 +265,8 @@ class _TemplateCard extends StatelessWidget {
                     children: [
                       Text(
                         template.title,
-                        style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                              fontWeight: FontWeight.bold,
-                            ),
+                        style: Theme.of(context).textTheme.titleMedium
+                            ?.copyWith(fontWeight: FontWeight.bold),
                       ),
                       const SizedBox(height: 4),
                       Container(
@@ -292,8 +297,8 @@ class _TemplateCard extends StatelessWidget {
             Text(
               template.description,
               style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                    color: cs.onSurface.withValues(alpha: 0.65),
-                  ),
+                color: cs.onSurface.withValues(alpha: 0.65),
+              ),
             ),
             const SizedBox(height: 20),
             SizedBox(

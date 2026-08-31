@@ -15,7 +15,9 @@ class GlassCard extends StatelessWidget {
     super.key,
     required this.child,
     this.borderRadius = 16.0, // Conform to Medium radius (16px)
-    this.padding = const EdgeInsets.all(16.0), // Conform to Card internal padding (16px)
+    this.padding = const EdgeInsets.all(
+      16.0,
+    ), // Conform to Card internal padding (16px)
     this.blur = 8.0,
     this.opacity = 0.85,
   });
@@ -53,7 +55,9 @@ class GlassCard extends StatelessWidget {
                   .withValues(alpha: opacity),
               borderRadius: BorderRadius.circular(borderRadius),
               border: Border.all(
-                color: isDark ? const Color(0xFF28282F) : const Color(0xFFECECF2),
+                color: isDark
+                    ? const Color(0xFF28282F)
+                    : const Color(0xFFECECF2),
                 width: 1.0,
               ),
             ),

@@ -51,9 +51,7 @@ class TimerNotifier extends _$TimerNotifier {
 
     _ticker = Timer.periodic(const Duration(seconds: 1), (timer) {
       if (state.remainingSeconds > 1) {
-        state = state.copyWith(
-          remainingSeconds: state.remainingSeconds - 1,
-        );
+        state = state.copyWith(remainingSeconds: state.remainingSeconds - 1);
       } else {
         timer.cancel();
         state = state.copyWith(
@@ -76,9 +74,7 @@ class TimerNotifier extends _$TimerNotifier {
     state = state.copyWith(isPaused: false);
     _ticker = Timer.periodic(const Duration(seconds: 1), (timer) {
       if (state.remainingSeconds > 1) {
-        state = state.copyWith(
-          remainingSeconds: state.remainingSeconds - 1,
-        );
+        state = state.copyWith(remainingSeconds: state.remainingSeconds - 1);
       } else {
         timer.cancel();
         state = state.copyWith(

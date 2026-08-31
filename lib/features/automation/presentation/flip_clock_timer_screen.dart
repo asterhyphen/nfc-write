@@ -14,7 +14,8 @@ class FlipClockTimerScreen extends ConsumerStatefulWidget {
   /// Custom transition route that rotates the screen open into landscape.
   static Route route() {
     return PageRouteBuilder(
-      pageBuilder: (context, animation, secondaryAnimation) => const FlipClockTimerScreen(),
+      pageBuilder: (context, animation, secondaryAnimation) =>
+          const FlipClockTimerScreen(),
       transitionsBuilder: (context, animation, secondaryAnimation, child) {
         final rotate = Tween<double>(begin: 0.15, end: 0.0).animate(
           CurvedAnimation(parent: animation, curve: Curves.easeOutBack),
@@ -22,18 +23,16 @@ class FlipClockTimerScreen extends ConsumerStatefulWidget {
         final scale = Tween<double>(begin: 0.85, end: 1.0).animate(
           CurvedAnimation(parent: animation, curve: Curves.easeOutCubic),
         );
-        final fade = Tween<double>(begin: 0.0, end: 1.0).animate(
-          CurvedAnimation(parent: animation, curve: Curves.easeIn),
-        );
+        final fade = Tween<double>(
+          begin: 0.0,
+          end: 1.0,
+        ).animate(CurvedAnimation(parent: animation, curve: Curves.easeIn));
 
         return FadeTransition(
           opacity: fade,
           child: ScaleTransition(
             scale: scale,
-            child: RotationTransition(
-              turns: rotate,
-              child: child,
-            ),
+            child: RotationTransition(turns: rotate, child: child),
           ),
         );
       },
@@ -41,10 +40,12 @@ class FlipClockTimerScreen extends ConsumerStatefulWidget {
   }
 
   @override
-  ConsumerState<FlipClockTimerScreen> createState() => _FlipClockTimerScreenState();
+  ConsumerState<FlipClockTimerScreen> createState() =>
+      _FlipClockTimerScreenState();
 }
 
-class _FlipClockTimerScreenState extends ConsumerState<FlipClockTimerScreen> with TickerProviderStateMixin {
+class _FlipClockTimerScreenState extends ConsumerState<FlipClockTimerScreen>
+    with TickerProviderStateMixin {
   bool _showControls = true;
   Timer? _hideControlsTimer;
 
@@ -124,7 +125,9 @@ class _FlipClockTimerScreenState extends ConsumerState<FlipClockTimerScreen> wit
       context: context,
       builder: (ctx) => AlertDialog(
         title: const Text('Cancel Timer?'),
-        content: const Text('Are you sure you want to stop the active focus session?'),
+        content: const Text(
+          'Are you sure you want to stop the active focus session?',
+        ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(ctx),
@@ -170,11 +173,23 @@ class _FlipClockTimerScreenState extends ConsumerState<FlipClockTimerScreen> wit
               builder: (ctx, child) {
                 final hueVal = _gradientAnim.value;
                 final col1 = isUrgent
-                    ? Colors.red.withValues(alpha: 0.15 + (math.sin(hueVal * math.pi * 8) * 0.05))
-                    : HSLColor.fromAHSL(0.18, (hueVal * 360) % 360, 0.65, 0.45).toColor();
+                    ? Colors.red.withValues(
+                        alpha: 0.15 + (math.sin(hueVal * math.pi * 8) * 0.05),
+                      )
+                    : HSLColor.fromAHSL(
+                        0.18,
+                        (hueVal * 360) % 360,
+                        0.65,
+                        0.45,
+                      ).toColor();
                 final col2 = isUrgent
                     ? const Color(0xFF1E0505)
-                    : HSLColor.fromAHSL(0.12, ((hueVal * 360) + 120) % 360, 0.5, 0.2).toColor();
+                    : HSLColor.fromAHSL(
+                        0.12,
+                        ((hueVal * 360) + 120) % 360,
+                        0.5,
+                        0.2,
+                      ).toColor();
 
                 return Container(
                   decoration: BoxDecoration(
@@ -198,7 +213,9 @@ class _FlipClockTimerScreenState extends ConsumerState<FlipClockTimerScreen> wit
                   value: timerState.remainingSeconds / timerState.duration,
                   backgroundColor: Colors.transparent,
                   valueColor: AlwaysStoppedAnimation<Color>(
-                    isUrgent ? Colors.redAccent : cs.primary.withValues(alpha: 0.7),
+                    isUrgent
+                        ? Colors.redAccent
+                        : cs.primary.withValues(alpha: 0.7),
                   ),
                   minHeight: 5,
                 ),
@@ -249,7 +266,10 @@ class _FlipClockTimerScreenState extends ConsumerState<FlipClockTimerScreen> wit
                       child: BackdropFilter(
                         filter: ImageFilter.blur(sigmaX: 12, sigmaY: 12),
                         child: Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 24,
+                            vertical: 12,
+                          ),
                           decoration: BoxDecoration(
                             color: Colors.black.withValues(alpha: 0.4),
                             borderRadius: BorderRadius.circular(24),
@@ -263,7 +283,10 @@ class _FlipClockTimerScreenState extends ConsumerState<FlipClockTimerScreen> wit
                             children: [
                               // Close/Cancel
                               IconButton(
-                                icon: const Icon(Icons.close, color: Colors.white),
+                                icon: const Icon(
+                                  Icons.close,
+                                  color: Colors.white,
+                                ),
                                 onPressed: () => _handleCancel(context),
                                 tooltip: 'Cancel Session',
                               ),
@@ -294,10 +317,16 @@ class _FlipClockTimerScreenState extends ConsumerState<FlipClockTimerScreen> wit
                                 FloatingActionButton.small(
                                   heroTag: 'flip_play_pause',
                                   elevation: 0,
-                                  backgroundColor: timerState.isPaused ? cs.primary : Colors.white24,
-                                  foregroundColor: timerState.isPaused ? cs.onPrimary : Colors.white,
+                                  backgroundColor: timerState.isPaused
+                                      ? cs.primary
+                                      : Colors.white24,
+                                  foregroundColor: timerState.isPaused
+                                      ? cs.onPrimary
+                                      : Colors.white,
                                   onPressed: () {
-                                    final notifier = ref.read(timerProvider.notifier);
+                                    final notifier = ref.read(
+                                      timerProvider.notifier,
+                                    );
                                     if (timerState.isPaused) {
                                       notifier.resume();
                                     } else {
@@ -306,7 +335,9 @@ class _FlipClockTimerScreenState extends ConsumerState<FlipClockTimerScreen> wit
                                     _startHideControlsTimer();
                                   },
                                   child: Icon(
-                                    timerState.isPaused ? Icons.play_arrow : Icons.pause,
+                                    timerState.isPaused
+                                        ? Icons.play_arrow
+                                        : Icons.pause,
                                   ),
                                 ),
                             ],
@@ -374,7 +405,13 @@ class FlipClockDisplay extends StatelessWidget {
               color: isUrgent ? Colors.redAccent : Colors.white70,
               shape: BoxShape.circle,
               boxShadow: isUrgent
-                  ? [const BoxShadow(color: Colors.red, blurRadius: 10, spreadRadius: 1)]
+                  ? [
+                      const BoxShadow(
+                        color: Colors.red,
+                        blurRadius: 10,
+                        spreadRadius: 1,
+                      ),
+                    ]
                   : null,
             ),
           ),
@@ -386,7 +423,13 @@ class FlipClockDisplay extends StatelessWidget {
               color: isUrgent ? Colors.redAccent : Colors.white70,
               shape: BoxShape.circle,
               boxShadow: isUrgent
-                  ? [const BoxShadow(color: Colors.red, blurRadius: 10, spreadRadius: 1)]
+                  ? [
+                      const BoxShadow(
+                        color: Colors.red,
+                        blurRadius: 10,
+                        spreadRadius: 1,
+                      ),
+                    ]
                   : null,
             ),
           ),
@@ -444,7 +487,8 @@ class FlipDigit extends StatefulWidget {
   State<FlipDigit> createState() => _FlipDigitState();
 }
 
-class _FlipDigitState extends State<FlipDigit> with SingleTickerProviderStateMixin {
+class _FlipDigitState extends State<FlipDigit>
+    with SingleTickerProviderStateMixin {
   late final AnimationController _ctrl;
   int _prev = 0;
   int _curr = 0;
@@ -536,7 +580,9 @@ class _FlipDigitState extends State<FlipDigit> with SingleTickerProviderStateMix
       alignment: alignment,
       child: ClipRect(
         child: Align(
-          alignment: alignment == Alignment.topCenter ? Alignment.topCenter : Alignment.bottomCenter,
+          alignment: alignment == Alignment.topCenter
+              ? Alignment.topCenter
+              : Alignment.bottomCenter,
           heightFactor: 0.5,
           child: Container(
             width: 72,
@@ -548,10 +594,7 @@ class _FlipDigitState extends State<FlipDigit> with SingleTickerProviderStateMix
                 end: Alignment.bottomCenter,
               ),
               borderRadius: BorderRadius.circular(12),
-              border: Border.all(
-                color: Colors.black,
-                width: 1,
-              ),
+              border: Border.all(color: Colors.black, width: 1),
               boxShadow: [
                 BoxShadow(
                   color: Colors.black.withValues(alpha: 0.45),
@@ -570,7 +613,13 @@ class _FlipDigitState extends State<FlipDigit> with SingleTickerProviderStateMix
                   color: textColor,
                   height: 1.0,
                   shadows: widget.isUrgent || widget.isFinished
-                      ? [BoxShadow(color: textColor.withValues(alpha: 0.4), blurRadius: 8, spreadRadius: 1)]
+                      ? [
+                          BoxShadow(
+                            color: textColor.withValues(alpha: 0.4),
+                            blurRadius: 8,
+                            spreadRadius: 1,
+                          ),
+                        ]
                       : null,
                 ),
               ),

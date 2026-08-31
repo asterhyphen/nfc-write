@@ -326,22 +326,24 @@ class _SettingCard extends StatelessWidget {
                     Text(
                       title,
                       style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                            fontWeight: FontWeight.w600,
-                          ),
+                        fontWeight: FontWeight.w600,
+                      ),
                     ),
                     const SizedBox(height: 2),
                     Text(
                       subtitle,
                       style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                            color: cs.onSurface.withValues(alpha: 0.55),
-                          ),
+                        color: cs.onSurface.withValues(alpha: 0.55),
+                      ),
                     ),
                   ],
                 ),
               ),
               if (trailing != null)
                 IconTheme(
-                  data: IconThemeData(color: cs.onSurface.withValues(alpha: 0.35)),
+                  data: IconThemeData(
+                    color: cs.onSurface.withValues(alpha: 0.35),
+                  ),
                   child: trailing!,
                 ),
             ],

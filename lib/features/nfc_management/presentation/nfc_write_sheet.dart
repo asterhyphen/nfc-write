@@ -16,11 +16,7 @@ class NfcWriteSheet extends ConsumerStatefulWidget {
   final WriteType? initialType;
   final String? initialContent;
 
-  const NfcWriteSheet({
-    super.key,
-    this.initialType,
-    this.initialContent,
-  });
+  const NfcWriteSheet({super.key, this.initialType, this.initialContent});
 
   @override
   ConsumerState<NfcWriteSheet> createState() => _NfcWriteSheetState();
@@ -306,10 +302,14 @@ class _ComposingForm extends StatelessWidget {
           Container(
             padding: const EdgeInsets.all(12),
             decoration: BoxDecoration(
-              color: Theme.of(context).colorScheme.errorContainer.withValues(alpha: 0.15),
+              color: Theme.of(
+                context,
+              ).colorScheme.errorContainer.withValues(alpha: 0.15),
               borderRadius: BorderRadius.circular(16),
               border: Border.all(
-                color: Theme.of(context).colorScheme.error.withValues(alpha: 0.2),
+                color: Theme.of(
+                  context,
+                ).colorScheme.error.withValues(alpha: 0.2),
                 width: 1,
               ),
             ),
@@ -320,7 +320,10 @@ class _ComposingForm extends StatelessWidget {
                   contentPadding: EdgeInsets.zero,
                   title: Row(
                     children: [
-                      Icon(Icons.lock_rounded, color: Theme.of(context).colorScheme.error),
+                      Icon(
+                        Icons.lock_rounded,
+                        color: Theme.of(context).colorScheme.error,
+                      ),
                       const SizedBox(width: 10),
                       const Text(
                         'Lock Tag (Read-Only)',
@@ -341,7 +344,11 @@ class _ComposingForm extends StatelessWidget {
                   Row(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Icon(Icons.warning_amber_rounded, size: 16, color: Theme.of(context).colorScheme.error),
+                      Icon(
+                        Icons.warning_amber_rounded,
+                        size: 16,
+                        color: Theme.of(context).colorScheme.error,
+                      ),
                       const SizedBox(width: 8),
                       Expanded(
                         child: Text(

@@ -312,28 +312,46 @@ class _NfcScanSheetState extends ConsumerState<NfcScanSheet> {
           int.tryParse(res.content.replaceFirst('timer://', '')) ?? 300;
       if (mounted) {
         Navigator.pop(context);
-        ref.read(timerProvider.notifier).start(secs, res.tagName ?? 'NFC Timer Action');
+        ref
+            .read(timerProvider.notifier)
+            .start(secs, res.tagName ?? 'NFC Timer Action');
         Navigator.push(context, FlipClockTimerScreen.route());
       }
     } else if (res.content.startsWith('notification://')) {
       final uri = Uri.parse(res.content);
       final title = uri.queryParameters['title'] ?? 'NFC Notification';
-      final body = uri.queryParameters['body'] ?? 'Automation Action Completed!';
+      final body =
+          uri.queryParameters['body'] ?? 'Automation Action Completed!';
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             backgroundColor: cs.primary,
             content: Row(
               children: [
-                const Icon(Icons.notifications_active_rounded, color: Colors.white),
+                const Icon(
+                  Icons.notifications_active_rounded,
+                  color: Colors.white,
+                ),
                 const SizedBox(width: 12),
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      Text(title, style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.white)),
-                      Text(body, style: const TextStyle(fontSize: 12, color: Colors.white70)),
+                      Text(
+                        title,
+                        style: const TextStyle(
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white,
+                        ),
+                      ),
+                      Text(
+                        body,
+                        style: const TextStyle(
+                          fontSize: 12,
+                          color: Colors.white70,
+                        ),
+                      ),
                     ],
                   ),
                 ),
@@ -351,9 +369,18 @@ class _NfcScanSheetState extends ConsumerState<NfcScanSheet> {
             backgroundColor: cs.secondary,
             content: Row(
               children: [
-                const Icon(Icons.do_not_disturb_on_rounded, color: Colors.white),
+                const Icon(
+                  Icons.do_not_disturb_on_rounded,
+                  color: Colors.white,
+                ),
                 const SizedBox(width: 12),
-                Text('Do Not Disturb: ${state.toUpperCase()} Activated!', style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.white)),
+                Text(
+                  'Do Not Disturb: ${state.toUpperCase()} Activated!',
+                  style: const TextStyle(
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white,
+                  ),
+                ),
               ],
             ),
           ),
@@ -444,19 +471,26 @@ class _NfcScanSheetState extends ConsumerState<NfcScanSheet> {
       children: [
         const SizedBox(height: 12),
         Container(
-          width: 80,
-          height: 80,
-          decoration: BoxDecoration(
-            color: const Color(0xFF22C55E).withValues(alpha: 0.1),
-            shape: BoxShape.circle,
-            border: Border.all(color: const Color(0xFF22C55E), width: 2),
-          ),
-          child: const Icon(Icons.check_rounded, color: Color(0xFF22C55E), size: 40),
-        ).animate().scale(
-          duration: 400.ms,
-          curve: Curves.easeOutBack, // overshoot spring easing
-          begin: const Offset(0.5, 0.5),
-        ).fadeIn(),
+              width: 80,
+              height: 80,
+              decoration: BoxDecoration(
+                color: const Color(0xFF22C55E).withValues(alpha: 0.1),
+                shape: BoxShape.circle,
+                border: Border.all(color: const Color(0xFF22C55E), width: 2),
+              ),
+              child: const Icon(
+                Icons.check_rounded,
+                color: Color(0xFF22C55E),
+                size: 40,
+              ),
+            )
+            .animate()
+            .scale(
+              duration: 400.ms,
+              curve: Curves.easeOutBack, // overshoot spring easing
+              begin: const Offset(0.5, 0.5),
+            )
+            .fadeIn(),
 
         const SizedBox(height: 16),
         Text(
@@ -654,7 +688,10 @@ class _WaitingState extends StatelessWidget {
             decoration: BoxDecoration(
               color: cs.primary.withValues(alpha: 0.08),
               shape: BoxShape.circle,
-              border: Border.all(color: cs.primary.withValues(alpha: 0.25), width: 1.5),
+              border: Border.all(
+                color: cs.primary.withValues(alpha: 0.25),
+                width: 1.5,
+              ),
             ),
             child: Icon(icon, size: 40, color: cs.primary),
           ),
@@ -688,7 +725,8 @@ class PulsingScanRing extends StatefulWidget {
   State<PulsingScanRing> createState() => _PulsingScanRingState();
 }
 
-class _PulsingScanRingState extends State<PulsingScanRing> with SingleTickerProviderStateMixin {
+class _PulsingScanRingState extends State<PulsingScanRing>
+    with SingleTickerProviderStateMixin {
   late AnimationController _controller;
 
   @override
@@ -722,7 +760,9 @@ class _PulsingScanRingState extends State<PulsingScanRing> with SingleTickerProv
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
                 border: Border.all(
-                  color: cs.primary.withValues(alpha: 0.25 * (1.0 - _controller.value)),
+                  color: cs.primary.withValues(
+                    alpha: 0.25 * (1.0 - _controller.value),
+                  ),
                   width: 3,
                 ),
               ),
@@ -734,7 +774,9 @@ class _PulsingScanRingState extends State<PulsingScanRing> with SingleTickerProv
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
                 border: Border.all(
-                  color: cs.primary.withValues(alpha: 0.15 * (1.0 - _controller.value)),
+                  color: cs.primary.withValues(
+                    alpha: 0.15 * (1.0 - _controller.value),
+                  ),
                   width: 2,
                 ),
               ),
@@ -759,19 +801,22 @@ class _ErrorState extends StatelessWidget {
       children: [
         const SizedBox(height: 20),
         Container(
-          width: 80,
-          height: 80,
-          decoration: BoxDecoration(
-            color: const Color(0xFFEF4444).withValues(alpha: 0.1),
-            shape: BoxShape.circle,
-            border: Border.all(color: const Color(0xFFEF4444), width: 2),
-          ),
-          child: const Icon(Icons.close_rounded, color: Color(0xFFEF4444), size: 40),
-        ).animate().shake(
-          hz: 8,
-          offset: const Offset(3, 0),
-          duration: 200.ms,
-        ).fadeIn(),
+              width: 80,
+              height: 80,
+              decoration: BoxDecoration(
+                color: const Color(0xFFEF4444).withValues(alpha: 0.1),
+                shape: BoxShape.circle,
+                border: Border.all(color: const Color(0xFFEF4444), width: 2),
+              ),
+              child: const Icon(
+                Icons.close_rounded,
+                color: Color(0xFFEF4444),
+                size: 40,
+              ),
+            )
+            .animate()
+            .shake(hz: 8, offset: const Offset(3, 0), duration: 200.ms)
+            .fadeIn(),
         const SizedBox(height: 20),
         Text(
           'Something went wrong',

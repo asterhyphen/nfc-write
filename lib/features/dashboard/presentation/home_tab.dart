@@ -63,19 +63,21 @@ class HomeDashboardTab extends ConsumerWidget {
                         children: [
                           Text(
                             'STUDIO WORKSPACE',
-                            style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                              color: cs.primary,
-                              fontWeight: FontWeight.w700,
-                              letterSpacing: 1.5,
-                            ),
+                            style: Theme.of(context).textTheme.labelSmall
+                                ?.copyWith(
+                                  color: cs.primary,
+                                  fontWeight: FontWeight.w700,
+                                  letterSpacing: 1.5,
+                                ),
                           ),
                           const SizedBox(height: 4),
                           Text(
                             'TapFlow NFC',
-                            style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                              fontWeight: FontWeight.w900,
-                              letterSpacing: -0.8,
-                            ),
+                            style: Theme.of(context).textTheme.headlineMedium
+                                ?.copyWith(
+                                  fontWeight: FontWeight.w900,
+                                  letterSpacing: -0.8,
+                                ),
                           ),
                         ],
                       ),
@@ -107,7 +109,10 @@ class HomeDashboardTab extends ConsumerWidget {
                       borderRadius: BorderRadius.circular(16),
                       onTap: () => _openScanSheet(context, ref),
                       child: Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 28),
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 24,
+                          vertical: 28,
+                        ),
                         child: Row(
                           children: [
                             Container(
@@ -141,13 +146,15 @@ class HomeDashboardTab extends ConsumerWidget {
                                       const SizedBox(width: 8),
                                       // Pulsing status dot
                                       Container(
-                                        width: 6,
-                                        height: 6,
-                                        decoration: const BoxDecoration(
-                                          shape: BoxShape.circle,
-                                          color: Color(0xFF10B981),
-                                        ),
-                                      ).animate(onPlay: (c) => c.repeat()).scale(
+                                            width: 6,
+                                            height: 6,
+                                            decoration: const BoxDecoration(
+                                              shape: BoxShape.circle,
+                                              color: Color(0xFF10B981),
+                                            ),
+                                          )
+                                          .animate(onPlay: (c) => c.repeat())
+                                          .scale(
                                             begin: const Offset(1, 1),
                                             end: const Offset(1.5, 1.5),
                                             duration: 800.ms,
@@ -158,7 +165,10 @@ class HomeDashboardTab extends ConsumerWidget {
                                   const SizedBox(height: 6),
                                   Text(
                                     'Tap to Scan NFC Tag',
-                                    style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .titleLarge
+                                        ?.copyWith(
                                           fontSize: 18,
                                           fontWeight: FontWeight.bold,
                                           letterSpacing: -0.3,
@@ -184,9 +194,9 @@ class HomeDashboardTab extends ConsumerWidget {
                   Text(
                     'Program Actions to Tag',
                     style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                          fontWeight: FontWeight.w800,
-                          letterSpacing: -0.5,
-                        ),
+                      fontWeight: FontWeight.w800,
+                      letterSpacing: -0.5,
+                    ),
                   ).animate().fadeIn(delay: 300.ms),
                   const SizedBox(height: 14),
 
@@ -315,7 +325,8 @@ class HomeDashboardTab extends ConsumerWidget {
             backgroundColor: Colors.transparent,
             builder: (_) => NfcWriteSheet(
               initialType: WriteType.text,
-              initialContent: 'notification://?title=$encodedTitle&body=$encodedBody',
+              initialContent:
+                  'notification://?title=$encodedTitle&body=$encodedBody',
             ),
           );
         },
@@ -390,7 +401,8 @@ class HomeDashboardTab extends ConsumerWidget {
       builder: (ctx) => _ContactProgramDialog(
         onConfirm: (name, phone) {
           Navigator.pop(ctx);
-          final vcard = 'BEGIN:VCARD\nVERSION:3.0\nN:${name.trim()}\nTEL;TYPE=CELL:${phone.trim()}\nEND:VCARD';
+          final vcard =
+              'BEGIN:VCARD\nVERSION:3.0\nN:${name.trim()}\nTEL;TYPE=CELL:${phone.trim()}\nEND:VCARD';
           showModalBottomSheet(
             context: context,
             isScrollControlled: true,
@@ -411,7 +423,10 @@ class HomeDashboardTab extends ConsumerWidget {
 class _TimerProgramDialog extends StatefulWidget {
   final void Function(int seconds) onWriteTag;
   final void Function(int seconds) onStartNow;
-  const _TimerProgramDialog({required this.onWriteTag, required this.onStartNow});
+  const _TimerProgramDialog({
+    required this.onWriteTag,
+    required this.onStartNow,
+  });
 
   @override
   State<_TimerProgramDialog> createState() => _TimerProgramDialogState();
@@ -469,10 +484,7 @@ class _TimerProgramDialogState extends State<_TimerProgramDialog> {
         decoration: BoxDecoration(
           color: isDark ? const Color(0xFF0E111A) : Colors.white,
           borderRadius: BorderRadius.circular(28),
-          border: Border.all(
-            color: cs.outline,
-            width: 1.5,
-          ),
+          border: Border.all(color: cs.outline, width: 1.5),
           boxShadow: [
             BoxShadow(
               color: Colors.black.withValues(alpha: isDark ? 0.3 : 0.1),
@@ -494,7 +506,11 @@ class _TimerProgramDialogState extends State<_TimerProgramDialog> {
                     color: Colors.orange.withValues(alpha: 0.15),
                     borderRadius: BorderRadius.circular(12),
                   ),
-                  child: const Icon(Icons.timer_rounded, color: Colors.orange, size: 20),
+                  child: const Icon(
+                    Icons.timer_rounded,
+                    color: Colors.orange,
+                    size: 20,
+                  ),
                 ),
                 const SizedBox(width: 12),
                 const Text(
@@ -508,7 +524,11 @@ class _TimerProgramDialogState extends State<_TimerProgramDialog> {
             // Preset Chips
             const Text(
               'Presets',
-              style: TextStyle(fontSize: 11, fontWeight: FontWeight.bold, color: Colors.grey),
+              style: TextStyle(
+                fontSize: 11,
+                fontWeight: FontWeight.bold,
+                color: Colors.grey,
+              ),
             ),
             const SizedBox(height: 8),
             Row(
@@ -526,11 +546,17 @@ class _TimerProgramDialogState extends State<_TimerProgramDialog> {
             // Live Time Display
             Center(
               child: Container(
-                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 20,
+                  vertical: 10,
+                ),
                 decoration: BoxDecoration(
                   color: Colors.orange.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(16),
-                  border: Border.all(color: Colors.orange.withValues(alpha: 0.3), width: 1.2),
+                  border: Border.all(
+                    color: Colors.orange.withValues(alpha: 0.3),
+                    width: 1.2,
+                  ),
                 ),
                 child: Text(
                   '${_minutes.toString().padLeft(2, '0')}:${_seconds.toString().padLeft(2, '0')}',
@@ -555,8 +581,13 @@ class _TimerProgramDialogState extends State<_TimerProgramDialog> {
                     onChanged: (_) => _updateFromInputs(),
                     decoration: InputDecoration(
                       labelText: 'Minutes',
-                      border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
-                      contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      contentPadding: const EdgeInsets.symmetric(
+                        horizontal: 12,
+                        vertical: 12,
+                      ),
                     ),
                   ),
                 ),
@@ -568,8 +599,13 @@ class _TimerProgramDialogState extends State<_TimerProgramDialog> {
                     onChanged: (_) => _updateFromInputs(),
                     decoration: InputDecoration(
                       labelText: 'Seconds',
-                      border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
-                      contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      contentPadding: const EdgeInsets.symmetric(
+                        horizontal: 12,
+                        vertical: 12,
+                      ),
                     ),
                   ),
                 ),
@@ -607,7 +643,10 @@ class _TimerProgramDialogState extends State<_TimerProgramDialog> {
               children: [
                 TextButton(
                   onPressed: () => Navigator.pop(context),
-                  child: const Text('Cancel', style: TextStyle(color: Colors.grey)),
+                  child: const Text(
+                    'Cancel',
+                    style: TextStyle(color: Colors.grey),
+                  ),
                 ),
                 const SizedBox(width: 8),
                 OutlinedButton(
@@ -617,7 +656,9 @@ class _TimerProgramDialogState extends State<_TimerProgramDialog> {
                   style: OutlinedButton.styleFrom(
                     foregroundColor: Colors.orange,
                     side: const BorderSide(color: Colors.orange),
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
                   ),
                   child: const Text('Write to Tag'),
                 ),
@@ -629,7 +670,9 @@ class _TimerProgramDialogState extends State<_TimerProgramDialog> {
                   style: FilledButton.styleFrom(
                     backgroundColor: Colors.orange,
                     foregroundColor: Colors.white,
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
                   ),
                   child: const Text('Start Now'),
                 ),
@@ -667,12 +710,16 @@ class _NotificationProgramDialog extends StatefulWidget {
   const _NotificationProgramDialog({required this.onConfirm});
 
   @override
-  State<_NotificationProgramDialog> createState() => _NotificationProgramDialogState();
+  State<_NotificationProgramDialog> createState() =>
+      _NotificationProgramDialogState();
 }
 
-class _NotificationProgramDialogState extends State<_NotificationProgramDialog> {
+class _NotificationProgramDialogState
+    extends State<_NotificationProgramDialog> {
   final _titleCtrl = TextEditingController(text: 'Focus Mode');
-  final _bodyCtrl = TextEditingController(text: 'NFC action sequence triggered successfully!');
+  final _bodyCtrl = TextEditingController(
+    text: 'NFC action sequence triggered successfully!',
+  );
 
   @override
   void dispose() {
@@ -707,10 +754,17 @@ class _NotificationProgramDialogState extends State<_NotificationProgramDialog> 
                     color: Colors.blue.withValues(alpha: 0.15),
                     borderRadius: BorderRadius.circular(12),
                   ),
-                  child: const Icon(Icons.notifications_active_rounded, color: Colors.blue, size: 20),
+                  child: const Icon(
+                    Icons.notifications_active_rounded,
+                    color: Colors.blue,
+                    size: 20,
+                  ),
                 ),
                 const SizedBox(width: 12),
-                const Text('Program Notification', style: TextStyle(fontSize: 18, fontWeight: FontWeight.w800)),
+                const Text(
+                  'Program Notification',
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.w800),
+                ),
               ],
             ),
             const SizedBox(height: 20),
@@ -718,7 +772,9 @@ class _NotificationProgramDialogState extends State<_NotificationProgramDialog> 
               controller: _titleCtrl,
               decoration: InputDecoration(
                 labelText: 'Notification Title',
-                border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
               ),
             ),
             const SizedBox(height: 16),
@@ -727,7 +783,9 @@ class _NotificationProgramDialogState extends State<_NotificationProgramDialog> 
               maxLines: 2,
               decoration: InputDecoration(
                 labelText: 'Message Body',
-                border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
               ),
             ),
             const SizedBox(height: 24),
@@ -736,14 +794,20 @@ class _NotificationProgramDialogState extends State<_NotificationProgramDialog> 
               children: [
                 TextButton(
                   onPressed: () => Navigator.pop(context),
-                  child: const Text('Cancel', style: TextStyle(color: Colors.grey)),
+                  child: const Text(
+                    'Cancel',
+                    style: TextStyle(color: Colors.grey),
+                  ),
                 ),
                 const SizedBox(width: 12),
                 FilledButton(
-                  onPressed: () => widget.onConfirm(_titleCtrl.text, _bodyCtrl.text),
+                  onPressed: () =>
+                      widget.onConfirm(_titleCtrl.text, _bodyCtrl.text),
                   style: FilledButton.styleFrom(
                     backgroundColor: Colors.blue,
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(14),
+                    ),
                   ),
                   child: const Text('Confirm Action'),
                 ),
@@ -786,10 +850,17 @@ class _DndProgramDialog extends StatelessWidget {
                     color: Colors.redAccent.withValues(alpha: 0.15),
                     borderRadius: BorderRadius.circular(12),
                   ),
-                  child: const Icon(Icons.do_not_disturb_on_rounded, color: Colors.redAccent, size: 20),
+                  child: const Icon(
+                    Icons.do_not_disturb_on_rounded,
+                    color: Colors.redAccent,
+                    size: 20,
+                  ),
                 ),
                 const SizedBox(width: 12),
-                const Text('Program DND Action', style: TextStyle(fontSize: 18, fontWeight: FontWeight.w800)),
+                const Text(
+                  'Program DND Action',
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.w800),
+                ),
               ],
             ),
             const SizedBox(height: 16),
@@ -803,14 +874,19 @@ class _DndProgramDialog extends StatelessWidget {
               children: [
                 TextButton(
                   onPressed: () => Navigator.pop(context),
-                  child: const Text('Cancel', style: TextStyle(color: Colors.grey)),
+                  child: const Text(
+                    'Cancel',
+                    style: TextStyle(color: Colors.grey),
+                  ),
                 ),
                 const SizedBox(width: 12),
                 FilledButton(
                   onPressed: onConfirm,
                   style: FilledButton.styleFrom(
                     backgroundColor: Colors.redAccent,
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(14),
+                    ),
                   ),
                   child: const Text('Confirm Action'),
                 ),
@@ -866,10 +942,17 @@ class _UrlProgramDialogState extends State<_UrlProgramDialog> {
                     color: Colors.teal.withValues(alpha: 0.15),
                     borderRadius: BorderRadius.circular(12),
                   ),
-                  child: const Icon(Icons.link_rounded, color: Colors.teal, size: 20),
+                  child: const Icon(
+                    Icons.link_rounded,
+                    color: Colors.teal,
+                    size: 20,
+                  ),
                 ),
                 const SizedBox(width: 12),
-                const Text('Program URL Link', style: TextStyle(fontSize: 18, fontWeight: FontWeight.w800)),
+                const Text(
+                  'Program URL Link',
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.w800),
+                ),
               ],
             ),
             const SizedBox(height: 20),
@@ -877,7 +960,9 @@ class _UrlProgramDialogState extends State<_UrlProgramDialog> {
               controller: _urlCtrl,
               decoration: InputDecoration(
                 labelText: 'Web URL Address',
-                border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
               ),
             ),
             const SizedBox(height: 24),
@@ -886,14 +971,19 @@ class _UrlProgramDialogState extends State<_UrlProgramDialog> {
               children: [
                 TextButton(
                   onPressed: () => Navigator.pop(context),
-                  child: const Text('Cancel', style: TextStyle(color: Colors.grey)),
+                  child: const Text(
+                    'Cancel',
+                    style: TextStyle(color: Colors.grey),
+                  ),
                 ),
                 const SizedBox(width: 12),
                 FilledButton(
                   onPressed: () => widget.onConfirm(_urlCtrl.text),
                   style: FilledButton.styleFrom(
                     backgroundColor: Colors.teal,
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(14),
+                    ),
                   ),
                   child: const Text('Confirm Link'),
                 ),
@@ -951,10 +1041,17 @@ class _WifiProgramDialogState extends State<_WifiProgramDialog> {
                     color: Colors.purple.withValues(alpha: 0.15),
                     borderRadius: BorderRadius.circular(12),
                   ),
-                  child: const Icon(Icons.wifi_rounded, color: Colors.purple, size: 20),
+                  child: const Icon(
+                    Icons.wifi_rounded,
+                    color: Colors.purple,
+                    size: 20,
+                  ),
                 ),
                 const SizedBox(width: 12),
-                const Text('Program Wi-Fi Login', style: TextStyle(fontSize: 18, fontWeight: FontWeight.w800)),
+                const Text(
+                  'Program Wi-Fi Login',
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.w800),
+                ),
               ],
             ),
             const SizedBox(height: 20),
@@ -962,7 +1059,9 @@ class _WifiProgramDialogState extends State<_WifiProgramDialog> {
               controller: _ssidCtrl,
               decoration: InputDecoration(
                 labelText: 'Wi-Fi Name (SSID)',
-                border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
               ),
             ),
             const SizedBox(height: 16),
@@ -971,7 +1070,9 @@ class _WifiProgramDialogState extends State<_WifiProgramDialog> {
               obscureText: true,
               decoration: InputDecoration(
                 labelText: 'Password',
-                border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
               ),
             ),
             const SizedBox(height: 24),
@@ -980,14 +1081,20 @@ class _WifiProgramDialogState extends State<_WifiProgramDialog> {
               children: [
                 TextButton(
                   onPressed: () => Navigator.pop(context),
-                  child: const Text('Cancel', style: TextStyle(color: Colors.grey)),
+                  child: const Text(
+                    'Cancel',
+                    style: TextStyle(color: Colors.grey),
+                  ),
                 ),
                 const SizedBox(width: 12),
                 FilledButton(
-                  onPressed: () => widget.onConfirm(_ssidCtrl.text, _passCtrl.text),
+                  onPressed: () =>
+                      widget.onConfirm(_ssidCtrl.text, _passCtrl.text),
                   style: FilledButton.styleFrom(
                     backgroundColor: Colors.purple,
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(14),
+                    ),
                   ),
                   child: const Text('Confirm Action'),
                 ),
@@ -1045,10 +1152,17 @@ class _ContactProgramDialogState extends State<_ContactProgramDialog> {
                     color: Colors.pink.withValues(alpha: 0.15),
                     borderRadius: BorderRadius.circular(12),
                   ),
-                  child: const Icon(Icons.badge_rounded, color: Colors.pink, size: 20),
+                  child: const Icon(
+                    Icons.badge_rounded,
+                    color: Colors.pink,
+                    size: 20,
+                  ),
                 ),
                 const SizedBox(width: 12),
-                const Text('Program Contact Card', style: TextStyle(fontSize: 18, fontWeight: FontWeight.w800)),
+                const Text(
+                  'Program Contact Card',
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.w800),
+                ),
               ],
             ),
             const SizedBox(height: 20),
@@ -1056,7 +1170,9 @@ class _ContactProgramDialogState extends State<_ContactProgramDialog> {
               controller: _nameCtrl,
               decoration: InputDecoration(
                 labelText: 'Full Name',
-                border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
               ),
             ),
             const SizedBox(height: 16),
@@ -1065,7 +1181,9 @@ class _ContactProgramDialogState extends State<_ContactProgramDialog> {
               keyboardType: TextInputType.phone,
               decoration: InputDecoration(
                 labelText: 'Phone Number',
-                border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
               ),
             ),
             const SizedBox(height: 24),
@@ -1074,14 +1192,20 @@ class _ContactProgramDialogState extends State<_ContactProgramDialog> {
               children: [
                 TextButton(
                   onPressed: () => Navigator.pop(context),
-                  child: const Text('Cancel', style: TextStyle(color: Colors.grey)),
+                  child: const Text(
+                    'Cancel',
+                    style: TextStyle(color: Colors.grey),
+                  ),
                 ),
                 const SizedBox(width: 12),
                 FilledButton(
-                  onPressed: () => widget.onConfirm(_nameCtrl.text, _phoneCtrl.text),
+                  onPressed: () =>
+                      widget.onConfirm(_nameCtrl.text, _phoneCtrl.text),
                   style: FilledButton.styleFrom(
                     backgroundColor: Colors.pink,
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(14),
+                    ),
                   ),
                   child: const Text('Confirm Action'),
                 ),
@@ -1121,110 +1245,121 @@ class _DesignerActionTile extends StatelessWidget {
     final cardBg = isDark ? const Color(0xFF17171D) : Colors.white;
 
     return Container(
-      margin: const EdgeInsets.only(bottom: 12), // Gap between stacked cards: 12px
-      decoration: BoxDecoration(
-        color: cardBg,
-        borderRadius: BorderRadius.circular(16), // Medium radius (16px)
-        border: Border.all(color: border, width: 1.0),
-        boxShadow: [
-          // Level 1 Shadow
-          BoxShadow(
-            color: Colors.black.withValues(alpha: isDark ? 0.4 : 0.04),
-            blurRadius: 3,
-            offset: const Offset(0, 1),
+          margin: const EdgeInsets.only(
+            bottom: 12,
+          ), // Gap between stacked cards: 12px
+          decoration: BoxDecoration(
+            color: cardBg,
+            borderRadius: BorderRadius.circular(16), // Medium radius (16px)
+            border: Border.all(color: border, width: 1.0),
+            boxShadow: [
+              // Level 1 Shadow
+              BoxShadow(
+                color: Colors.black.withValues(alpha: isDark ? 0.4 : 0.04),
+                blurRadius: 3,
+                offset: const Offset(0, 1),
+              ),
+              BoxShadow(
+                color: Colors.black.withValues(alpha: isDark ? 0.3 : 0.03),
+                blurRadius: 2,
+                offset: const Offset(0, 1),
+              ),
+            ],
           ),
-          BoxShadow(
-            color: Colors.black.withValues(alpha: isDark ? 0.3 : 0.03),
-            blurRadius: 2,
-            offset: const Offset(0, 1),
-          ),
-        ],
-      ),
-      child: Material(
-        color: Colors.transparent,
-        borderRadius: BorderRadius.circular(16),
-        child: InkWell(
-          onTap: onTap,
-          borderRadius: BorderRadius.circular(16),
-          child: Padding(
-            padding: const EdgeInsets.all(16), // Card internal padding: 16px
-            child: Row(
-              children: [
-                // Icon block
-                Container(
-                  width: 44, // Minimum 44px tap target
-                  height: 44,
-                  decoration: BoxDecoration(
-                    color: color.withValues(alpha: 0.1),
-                    shape: BoxShape.circle,
-                  ),
-                  child: Icon(icon, color: color, size: 20),
-                ),
-                const SizedBox(width: 16),
-                // Text descriptions
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Row(
+          child: Material(
+            color: Colors.transparent,
+            borderRadius: BorderRadius.circular(16),
+            child: InkWell(
+              onTap: onTap,
+              borderRadius: BorderRadius.circular(16),
+              child: Padding(
+                padding: const EdgeInsets.all(
+                  16,
+                ), // Card internal padding: 16px
+                child: Row(
+                  children: [
+                    // Icon block
+                    Container(
+                      width: 44, // Minimum 44px tap target
+                      height: 44,
+                      decoration: BoxDecoration(
+                        color: color.withValues(alpha: 0.1),
+                        shape: BoxShape.circle,
+                      ),
+                      child: Icon(icon, color: color, size: 20),
+                    ),
+                    const SizedBox(width: 16),
+                    // Text descriptions
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisSize: MainAxisSize.min,
                         children: [
-                          Text(
-                            title,
-                            style: GoogleFonts.inter(
-                              fontSize: 15,
-                              fontWeight: FontWeight.w600, // Heading/Body Emphasis Style
-                              letterSpacing: 0,
-                            ),
-                          ),
-                          const SizedBox(width: 8),
-                          // Mini category pill
-                          Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-                            decoration: BoxDecoration(
-                              color: color.withValues(alpha: 0.1),
-                              borderRadius: BorderRadius.circular(10), // Small radius (10px)
-                            ),
-                            child: Text(
-                              tag.toUpperCase(),
-                              style: GoogleFonts.inter(
-                                fontSize: 11,
-                                fontWeight: FontWeight.w600,
-                                color: color,
-                                letterSpacing: 0.04 * 11,
+                          Row(
+                            children: [
+                              Text(
+                                title,
+                                style: GoogleFonts.inter(
+                                  fontSize: 15,
+                                  fontWeight: FontWeight
+                                      .w600, // Heading/Body Emphasis Style
+                                  letterSpacing: 0,
+                                ),
                               ),
+                              const SizedBox(width: 8),
+                              // Mini category pill
+                              Container(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 6,
+                                  vertical: 2,
+                                ),
+                                decoration: BoxDecoration(
+                                  color: color.withValues(alpha: 0.1),
+                                  borderRadius: BorderRadius.circular(
+                                    10,
+                                  ), // Small radius (10px)
+                                ),
+                                child: Text(
+                                  tag.toUpperCase(),
+                                  style: GoogleFonts.inter(
+                                    fontSize: 11,
+                                    fontWeight: FontWeight.w600,
+                                    color: color,
+                                    letterSpacing: 0.04 * 11,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 4),
+                          Text(
+                            subtitle,
+                            style: GoogleFonts.inter(
+                              fontSize: 13,
+                              fontWeight: FontWeight.w500,
+                              color: isDark
+                                  ? const Color(0xFF9A9AA5)
+                                  : const Color(0xFF6B6B76), // Text Secondary
                             ),
                           ),
                         ],
                       ),
-                      const SizedBox(height: 4),
-                      Text(
-                        subtitle,
-                        style: GoogleFonts.inter(
-                          fontSize: 13,
-                          fontWeight: FontWeight.w500,
-                          color: isDark ? const Color(0xFF9A9AA5) : const Color(0xFF6B6B76), // Text Secondary
-                        ),
-                      ),
-                    ],
-                  ),
+                    ),
+                    Icon(
+                      Icons.arrow_forward_ios_rounded,
+                      size: 14,
+                      color: isDark
+                          ? const Color(0xFF5C5C66)
+                          : const Color(0xFFA6A6B0), // Text Tertiary
+                    ),
+                  ],
                 ),
-                Icon(
-                  Icons.arrow_forward_ios_rounded,
-                  size: 14,
-                  color: isDark ? const Color(0xFF5C5C66) : const Color(0xFFA6A6B0), // Text Tertiary
-                ),
-              ],
+              ),
             ),
           ),
-        ),
-      ),
-    ).animate().fadeIn(
-          delay: Duration(milliseconds: 350 + (index * 60)),
-        ).slideY(
-          begin: 0.08,
-          curve: Curves.easeOutQuad,
-          duration: 400.ms,
-        );
+        )
+        .animate()
+        .fadeIn(delay: Duration(milliseconds: 350 + (index * 60)))
+        .slideY(begin: 0.08, curve: Curves.easeOutQuad, duration: 400.ms);
   }
 }

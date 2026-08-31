@@ -8,7 +8,9 @@ class AppTheme {
   static const Color accent600 = Color(0xFF4548D9);
   static const Color accent400 = Color(0xFF7B7FF5);
   static const Color accent100 = Color(0xFFEDEEFE);
-  static final Color accentGlow = const Color(0xFF5B5FEF).withValues(alpha: 0.25);
+  static final Color accentGlow = const Color(
+    0xFF5B5FEF,
+  ).withValues(alpha: 0.25);
 
   // Semantic Colors
   static const Color success = Color(0xFF22C55E);
@@ -166,7 +168,10 @@ class AppTheme {
       inputDecorationTheme: InputDecorationTheme(
         filled: true,
         fillColor: surfaceLight,
-        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+        contentPadding: const EdgeInsets.symmetric(
+          horizontal: 16,
+          vertical: 14,
+        ),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(10),
           borderSide: const BorderSide(color: borderLight, width: 1.5),
@@ -318,7 +323,10 @@ class AppTheme {
       inputDecorationTheme: InputDecorationTheme(
         filled: true,
         fillColor: surfaceDark,
-        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+        contentPadding: const EdgeInsets.symmetric(
+          horizontal: 16,
+          vertical: 14,
+        ),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(10),
           borderSide: const BorderSide(color: borderDark, width: 1.5),

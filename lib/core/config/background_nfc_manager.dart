@@ -29,13 +29,17 @@ class BackgroundNfcManager {
     });
   }
 
-  static Future<void> _handlePayload(String payload, WidgetRef ref, BuildContext context) async {
+  static Future<void> _handlePayload(
+    String payload,
+    WidgetRef ref,
+    BuildContext context,
+  ) async {
     if (payload.startsWith('timer://')) {
       final secs = int.tryParse(payload.replaceFirst('timer://', '')) ?? 300;
       final registry = await ref.read(tagRegistryRepositoryProvider.future);
       final tagName = registry.getTagName(payload);
       ref.read(timerProvider.notifier).start(secs, tagName ?? 'TIMER');
-      
+
       if (context.mounted) {
         // Push Flip Clock Screen
         Navigator.push(context, FlipClockTimerScreen.route());
@@ -43,22 +47,38 @@ class BackgroundNfcManager {
     } else if (payload.startsWith('notification://')) {
       final uri = Uri.parse(payload);
       final title = uri.queryParameters['title'] ?? 'NFC Notification';
-      final body = uri.queryParameters['body'] ?? 'Automation Action Completed!';
-      
+      final body =
+          uri.queryParameters['body'] ?? 'Automation Action Completed!';
+
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           backgroundColor: Theme.of(context).colorScheme.primary,
           content: Row(
             children: [
-              const Icon(Icons.notifications_active_rounded, color: Colors.white),
+              const Icon(
+                Icons.notifications_active_rounded,
+                color: Colors.white,
+              ),
               const SizedBox(width: 12),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    Text(title, style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.white)),
-                    Text(body, style: const TextStyle(fontSize: 12, color: Colors.white70)),
+                    Text(
+                      title,
+                      style: const TextStyle(
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
+                      ),
+                    ),
+                    Text(
+                      body,
+                      style: const TextStyle(
+                        fontSize: 12,
+                        color: Colors.white70,
+                      ),
+                    ),
                   ],
                 ),
               ),
@@ -69,7 +89,7 @@ class BackgroundNfcManager {
     } else if (payload.startsWith('dnd://')) {
       final uri = Uri.parse(payload);
       final state = uri.queryParameters['state'] ?? 'toggle';
-      
+
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           backgroundColor: Theme.of(context).colorScheme.secondary,
@@ -78,8 +98,11 @@ class BackgroundNfcManager {
               const Icon(Icons.do_not_disturb_on_rounded, color: Colors.white),
               const SizedBox(width: 12),
               Text(
-                'Do Not Disturb: ${state.toUpperCase()} Activated!', 
-                style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.white),
+                'Do Not Disturb: ${state.toUpperCase()} Activated!',
+                style: const TextStyle(
+                  fontWeight: FontWeight.bold,
+                  color: Colors.white,
+                ),
               ),
             ],
           ),
