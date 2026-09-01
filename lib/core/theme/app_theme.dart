@@ -129,7 +129,7 @@ class AppTheme {
           backgroundColor: appleIndigo,
           foregroundColor: Colors.white,
           padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
-          minimumSize: const Size.fromHeight(50),
+          minimumSize: const Size(0, 44),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(14),
           ),
@@ -144,7 +144,7 @@ class AppTheme {
           foregroundColor: appleIndigo,
           side: const BorderSide(color: borderLight, width: 1),
           padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
-          minimumSize: const Size.fromHeight(50),
+          minimumSize: const Size(0, 44),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(14),
           ),
@@ -273,7 +273,7 @@ class AppTheme {
           backgroundColor: appleIndigoDark,
           foregroundColor: Colors.white,
           padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
-          minimumSize: const Size.fromHeight(50),
+          minimumSize: const Size(0, 44),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(14),
           ),
@@ -288,7 +288,7 @@ class AppTheme {
           foregroundColor: appleIndigoDark,
           side: const BorderSide(color: borderDark, width: 1),
           padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
-          minimumSize: const Size.fromHeight(50),
+          minimumSize: const Size(0, 44),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(14),
           ),
