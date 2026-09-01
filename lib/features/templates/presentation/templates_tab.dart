@@ -1,6 +1,8 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 import '../../../core/widgets/glass_card.dart';
 import '../../nfc_management/presentation/nfc_write_sheet.dart';
@@ -101,55 +103,65 @@ class _TemplatesTabState extends ConsumerState<TemplatesTab> {
       return categoryMatch && searchMatch;
     }).toList();
 
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     return Padding(
       padding: const EdgeInsets.fromLTRB(20, 20, 20, 0),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'Templates Library',
-            style: Theme.of(
-              context,
-            ).textTheme.headlineMedium?.copyWith(fontWeight: FontWeight.bold),
+            'Templates',
+            style: GoogleFonts.inter(
+              fontSize: 34,
+              fontWeight: FontWeight.w700,
+              letterSpacing: -0.8,
+            ),
           ).animate().fadeIn(duration: 300.ms),
-          const SizedBox(height: 6),
+          const SizedBox(height: 4),
           Text(
-            'Pre-built NFC configurations ready to write to any tag.',
-            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-              color: cs.onSurface.withValues(alpha: 0.6),
+            'Pre-configured NFC tags ready to program.',
+            style: GoogleFonts.inter(
+              fontSize: 15,
+              fontWeight: FontWeight.w400,
+              color: isDark ? const Color(0xFF8E8E93) : const Color(0xFF8E8E93),
             ),
           ).animate().fadeIn(delay: 100.ms),
 
-          const SizedBox(height: 18),
+          const SizedBox(height: 16),
 
-          // Search Bar
-          TextField(
-            decoration: InputDecoration(
-              hintText: 'Search templates…',
-              prefixIcon: Icon(
-                Icons.search_rounded,
-                color: cs.primary.withValues(alpha: 0.6),
-              ),
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(16),
-                borderSide: BorderSide(color: cs.outline),
-              ),
-              enabledBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(16),
-                borderSide: BorderSide(color: cs.outline),
-              ),
-              focusedBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(16),
-                borderSide: BorderSide(color: cs.primary, width: 1.5),
-              ),
-              filled: true,
-              fillColor: cs.surfaceContainerLow,
-              contentPadding: const EdgeInsets.symmetric(
-                vertical: 14,
-                horizontal: 16,
+          // Apple iOS Search Bar
+          Container(
+            height: 44,
+            decoration: BoxDecoration(
+              color: isDark
+                  ? const Color(0xFF1C1C1E)
+                  : const Color(0xFFE5E5EA).withValues(alpha: 0.6),
+              borderRadius: BorderRadius.circular(12),
+              border: Border.all(
+                color: isDark ? const Color(0xFF38383A) : Colors.transparent,
+                width: 0.5,
               ),
             ),
-            onChanged: (v) => setState(() => _searchQuery = v.toLowerCase()),
+            child: TextField(
+              decoration: const InputDecoration(
+                hintText: 'Search templates…',
+                prefixIcon: Icon(
+                  CupertinoIcons.search,
+                  size: 20,
+                  color: Color(0xFF8E8E93),
+                ),
+                border: InputBorder.none,
+                enabledBorder: InputBorder.none,
+                focusedBorder: InputBorder.none,
+                filled: false,
+                contentPadding: EdgeInsets.symmetric(
+                  vertical: 11,
+                  horizontal: 14,
+                ),
+              ),
+              onChanged: (v) => setState(() => _searchQuery = v.toLowerCase()),
+            ),
           ).animate().fadeIn(delay: 150.ms),
 
           const SizedBox(height: 14),

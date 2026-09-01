@@ -1,82 +1,90 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 import '../../history/presentation/history_notifier.dart';
 import '../data/backup_service.dart';
 
-/// Settings tab with real controls for appearance, JSON backup/restore, and history.
+/// Settings tab styled with Apple iOS Inset Grouped design.
 class SettingsTab extends ConsumerWidget {
   const SettingsTab({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final cs = Theme.of(context).colorScheme;
-
     return ListView(
-      padding: const EdgeInsets.all(20),
+      padding: const EdgeInsets.fromLTRB(20, 20, 20, 32),
       children: [
         Text(
           'Settings',
-          style: Theme.of(
-            context,
-          ).textTheme.headlineMedium?.copyWith(fontWeight: FontWeight.bold),
+          style: GoogleFonts.inter(
+            fontSize: 34,
+            fontWeight: FontWeight.w700,
+            letterSpacing: -0.8,
+          ),
         ).animate().fadeIn(duration: 300.ms),
-        const SizedBox(height: 24),
+        const SizedBox(height: 20),
 
-        _SectionHeader('Appearance'),
+        _SectionHeader('APPEARANCE'),
         _SettingCard(
-          icon: Icons.dark_mode_outlined,
+          icon: CupertinoIcons.moon_fill,
+          badgeColor: const Color(0xFF5856D6),
           title: 'Theme Mode',
-          subtitle: 'Follow system theme',
-          trailing: const Icon(Icons.chevron_right),
+          subtitle: 'Follows system appearance',
+          trailing: const Icon(CupertinoIcons.chevron_right, size: 14),
           onTap: () => _showThemeDialog(context),
-        ).animate().fadeIn(delay: 100.ms).slideX(begin: 0.1),
+        ).animate().fadeIn(delay: 100.ms).slideX(begin: 0.05),
 
         const SizedBox(height: 16),
-        _SectionHeader('Backup & Data'),
+        _SectionHeader('DATA & BACKUP'),
         _SettingCard(
-          icon: Icons.upload_rounded,
+          icon: CupertinoIcons.arrow_up_doc_fill,
+          badgeColor: const Color(0xFF007AFF),
           title: 'Export Backup (JSON)',
           subtitle: 'Export scan history & tag aliases',
-          trailing: const Icon(Icons.chevron_right),
+          trailing: const Icon(CupertinoIcons.chevron_right, size: 14),
           onTap: () => _exportBackup(context, ref),
-        ).animate().fadeIn(delay: 150.ms).slideX(begin: 0.1),
+        ).animate().fadeIn(delay: 150.ms).slideX(begin: 0.05),
 
         _SettingCard(
-          icon: Icons.download_rounded,
+          icon: CupertinoIcons.arrow_down_doc_fill,
+          badgeColor: const Color(0xFF34C759),
           title: 'Import Backup (JSON)',
           subtitle: 'Restore scan records & tag aliases',
-          trailing: const Icon(Icons.chevron_right),
+          trailing: const Icon(CupertinoIcons.chevron_right, size: 14),
           onTap: () => _importBackup(context, ref),
-        ).animate().fadeIn(delay: 200.ms).slideX(begin: 0.1),
+        ).animate().fadeIn(delay: 200.ms).slideX(begin: 0.05),
 
         _SettingCard(
-          icon: Icons.delete_forever_outlined,
+          icon: CupertinoIcons.trash_fill,
+          badgeColor: const Color(0xFFFF3B30),
           title: 'Clear Scan History',
           subtitle: 'Remove all recorded scans',
-          iconColor: cs.error,
+          iconColor: Colors.white,
           onTap: () => _confirmClearHistory(context, ref),
-        ).animate().fadeIn(delay: 250.ms).slideX(begin: 0.1),
+        ).animate().fadeIn(delay: 250.ms).slideX(begin: 0.05),
 
         const SizedBox(height: 16),
-        _SectionHeader('About'),
+        _SectionHeader('ABOUT'),
         _SettingCard(
-          icon: Icons.info_outline,
+          icon: CupertinoIcons.info_circle_fill,
+          badgeColor: const Color(0xFFFF9500),
           title: 'TapFlow',
-          subtitle: 'Version 1.0.0 • Premium NFC Manager',
+          subtitle: 'Version 1.0.0 • Modern NFC Manager',
           onTap: () {},
-        ).animate().fadeIn(delay: 300.ms).slideX(begin: 0.1),
+        ).animate().fadeIn(delay: 300.ms).slideX(begin: 0.05),
 
         _SettingCard(
-          icon: Icons.code,
+          icon: CupertinoIcons.doc_text_fill,
+          badgeColor: const Color(0xFF8E8E93),
           title: 'Open Source Licenses',
-          subtitle: 'Third-party libraries',
-          trailing: const Icon(Icons.chevron_right),
+          subtitle: 'Third-party acknowledgements',
+          trailing: const Icon(CupertinoIcons.chevron_right, size: 14),
           onTap: () =>
               showLicensePage(context: context, applicationName: 'TapFlow'),
-        ).animate().fadeIn(delay: 350.ms).slideX(begin: 0.1),
+        ).animate().fadeIn(delay: 350.ms).slideX(begin: 0.05),
       ],
     );
   }
@@ -268,13 +276,14 @@ class _SectionHeader extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.only(bottom: 10, top: 12),
+      padding: const EdgeInsets.only(left: 4, bottom: 8, top: 12),
       child: Text(
-        title.toUpperCase(),
-        style: Theme.of(context).textTheme.labelSmall?.copyWith(
-          color: Theme.of(context).colorScheme.primary,
-          fontWeight: FontWeight.w800,
-          letterSpacing: 1.5,
+        title,
+        style: GoogleFonts.inter(
+          fontSize: 13,
+          fontWeight: FontWeight.w500,
+          color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.5),
+          letterSpacing: -0.1,
         ),
       ),
     );
@@ -283,6 +292,7 @@ class _SectionHeader extends StatelessWidget {
 
 class _SettingCard extends StatelessWidget {
   final IconData icon;
+  final Color? badgeColor;
   final String title;
   final String subtitle;
   final Widget? trailing;
@@ -291,6 +301,7 @@ class _SettingCard extends StatelessWidget {
 
   const _SettingCard({
     required this.icon,
+    this.badgeColor,
     required this.title,
     required this.subtitle,
     this.trailing,
@@ -301,52 +312,81 @@ class _SettingCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final cs = Theme.of(context).colorScheme;
-    return Card(
-      margin: const EdgeInsets.only(bottom: 12),
-      child: InkWell(
-        borderRadius: BorderRadius.circular(20),
-        onTap: onTap,
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-          child: Row(
-            children: [
-              Container(
-                padding: const EdgeInsets.all(10),
-                decoration: BoxDecoration(
-                  color: (iconColor ?? cs.primary).withValues(alpha: 0.08),
-                  shape: BoxShape.circle,
-                ),
-                child: Icon(icon, color: iconColor ?? cs.primary, size: 20),
-              ),
-              const SizedBox(width: 16),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      title,
-                      style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                    const SizedBox(height: 2),
-                    Text(
-                      subtitle,
-                      style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                        color: cs.onSurface.withValues(alpha: 0.55),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              if (trailing != null)
-                IconTheme(
-                  data: IconThemeData(
-                    color: cs.onSurface.withValues(alpha: 0.35),
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final border = isDark ? const Color(0xFF38383A) : const Color(0xFFE5E5EA);
+    final cardBg = isDark ? const Color(0xFF1C1C1E) : Colors.white;
+
+    return Container(
+      margin: const EdgeInsets.only(bottom: 8),
+      decoration: BoxDecoration(
+        color: cardBg,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: border, width: 0.5),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: isDark ? 0.25 : 0.04),
+            blurRadius: 10,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      child: Material(
+        color: Colors.transparent,
+        borderRadius: BorderRadius.circular(16),
+        child: InkWell(
+          borderRadius: BorderRadius.circular(16),
+          onTap: onTap,
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+            child: Row(
+              children: [
+                Container(
+                  width: 32,
+                  height: 32,
+                  decoration: BoxDecoration(
+                    color: badgeColor ?? cs.primary,
+                    borderRadius: BorderRadius.circular(8),
                   ),
-                  child: trailing!,
+                  child: Icon(
+                    icon,
+                    color: iconColor ?? Colors.white,
+                    size: 18,
+                  ),
                 ),
-            ],
+                const SizedBox(width: 14),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        title,
+                        style: GoogleFonts.inter(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w500,
+                          letterSpacing: -0.2,
+                        ),
+                      ),
+                      const SizedBox(height: 2),
+                      Text(
+                        subtitle,
+                        style: GoogleFonts.inter(
+                          fontSize: 13,
+                          fontWeight: FontWeight.w400,
+                          color: const Color(0xFF8E8E93),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                if (trailing != null)
+                  IconTheme(
+                    data: const IconThemeData(
+                      color: Color(0xFFC7C7CC),
+                    ),
+                    child: trailing!,
+                  ),
+              ],
+            ),
           ),
         ),
       ),

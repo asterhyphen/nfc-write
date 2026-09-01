@@ -1,4 +1,3 @@
-import 'dart:async';
 import 'dart:math' as math;
 import 'dart:ui';
 import 'package:flutter/material.dart';
@@ -11,31 +10,10 @@ import 'timer_notifier.dart';
 class FlipClockTimerScreen extends ConsumerStatefulWidget {
   const FlipClockTimerScreen({super.key});
 
-  /// Custom transition route that rotates the screen open into landscape.
+  /// Smooth Apple-style transition route.
   static Route route() {
-    return PageRouteBuilder(
-      pageBuilder: (context, animation, secondaryAnimation) =>
-          const FlipClockTimerScreen(),
-      transitionsBuilder: (context, animation, secondaryAnimation, child) {
-        final rotate = Tween<double>(begin: 0.15, end: 0.0).animate(
-          CurvedAnimation(parent: animation, curve: Curves.easeOutBack),
-        );
-        final scale = Tween<double>(begin: 0.85, end: 1.0).animate(
-          CurvedAnimation(parent: animation, curve: Curves.easeOutCubic),
-        );
-        final fade = Tween<double>(
-          begin: 0.0,
-          end: 1.0,
-        ).animate(CurvedAnimation(parent: animation, curve: Curves.easeIn));
-
-        return FadeTransition(
-          opacity: fade,
-          child: ScaleTransition(
-            scale: scale,
-            child: RotationTransition(turns: rotate, child: child),
-          ),
-        );
-      },
+    return MaterialPageRoute(
+      builder: (context) => const FlipClockTimerScreen(),
     );
   }
 
@@ -46,9 +24,6 @@ class FlipClockTimerScreen extends ConsumerStatefulWidget {
 
 class _FlipClockTimerScreenState extends ConsumerState<FlipClockTimerScreen>
     with TickerProviderStateMixin {
-  bool _showControls = true;
-  Timer? _hideControlsTimer;
-
   // Background gradient shift animation controllers
   late final AnimationController _gradientCtrl;
   late final Animation<double> _gradientAnim;
@@ -56,13 +31,13 @@ class _FlipClockTimerScreenState extends ConsumerState<FlipClockTimerScreen>
   @override
   void initState() {
     super.initState();
-    // Force and lock landscape orientation on entry
+    // Support all orientations naturally
     SystemChrome.setPreferredOrientations([
+      DeviceOrientation.portraitUp,
+      DeviceOrientation.portraitDown,
       DeviceOrientation.landscapeLeft,
       DeviceOrientation.landscapeRight,
     ]);
-    // Fullscreen immersive mode
-    SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky);
 
     // Slowly shift gradient colors
     _gradientCtrl = AnimationController(
@@ -70,8 +45,6 @@ class _FlipClockTimerScreenState extends ConsumerState<FlipClockTimerScreen>
       duration: const Duration(seconds: 12),
     )..repeat(reverse: true);
     _gradientAnim = Tween<double>(begin: 0.0, end: 1.0).animate(_gradientCtrl);
-
-    _startHideControlsTimer();
   }
 
   @override
@@ -81,9 +54,7 @@ class _FlipClockTimerScreenState extends ConsumerState<FlipClockTimerScreen>
   }
 
   void _tickerDispose() {
-    _hideControlsTimer?.cancel();
     _gradientCtrl.dispose();
-    // Restore default orientation on exit
     SystemChrome.setPreferredOrientations([
       DeviceOrientation.portraitUp,
       DeviceOrientation.portraitDown,
@@ -91,26 +62,6 @@ class _FlipClockTimerScreenState extends ConsumerState<FlipClockTimerScreen>
       DeviceOrientation.landscapeRight,
     ]);
     SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
-  }
-
-  void _startHideControlsTimer() {
-    _hideControlsTimer?.cancel();
-    _hideControlsTimer = Timer(const Duration(seconds: 4), () {
-      if (mounted) {
-        setState(() {
-          _showControls = false;
-        });
-      }
-    });
-  }
-
-  void _onScreenTap() {
-    setState(() {
-      _showControls = !_showControls;
-    });
-    if (_showControls) {
-      _startHideControlsTimer();
-    }
   }
 
   void _handleCancel(BuildContext context) {
@@ -161,11 +112,8 @@ class _FlipClockTimerScreenState extends ConsumerState<FlipClockTimerScreen>
     final isUrgent = timerState.remainingSeconds <= 10 && timerState.isRunning;
 
     return Scaffold(
-      backgroundColor: Colors.black,
-      body: GestureDetector(
-        behavior: HitTestBehavior.opaque,
-        onTap: _onScreenTap,
-        child: Stack(
+      backgroundColor: const Color(0xFF09090F),
+      body: Stack(
           children: [
             // ── Background Animated Gradient ────────────────────────
             AnimatedBuilder(
@@ -221,127 +169,149 @@ class _FlipClockTimerScreenState extends ConsumerState<FlipClockTimerScreen>
                 ),
               ),
 
+            // ── Top Bar with Apple Frosted Close Button ─────────────────
+            Positioned(
+              top: 0,
+              left: 0,
+              right: 0,
+              child: SafeArea(
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      ClipRRect(
+                        borderRadius: BorderRadius.circular(20),
+                        child: BackdropFilter(
+                          filter: ImageFilter.blur(sigmaX: 16, sigmaY: 16),
+                          child: Container(
+                            decoration: BoxDecoration(
+                              color: Colors.white.withValues(alpha: 0.15),
+                              shape: BoxShape.circle,
+                              border: Border.all(color: Colors.white24, width: 0.5),
+                            ),
+                            child: IconButton(
+                              icon: const Icon(Icons.close_rounded, color: Colors.white, size: 22),
+                              onPressed: () => _handleCancel(context),
+                              tooltip: 'Close Timer',
+                            ),
+                          ),
+                        ),
+                      ),
+                      Text(
+                        timerState.label.toUpperCase(),
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 13,
+                          fontWeight: FontWeight.w700,
+                          letterSpacing: 2.0,
+                        ),
+                      ),
+                      const SizedBox(width: 44),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+
             // ── Flip Clock Display ───────────────────────────────────
             Center(
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Text(
-                    timerState.label.toUpperCase(),
-                    style: TextStyle(
-                      color: isUrgent
-                          ? Colors.redAccent
-                          : cs.onSurface.withValues(alpha: 0.5),
-                      fontSize: 14,
-                      fontWeight: FontWeight.w800,
-                      letterSpacing: 4.0,
-                      shadows: isUrgent
-                          ? [const Shadow(color: Colors.red, blurRadius: 10)]
-                          : null,
-                    ),
-                  ),
-                  const SizedBox(height: 24),
-                  FlipClockDisplay(
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 20),
+                child: FittedBox(
+                  fit: BoxFit.scaleDown,
+                  child: FlipClockDisplay(
                     seconds: timerState.remainingSeconds,
                     isUrgent: isUrgent,
                     isFinished: timerState.isFinished,
                   ),
-                ],
+                ),
               ),
             ),
 
-            // ── Frosted Overlay Controls ──────────────────────────────
+            // ── Apple Frosted Overlay Controls (Always Accessible) ───
             Positioned(
               bottom: 24,
               left: 0,
               right: 0,
-              child: AnimatedOpacity(
-                opacity: _showControls || timerState.isFinished ? 1.0 : 0.0,
-                duration: const Duration(milliseconds: 300),
-                child: AbsorbPointer(
-                  absorbing: !_showControls && !timerState.isFinished,
-                  child: Center(
-                    child: ClipRRect(
-                      borderRadius: BorderRadius.circular(24),
-                      child: BackdropFilter(
-                        filter: ImageFilter.blur(sigmaX: 12, sigmaY: 12),
-                        child: Container(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 24,
-                            vertical: 12,
+              child: SafeArea(
+                child: Center(
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(32),
+                    child: BackdropFilter(
+                      filter: ImageFilter.blur(sigmaX: 20, sigmaY: 20),
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 24,
+                          vertical: 10,
+                        ),
+                        decoration: BoxDecoration(
+                          color: const Color(0xFF1C1C1E).withValues(alpha: 0.85),
+                          borderRadius: BorderRadius.circular(32),
+                          border: Border.all(
+                            color: Colors.white.withValues(alpha: 0.15),
+                            width: 0.5,
                           ),
-                          decoration: BoxDecoration(
-                            color: Colors.black.withValues(alpha: 0.4),
-                            borderRadius: BorderRadius.circular(24),
-                            border: Border.all(
-                              color: Colors.white.withValues(alpha: 0.1),
-                              width: 1.5,
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black.withValues(alpha: 0.35),
+                              blurRadius: 16,
+                              offset: const Offset(0, 4),
                             ),
-                          ),
-                          child: Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              // Close/Cancel
-                              IconButton(
-                                icon: const Icon(
-                                  Icons.close,
-                                  color: Colors.white,
-                                ),
-                                onPressed: () => _handleCancel(context),
-                                tooltip: 'Cancel Session',
-                              ),
-                              const SizedBox(width: 16),
-                              Container(
-                                width: 1.5,
-                                height: 28,
-                                color: Colors.white10,
-                              ),
-                              const SizedBox(width: 16),
-                              // Play / Pause
-                              if (timerState.isFinished)
-                                FilledButton.icon(
-                                  onPressed: () {
-                                    ref.read(timerProvider.notifier).reset();
-                                    Navigator.pop(context);
-                                  },
-                                  style: FilledButton.styleFrom(
-                                    backgroundColor: Colors.green,
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(12),
-                                    ),
+                          ],
+                        ),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            IconButton(
+                              icon: const Icon(Icons.refresh_rounded, color: Colors.white70),
+                              onPressed: () {
+                                ref.read(timerProvider.notifier).reset();
+                              },
+                              tooltip: 'Reset',
+                            ),
+                            const SizedBox(width: 12),
+                            Container(width: 0.5, height: 24, color: Colors.white24),
+                            const SizedBox(width: 12),
+                            if (timerState.isFinished)
+                              FilledButton.icon(
+                                onPressed: () {
+                                  ref.read(timerProvider.notifier).reset();
+                                  Navigator.pop(context);
+                                },
+                                style: FilledButton.styleFrom(
+                                  backgroundColor: const Color(0xFF34C759),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(20),
                                   ),
-                                  icon: const Icon(Icons.done),
-                                  label: const Text('Dismiss'),
-                                )
-                              else
-                                FloatingActionButton.small(
-                                  heroTag: 'flip_play_pause',
-                                  elevation: 0,
+                                ),
+                                icon: const Icon(Icons.done_rounded),
+                                label: const Text('Dismiss'),
+                              )
+                            else
+                              IconButton.filled(
+                                iconSize: 28,
+                                style: IconButton.styleFrom(
                                   backgroundColor: timerState.isPaused
-                                      ? cs.primary
-                                      : Colors.white24,
-                                  foregroundColor: timerState.isPaused
-                                      ? cs.onPrimary
-                                      : Colors.white,
-                                  onPressed: () {
-                                    final notifier = ref.read(
-                                      timerProvider.notifier,
-                                    );
-                                    if (timerState.isPaused) {
-                                      notifier.resume();
-                                    } else {
-                                      notifier.pause();
-                                    }
-                                    _startHideControlsTimer();
-                                  },
-                                  child: Icon(
-                                    timerState.isPaused
-                                        ? Icons.play_arrow
-                                        : Icons.pause,
-                                  ),
+                                      ? const Color(0xFF5856D6)
+                                      : Colors.white.withValues(alpha: 0.2),
+                                  foregroundColor: Colors.white,
                                 ),
-                            ],
-                          ),
+                                onPressed: () {
+                                  final notifier = ref.read(timerProvider.notifier);
+                                  if (timerState.isPaused) {
+                                    notifier.resume();
+                                  } else {
+                                    notifier.pause();
+                                  }
+                                },
+                                icon: Icon(
+                                  timerState.isPaused
+                                      ? Icons.play_arrow_rounded
+                                      : Icons.pause_rounded,
+                                ),
+                              ),
+                          ],
                         ),
                       ),
                     ),
@@ -351,8 +321,7 @@ class _FlipClockTimerScreenState extends ConsumerState<FlipClockTimerScreen>
             ),
           ],
         ),
-      ),
-    );
+      );
   }
 }
 
@@ -614,10 +583,9 @@ class _FlipDigitState extends State<FlipDigit>
                   height: 1.0,
                   shadows: widget.isUrgent || widget.isFinished
                       ? [
-                          BoxShadow(
+                          Shadow(
                             color: textColor.withValues(alpha: 0.4),
                             blurRadius: 8,
-                            spreadRadius: 1,
                           ),
                         ]
                       : null,

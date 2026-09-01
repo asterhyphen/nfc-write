@@ -1,9 +1,7 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
 
-/// A premium reusable glassmorphism card styled exactly according to the
-/// "Pulse" design system specification (Level 1 shadow, 16px border radius,
-/// 16px internal padding, and customized light/dark borders).
+/// An Apple-style frosted squircle card with diffuse shadow and hairline border.
 class GlassCard extends StatelessWidget {
   final Widget child;
   final double borderRadius;
@@ -14,12 +12,10 @@ class GlassCard extends StatelessWidget {
   const GlassCard({
     super.key,
     required this.child,
-    this.borderRadius = 16.0, // Conform to Medium radius (16px)
-    this.padding = const EdgeInsets.all(
-      16.0,
-    ), // Conform to Card internal padding (16px)
-    this.blur = 8.0,
-    this.opacity = 0.85,
+    this.borderRadius = 18.0,
+    this.padding = const EdgeInsets.all(16.0),
+    this.blur = 16.0,
+    this.opacity = 0.88,
   });
 
   @override
@@ -27,20 +23,17 @@ class GlassCard extends StatelessWidget {
     final colorScheme = Theme.of(context).colorScheme;
     final isDark = colorScheme.brightness == Brightness.dark;
 
+    final border = isDark ? const Color(0xFF38383A) : const Color(0xFFE5E5EA);
+    final cardBg = isDark ? const Color(0xFF1C1C1E) : Colors.white;
+
     return Container(
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(borderRadius),
         boxShadow: [
-          // Level 1 Shadow
           BoxShadow(
-            color: Colors.black.withValues(alpha: isDark ? 0.4 : 0.04),
-            blurRadius: 3,
-            offset: const Offset(0, 1),
-          ),
-          BoxShadow(
-            color: Colors.black.withValues(alpha: isDark ? 0.3 : 0.03),
-            blurRadius: 2,
-            offset: const Offset(0, 1),
+            color: Colors.black.withValues(alpha: isDark ? 0.3 : 0.05),
+            blurRadius: 16,
+            offset: const Offset(0, 4),
           ),
         ],
       ),
@@ -51,14 +44,11 @@ class GlassCard extends StatelessWidget {
           child: Container(
             padding: padding,
             decoration: BoxDecoration(
-              color: (isDark ? const Color(0xFF17171D) : Colors.white)
-                  .withValues(alpha: opacity),
+              color: cardBg.withValues(alpha: opacity),
               borderRadius: BorderRadius.circular(borderRadius),
               border: Border.all(
-                color: isDark
-                    ? const Color(0xFF28282F)
-                    : const Color(0xFFECECF2),
-                width: 1.0,
+                color: border,
+                width: 0.5,
               ),
             ),
             child: child,

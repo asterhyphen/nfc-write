@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -50,155 +51,170 @@ class HomeDashboardTab extends ConsumerWidget {
           // ── Main Page Layout ───────────────────────────────────────────────
           SafeArea(
             child: SingleChildScrollView(
-              padding: const EdgeInsets.fromLTRB(22, 24, 22, 32),
+              padding: const EdgeInsets.fromLTRB(20, 20, 20, 32),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // ── Designer Welcoming Header ──────────────────────────────
+                  // ── Apple iOS Large Title Header ───────────────────────────
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    crossAxisAlignment: CrossAxisAlignment.end,
                     children: [
                       Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            'STUDIO WORKSPACE',
-                            style: Theme.of(context).textTheme.labelSmall
-                                ?.copyWith(
-                                  color: cs.primary,
-                                  fontWeight: FontWeight.w700,
-                                  letterSpacing: 1.5,
-                                ),
+                            'NFC WORKSPACE',
+                            style: GoogleFonts.inter(
+                              color: cs.primary,
+                              fontSize: 12,
+                              fontWeight: FontWeight.w700,
+                              letterSpacing: 1.2,
+                            ),
                           ),
-                          const SizedBox(height: 4),
+                          const SizedBox(height: 2),
                           Text(
-                            'TapFlow NFC',
-                            style: Theme.of(context).textTheme.headlineMedium
-                                ?.copyWith(
-                                  fontWeight: FontWeight.w900,
-                                  letterSpacing: -0.8,
-                                ),
+                            'TapFlow',
+                            style: GoogleFonts.inter(
+                              fontSize: 34,
+                              fontWeight: FontWeight.w700,
+                              letterSpacing: -0.8,
+                            ),
                           ),
                         ],
                       ),
                       Container(
-                        padding: const EdgeInsets.all(4),
+                        width: 40,
+                        height: 40,
                         decoration: BoxDecoration(
+                          color: cs.primary.withValues(alpha: 0.12),
                           shape: BoxShape.circle,
-                          border: Border.all(
-                            color: cs.primary.withValues(alpha: 0.2),
-                            width: 1.5,
-                          ),
                         ),
-                        child: CircleAvatar(
-                          radius: 20,
-                          backgroundColor: cs.primaryContainer,
-                          child: Icon(Icons.bolt, color: cs.primary, size: 20),
+                        child: Icon(
+                          CupertinoIcons.bolt_fill,
+                          color: cs.primary,
+                          size: 20,
                         ),
                       ),
                     ],
                   ).animate().fadeIn(duration: 400.ms).slideY(begin: -0.05),
 
-                  const SizedBox(height: 28),
+                  const SizedBox(height: 24),
 
-                  // ── Premium Sleek Scan NFC Card ────────────────────
-                  Card(
-                    elevation: 0,
-                    margin: EdgeInsets.zero,
-                    child: InkWell(
-                      borderRadius: BorderRadius.circular(16),
-                      onTap: () => _openScanSheet(context, ref),
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 24,
-                          vertical: 28,
+                  // ── Apple Hero Scan Card ───────────────────────────
+                  Container(
+                    decoration: BoxDecoration(
+                      color: Theme.of(context).cardTheme.color,
+                      borderRadius: BorderRadius.circular(20),
+                      border: Border.all(
+                        color: cs.outline,
+                        width: 0.5,
+                      ),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withValues(alpha: Theme.of(context).brightness == Brightness.dark ? 0.35 : 0.05),
+                          blurRadius: 18,
+                          offset: const Offset(0, 5),
                         ),
-                        child: Row(
-                          children: [
-                            Container(
-                              padding: const EdgeInsets.all(12),
-                              decoration: BoxDecoration(
-                                color: cs.primary.withValues(alpha: 0.08),
-                                borderRadius: BorderRadius.circular(12),
+                      ],
+                    ),
+                    child: Material(
+                      color: Colors.transparent,
+                      borderRadius: BorderRadius.circular(20),
+                      child: InkWell(
+                        borderRadius: BorderRadius.circular(20),
+                        onTap: () => _openScanSheet(context, ref),
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 20,
+                            vertical: 22,
+                          ),
+                          child: Row(
+                            children: [
+                              Container(
+                                width: 48,
+                                height: 48,
+                                decoration: BoxDecoration(
+                                  color: cs.primary,
+                                  borderRadius: BorderRadius.circular(14),
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: cs.primary.withValues(alpha: 0.35),
+                                      blurRadius: 12,
+                                      offset: const Offset(0, 4),
+                                    ),
+                                  ],
+                                ),
+                                child: const Icon(
+                                  CupertinoIcons.radiowaves_right,
+                                  color: Colors.white,
+                                  size: 24,
+                                ),
                               ),
-                              child: Icon(
-                                Icons.nfc_rounded,
-                                color: cs.primary,
-                                size: 30,
-                              ),
-                            ),
-                            const SizedBox(width: 20),
-                            Expanded(
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Row(
-                                    children: [
-                                      Text(
-                                        'READY TO SCAN',
-                                        style: TextStyle(
-                                          fontSize: 9,
-                                          fontWeight: FontWeight.w800,
-                                          color: cs.primary,
-                                          letterSpacing: 1.5,
-                                        ),
-                                      ),
-                                      const SizedBox(width: 8),
-                                      // Pulsing status dot
-                                      Container(
-                                            width: 6,
-                                            height: 6,
-                                            decoration: const BoxDecoration(
-                                              shape: BoxShape.circle,
-                                              color: Color(0xFF10B981),
-                                            ),
-                                          )
-                                          .animate(onPlay: (c) => c.repeat())
-                                          .scale(
-                                            begin: const Offset(1, 1),
-                                            end: const Offset(1.5, 1.5),
-                                            duration: 800.ms,
-                                            curve: Curves.easeOut,
+                              const SizedBox(width: 16),
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Row(
+                                      children: [
+                                        Container(
+                                          width: 7,
+                                          height: 7,
+                                          decoration: const BoxDecoration(
+                                            shape: BoxShape.circle,
+                                            color: Color(0xFF34C759),
                                           ),
-                                    ],
-                                  ),
-                                  const SizedBox(height: 6),
-                                  Text(
-                                    'Tap to Scan NFC Tag',
-                                    style: Theme.of(context)
-                                        .textTheme
-                                        .titleLarge
-                                        ?.copyWith(
-                                          fontSize: 18,
-                                          fontWeight: FontWeight.bold,
-                                          letterSpacing: -0.3,
                                         ),
-                                  ),
-                                ],
+                                        const SizedBox(width: 6),
+                                        Text(
+                                          'READY TO SCAN',
+                                          style: GoogleFonts.inter(
+                                            fontSize: 11,
+                                            fontWeight: FontWeight.w700,
+                                            color: cs.primary,
+                                            letterSpacing: 1.0,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                    const SizedBox(height: 4),
+                                    Text(
+                                      'Tap to Scan NFC Tag',
+                                      style: GoogleFonts.inter(
+                                        fontSize: 17,
+                                        fontWeight: FontWeight.w600,
+                                        letterSpacing: -0.3,
+                                      ),
+                                    ),
+                                  ],
+                                ),
                               ),
-                            ),
-                            Icon(
-                              Icons.arrow_forward_ios_rounded,
-                              size: 14,
-                              color: cs.onSurface.withValues(alpha: 0.35),
-                            ),
-                          ],
+                              Icon(
+                                CupertinoIcons.chevron_right,
+                                size: 16,
+                                color: cs.onSurface.withValues(alpha: 0.3),
+                              ),
+                            ],
+                          ),
                         ),
                       ),
                     ),
                   ).animate().fadeIn(delay: 200.ms).slideY(begin: 0.05),
 
-                  const SizedBox(height: 36),
+                  const SizedBox(height: 32),
 
                   // ── Section Header ─────────────────────────────────────────
                   Text(
-                    'Program Actions to Tag',
-                    style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                      fontWeight: FontWeight.w800,
-                      letterSpacing: -0.5,
+                    'QUICK ACTIONS',
+                    style: GoogleFonts.inter(
+                      fontSize: 13,
+                      fontWeight: FontWeight.w600,
+                      color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.5),
+                      letterSpacing: 0.5,
                     ),
                   ).animate().fadeIn(delay: 300.ms),
-                  const SizedBox(height: 14),
+                  const SizedBox(height: 12),
 
                   // ── Actions Vertical List ──────────────────────────────────
                   ListView(
@@ -482,9 +498,9 @@ class _TimerProgramDialogState extends State<_TimerProgramDialog> {
       child: Container(
         padding: const EdgeInsets.all(24),
         decoration: BoxDecoration(
-          color: isDark ? const Color(0xFF0E111A) : Colors.white,
+          color: isDark ? const Color(0xFF1C1C1E) : Colors.white,
           borderRadius: BorderRadius.circular(28),
-          border: Border.all(color: cs.outline, width: 1.5),
+          border: Border.all(color: cs.outline, width: 0.5),
           boxShadow: [
             BoxShadow(
               color: Colors.black.withValues(alpha: isDark ? 0.3 : 0.1),
@@ -738,9 +754,9 @@ class _NotificationProgramDialogState
       child: Container(
         padding: const EdgeInsets.all(24),
         decoration: BoxDecoration(
-          color: isDark ? const Color(0xFF0E111A) : Colors.white,
+          color: isDark ? const Color(0xFF1C1C1E) : Colors.white,
           borderRadius: BorderRadius.circular(28),
-          border: Border.all(color: cs.outline, width: 1.5),
+          border: Border.all(color: cs.outline, width: 0.5),
         ),
         child: Column(
           mainAxisSize: MainAxisSize.min,
@@ -834,9 +850,9 @@ class _DndProgramDialog extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.all(24),
         decoration: BoxDecoration(
-          color: isDark ? const Color(0xFF0E111A) : Colors.white,
+          color: isDark ? const Color(0xFF1C1C1E) : Colors.white,
           borderRadius: BorderRadius.circular(28),
-          border: Border.all(color: cs.outline, width: 1.5),
+          border: Border.all(color: cs.outline, width: 0.5),
         ),
         child: Column(
           mainAxisSize: MainAxisSize.min,
@@ -926,9 +942,9 @@ class _UrlProgramDialogState extends State<_UrlProgramDialog> {
       child: Container(
         padding: const EdgeInsets.all(24),
         decoration: BoxDecoration(
-          color: isDark ? const Color(0xFF0E111A) : Colors.white,
+          color: isDark ? const Color(0xFF1C1C1E) : Colors.white,
           borderRadius: BorderRadius.circular(28),
-          border: Border.all(color: cs.outline, width: 1.5),
+          border: Border.all(color: cs.outline, width: 0.5),
         ),
         child: Column(
           mainAxisSize: MainAxisSize.min,
@@ -1025,9 +1041,9 @@ class _WifiProgramDialogState extends State<_WifiProgramDialog> {
       child: Container(
         padding: const EdgeInsets.all(24),
         decoration: BoxDecoration(
-          color: isDark ? const Color(0xFF0E111A) : Colors.white,
+          color: isDark ? const Color(0xFF1C1C1E) : Colors.white,
           borderRadius: BorderRadius.circular(28),
-          border: Border.all(color: cs.outline, width: 1.5),
+          border: Border.all(color: cs.outline, width: 0.5),
         ),
         child: Column(
           mainAxisSize: MainAxisSize.min,
@@ -1136,9 +1152,9 @@ class _ContactProgramDialogState extends State<_ContactProgramDialog> {
       child: Container(
         padding: const EdgeInsets.all(24),
         decoration: BoxDecoration(
-          color: isDark ? const Color(0xFF0E111A) : Colors.white,
+          color: isDark ? const Color(0xFF1C1C1E) : Colors.white,
           borderRadius: BorderRadius.circular(28),
-          border: Border.all(color: cs.outline, width: 1.5),
+          border: Border.all(color: cs.outline, width: 0.5),
         ),
         child: Column(
           mainAxisSize: MainAxisSize.min,
@@ -1239,30 +1255,21 @@ class _DesignerActionTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final cs = Theme.of(context).colorScheme;
-    final isDark = cs.brightness == Brightness.dark;
-    final border = isDark ? const Color(0xFF28282F) : const Color(0xFFECECF2);
-    final cardBg = isDark ? const Color(0xFF17171D) : Colors.white;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final border = isDark ? const Color(0xFF38383A) : const Color(0xFFE5E5EA);
+    final cardBg = isDark ? const Color(0xFF1C1C1E) : Colors.white;
 
     return Container(
-          margin: const EdgeInsets.only(
-            bottom: 12,
-          ), // Gap between stacked cards: 12px
+          margin: const EdgeInsets.only(bottom: 10),
           decoration: BoxDecoration(
             color: cardBg,
-            borderRadius: BorderRadius.circular(16), // Medium radius (16px)
-            border: Border.all(color: border, width: 1.0),
+            borderRadius: BorderRadius.circular(16),
+            border: Border.all(color: border, width: 0.5),
             boxShadow: [
-              // Level 1 Shadow
               BoxShadow(
-                color: Colors.black.withValues(alpha: isDark ? 0.4 : 0.04),
-                blurRadius: 3,
-                offset: const Offset(0, 1),
-              ),
-              BoxShadow(
-                color: Colors.black.withValues(alpha: isDark ? 0.3 : 0.03),
-                blurRadius: 2,
-                offset: const Offset(0, 1),
+                color: Colors.black.withValues(alpha: isDark ? 0.25 : 0.04),
+                blurRadius: 10,
+                offset: const Offset(0, 2),
               ),
             ],
           ),
@@ -1273,22 +1280,27 @@ class _DesignerActionTile extends StatelessWidget {
               onTap: onTap,
               borderRadius: BorderRadius.circular(16),
               child: Padding(
-                padding: const EdgeInsets.all(
-                  16,
-                ), // Card internal padding: 16px
+                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
                 child: Row(
                   children: [
-                    // Icon block
+                    // Apple iOS Squircle Icon Badge
                     Container(
-                      width: 44, // Minimum 44px tap target
-                      height: 44,
+                      width: 40,
+                      height: 40,
                       decoration: BoxDecoration(
-                        color: color.withValues(alpha: 0.1),
-                        shape: BoxShape.circle,
+                        color: color,
+                        borderRadius: BorderRadius.circular(10),
+                        boxShadow: [
+                          BoxShadow(
+                            color: color.withValues(alpha: 0.35),
+                            blurRadius: 8,
+                            offset: const Offset(0, 3),
+                          ),
+                        ],
                       ),
-                      child: Icon(icon, color: color, size: 20),
+                      child: Icon(icon, color: Colors.white, size: 22),
                     ),
-                    const SizedBox(width: 16),
+                    const SizedBox(width: 14),
                     // Text descriptions
                     Expanded(
                       child: Column(
@@ -1300,57 +1312,55 @@ class _DesignerActionTile extends StatelessWidget {
                               Text(
                                 title,
                                 style: GoogleFonts.inter(
-                                  fontSize: 15,
-                                  fontWeight: FontWeight
-                                      .w600, // Heading/Body Emphasis Style
-                                  letterSpacing: 0,
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w600,
+                                  letterSpacing: -0.2,
+                                  color: isDark ? Colors.white : Colors.black,
                                 ),
                               ),
                               const SizedBox(width: 8),
-                              // Mini category pill
+                              // Apple Mini category pill
                               Container(
                                 padding: const EdgeInsets.symmetric(
                                   horizontal: 6,
                                   vertical: 2,
                                 ),
                                 decoration: BoxDecoration(
-                                  color: color.withValues(alpha: 0.1),
-                                  borderRadius: BorderRadius.circular(
-                                    10,
-                                  ), // Small radius (10px)
+                                  color: color.withValues(alpha: 0.12),
+                                  borderRadius: BorderRadius.circular(8),
                                 ),
                                 child: Text(
                                   tag.toUpperCase(),
                                   style: GoogleFonts.inter(
-                                    fontSize: 11,
-                                    fontWeight: FontWeight.w600,
+                                    fontSize: 10,
+                                    fontWeight: FontWeight.w700,
                                     color: color,
-                                    letterSpacing: 0.04 * 11,
+                                    letterSpacing: 0.4,
                                   ),
                                 ),
                               ),
                             ],
                           ),
-                          const SizedBox(height: 4),
+                          const SizedBox(height: 3),
                           Text(
                             subtitle,
                             style: GoogleFonts.inter(
                               fontSize: 13,
-                              fontWeight: FontWeight.w500,
+                              fontWeight: FontWeight.w400,
                               color: isDark
-                                  ? const Color(0xFF9A9AA5)
-                                  : const Color(0xFF6B6B76), // Text Secondary
+                                  ? const Color(0xFF8E8E93)
+                                  : const Color(0xFF8E8E93),
                             ),
                           ),
                         ],
                       ),
                     ),
                     Icon(
-                      Icons.arrow_forward_ios_rounded,
+                      CupertinoIcons.chevron_right,
                       size: 14,
                       color: isDark
-                          ? const Color(0xFF5C5C66)
-                          : const Color(0xFFA6A6B0), // Text Tertiary
+                          ? const Color(0xFF48484A)
+                          : const Color(0xFFC7C7CC),
                     ),
                   ],
                 ),
@@ -1359,7 +1369,7 @@ class _DesignerActionTile extends StatelessWidget {
           ),
         )
         .animate()
-        .fadeIn(delay: Duration(milliseconds: 350 + (index * 60)))
-        .slideY(begin: 0.08, curve: Curves.easeOutQuad, duration: 400.ms);
+        .fadeIn(delay: Duration(milliseconds: 300 + (index * 50)))
+        .slideY(begin: 0.06, curve: Curves.easeOutQuad, duration: 350.ms);
   }
 }
