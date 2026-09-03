@@ -1,9 +1,11 @@
 import 'dart:convert';
 import 'dart:typed_data';
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:ndef_record/ndef_record.dart';
 
 import '../data/nfc_repository.dart';
@@ -236,6 +238,7 @@ class _ComposingForm extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Form(
       key: formKey,
       child: Column(
@@ -298,19 +301,17 @@ class _ComposingForm extends StatelessWidget {
 
           const SizedBox(height: 20),
 
-          // Lock Tag (Read-Only) Option
+          // ── Lock Tag Card (Read-Only Lock Bits) ────────────────────
           Container(
-            padding: const EdgeInsets.all(12),
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
             decoration: BoxDecoration(
-              color: Theme.of(
-                context,
-              ).colorScheme.errorContainer.withValues(alpha: 0.15),
+              color: isDark ? const Color(0xFF1C1C1E) : const Color(0xFFF2F2F7),
               borderRadius: BorderRadius.circular(16),
               border: Border.all(
-                color: Theme.of(
-                  context,
-                ).colorScheme.error.withValues(alpha: 0.2),
-                width: 1,
+                color: lockTag
+                    ? const Color(0xFFFF3B30).withValues(alpha: 0.4)
+                    : (isDark ? const Color(0xFF38383A) : const Color(0xFFE5E5EA)),
+                width: 0.5,
               ),
             ),
             child: Column(
@@ -320,52 +321,80 @@ class _ComposingForm extends StatelessWidget {
                   contentPadding: EdgeInsets.zero,
                   title: Row(
                     children: [
-                      Icon(
-                        Icons.lock_rounded,
-                        color: Theme.of(context).colorScheme.error,
+                      Container(
+                        padding: const EdgeInsets.all(6),
+                        decoration: BoxDecoration(
+                          color: const Color(0xFFFF3B30).withValues(alpha: 0.12),
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        child: const Icon(
+                          CupertinoIcons.lock_fill,
+                          color: Color(0xFFFF3B30),
+                          size: 16,
+                        ),
                       ),
                       const SizedBox(width: 10),
-                      const Text(
-                        'Lock Tag (Read-Only)',
-                        style: TextStyle(fontWeight: FontWeight.bold),
-                      ),
-                    ],
-                  ),
-                  subtitle: const Text(
-                    'Make this tag permanently write-protected.',
-                    style: TextStyle(fontSize: 12),
-                  ),
-                  value: lockTag,
-                  activeThumbColor: Theme.of(context).colorScheme.error,
-                  onChanged: (val) => onLockTagChanged(val),
-                ),
-                if (lockTag) ...[
-                  const Divider(height: 16),
-                  Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Icon(
-                        Icons.warning_amber_rounded,
-                        size: 16,
-                        color: Theme.of(context).colorScheme.error,
-                      ),
-                      const SizedBox(width: 8),
-                      Expanded(
-                        child: Text(
-                          'WARNING: Locking an NFC tag is permanent and irreversible. You will never be able to rewrite or erase this tag again.',
-                          style: TextStyle(
-                            fontSize: 11,
-                            color: Theme.of(context).colorScheme.error,
-                            fontWeight: FontWeight.w600,
-                          ),
+                      Text(
+                        'Lock the tag permanently',
+                        style: GoogleFonts.inter(
+                          fontWeight: FontWeight.w600,
+                          fontSize: 15,
+                          letterSpacing: -0.2,
                         ),
                       ),
                     ],
                   ),
+                  subtitle: Padding(
+                    padding: const EdgeInsets.only(top: 4),
+                    child: Text(
+                      'NFC tags have lock bits that make memory read-only. Once locked, you generally cannot overwrite it, even yourself.',
+                      style: GoogleFonts.inter(
+                        fontSize: 12,
+                        color: isDark ? const Color(0xFF8E8E93) : const Color(0xFF636366),
+                        height: 1.35,
+                      ),
+                    ),
+                  ),
+                  value: lockTag,
+                  activeThumbColor: const Color(0xFFFF3B30),
+                  activeTrackColor: const Color(0xFFFF3B30).withValues(alpha: 0.4),
+                  onChanged: (val) => onLockTagChanged(val),
+                ),
+                if (lockTag) ...[
+                  const Divider(height: 16),
+                  Container(
+                    padding: const EdgeInsets.all(10),
+                    decoration: BoxDecoration(
+                      color: const Color(0xFFFF3B30).withValues(alpha: 0.10),
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const Icon(
+                          CupertinoIcons.exclamationmark_triangle_fill,
+                          size: 16,
+                          color: Color(0xFFFF3B30),
+                        ),
+                        const SizedBox(width: 8),
+                        Expanded(
+                          child: Text(
+                            'IRREVERSIBLE: Once written and locked, hardware lock bits are set permanently. The tag can never be rewritten or erased by any device.',
+                            style: GoogleFonts.inter(
+                              fontSize: 11,
+                              color: const Color(0xFFFF3B30),
+                              fontWeight: FontWeight.w600,
+                              height: 1.3,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ).animate().fadeIn(duration: 200.ms).slideY(begin: -0.1),
                 ],
               ],
             ),
-          ),
+          ).animate().fadeIn(delay: 150.ms),
 
           const SizedBox(height: 28),
 
