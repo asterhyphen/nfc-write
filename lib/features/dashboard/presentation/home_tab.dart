@@ -654,45 +654,57 @@ class _TimerProgramDialogState extends State<_TimerProgramDialog> {
             const SizedBox(height: 24),
 
             // Buttons
-            Row(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: [
-                TextButton(
-                  onPressed: () => Navigator.pop(context),
-                  child: const Text(
-                    'Cancel',
-                    style: TextStyle(color: Colors.grey),
-                  ),
-                ),
-                const SizedBox(width: 8),
-                OutlinedButton(
-                  onPressed: totalSeconds > 0
-                      ? () => widget.onWriteTag(totalSeconds)
-                      : null,
-                  style: OutlinedButton.styleFrom(
-                    foregroundColor: Colors.orange,
-                    side: const BorderSide(color: Colors.orange),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
+            Align(
+              alignment: Alignment.centerRight,
+              child: Wrap(
+                alignment: WrapAlignment.end,
+                crossAxisAlignment: WrapCrossAlignment.center,
+                spacing: 8,
+                runSpacing: 8,
+                children: [
+                  TextButton(
+                    onPressed: () => Navigator.pop(context),
+                    child: const Text(
+                      'Cancel',
+                      style: TextStyle(color: Colors.grey),
                     ),
                   ),
-                  child: const Text('Write to Tag'),
-                ),
-                const SizedBox(width: 8),
-                FilledButton(
-                  onPressed: totalSeconds > 0
-                      ? () => widget.onStartNow(totalSeconds)
-                      : null,
-                  style: FilledButton.styleFrom(
-                    backgroundColor: Colors.orange,
-                    foregroundColor: Colors.white,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
+                  OutlinedButton(
+                    onPressed: totalSeconds > 0
+                        ? () => widget.onWriteTag(totalSeconds)
+                        : null,
+                    style: OutlinedButton.styleFrom(
+                      foregroundColor: Colors.orange,
+                      side: const BorderSide(color: Colors.orange),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 14,
+                        vertical: 10,
+                      ),
                     ),
+                    child: const Text('Write to Tag'),
                   ),
-                  child: const Text('Start Now'),
-                ),
-              ],
+                  FilledButton(
+                    onPressed: totalSeconds > 0
+                        ? () => widget.onStartNow(totalSeconds)
+                        : null,
+                    style: FilledButton.styleFrom(
+                      backgroundColor: Colors.orange,
+                      foregroundColor: Colors.white,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 16,
+                        vertical: 10,
+                      ),
+                    ),
+                    child: const Text('Start Now'),
+                  ),
+                ],
+              ),
             ),
           ],
         ),
