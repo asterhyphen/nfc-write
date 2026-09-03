@@ -71,7 +71,7 @@ class SettingsTab extends ConsumerWidget {
         _SettingCard(
           icon: CupertinoIcons.info_circle_fill,
           badgeColor: const Color(0xFFFF9500),
-          title: 'TapFlow',
+          title: 'TipTapTup',
           subtitle: 'Version 1.0.0 • Modern NFC Manager',
           onTap: () {},
         ).animate().fadeIn(delay: 300.ms).slideX(begin: 0.05),
@@ -83,7 +83,7 @@ class SettingsTab extends ConsumerWidget {
           subtitle: 'Third-party acknowledgements',
           trailing: const Icon(CupertinoIcons.chevron_right, size: 14),
           onTap: () =>
-              showLicensePage(context: context, applicationName: 'TapFlow'),
+              showLicensePage(context: context, applicationName: 'TipTapTup'),
         ).animate().fadeIn(delay: 350.ms).slideX(begin: 0.05),
       ],
     );
@@ -185,14 +185,14 @@ class SettingsTab extends ConsumerWidget {
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text('Paste your TapFlow JSON backup string below:'),
+            const Text('Paste your TipTapTup JSON backup string below:'),
             const SizedBox(height: 12),
             TextField(
               controller: importCtrl,
               maxLines: 5,
               style: const TextStyle(fontFamily: 'monospace', fontSize: 11),
               decoration: InputDecoration(
-                hintText: '{\n  "app": "TapFlow", ...\n}',
+                hintText: '{\n  "app": "TipTapTup", ...\n}',
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(12),
                 ),

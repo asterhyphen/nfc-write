@@ -19,7 +19,7 @@ class BackupService {
     final tagNames = _tagRegistryRepo.getAllTagNames();
 
     final backupData = {
-      'app': 'TapFlow',
+      'app': 'TipTapTup',
       'version': '1.0.0',
       'exportedAt': DateTime.now().toIso8601String(),
       'history': history,
@@ -35,7 +35,7 @@ class BackupService {
   Future<bool> restoreBackupJson(String jsonStr) async {
     final Map<String, dynamic> data = jsonDecode(jsonStr);
 
-    if (data['app'] != 'TapFlow') {
+    if (data['app'] != 'TipTapTup' && data['app'] != 'TapFlow') {
       throw const FormatException(
         'Invalid backup file. App signature mismatch.',
       );

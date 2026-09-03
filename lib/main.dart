@@ -5,18 +5,18 @@ import 'core/theme/app_theme.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
-  runApp(const ProviderScope(child: TapFlowApp()));
+  runApp(const ProviderScope(child: TipTapTupApp()));
 }
 
-class TapFlowApp extends ConsumerWidget {
-  const TapFlowApp({super.key});
+class TipTapTupApp extends ConsumerWidget {
+  const TipTapTupApp({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final goRouter = ref.watch(routerProvider);
 
     return MaterialApp.router(
-      title: 'TapFlow',
+      title: 'TipTapTup',
       theme: AppTheme.lightTheme,
       darkTheme: AppTheme.darkTheme,
       themeMode: ThemeMode.system,

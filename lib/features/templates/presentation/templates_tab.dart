@@ -26,7 +26,7 @@ const List<NfcTemplate> kBuiltInTemplates = [
     category: 'Contact',
     payloadType: 'vcard',
     defaultPayload:
-        'BEGIN:VCARD\nVERSION:3.0\nN:Doe;John;;;\nFN:John Doe\nTEL;TYPE=CELL:+15550199\nEMAIL:john@example.com\nORG:TapFlow Tech\nEND:VCARD',
+        'BEGIN:VCARD\nVERSION:3.0\nN:Doe;John;;;\nFN:John Doe\nTEL;TYPE=CELL:+15550199\nEMAIL:john@example.com\nORG:TipTapTup Tech\nEND:VCARD',
     iconName: 'contact',
   ),
   NfcTemplate(
@@ -45,7 +45,7 @@ const List<NfcTemplate> kBuiltInTemplates = [
         'Direct users to your Instagram, LinkedIn, or YouTube profile.',
     category: 'Social',
     payloadType: 'url',
-    defaultPayload: 'https://instagram.com/tapflow_app',
+    defaultPayload: 'https://instagram.com/tiptaptup_app',
     iconName: 'social',
   ),
   NfcTemplate(

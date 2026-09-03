@@ -75,7 +75,7 @@ class HomeDashboardTab extends ConsumerWidget {
                           ),
                           const SizedBox(height: 2),
                           Text(
-                            'TapFlow',
+                            'TipTapTup',
                             style: GoogleFonts.inter(
                               fontSize: 34,
                               fontWeight: FontWeight.w700,

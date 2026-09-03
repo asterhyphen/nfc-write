@@ -3,7 +3,7 @@
     <uses-feature android:name="android.hardware.nfc" android:required="false" />
 
     <application
-        android:label="nfc_write"
+        android:label="TipTapTup"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         <activity
