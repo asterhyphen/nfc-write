@@ -9,6 +9,7 @@ import '../../nfc_management/presentation/nfc_scan_sheet.dart';
 import '../../nfc_management/presentation/nfc_write_sheet.dart';
 import '../../automation/presentation/timer_notifier.dart';
 import '../../automation/presentation/flip_clock_timer_screen.dart';
+import '../../automation/data/timer_preferences.dart';
 
 /// Designer-grade, modern and clean Homepage for scanning & programming NFC.
 class HomeDashboardTab extends ConsumerWidget {
@@ -302,11 +303,15 @@ class HomeDashboardTab extends ConsumerWidget {
 
   // ── Dialog Action Logic ────────────────────────────────────────────────────
 
-  void _programTimer(BuildContext context, WidgetRef ref) {
+  void _programTimer(BuildContext context, WidgetRef ref) async {
+    final initialSeconds = await TimerPreferences.getLastDuration();
+    if (!context.mounted) return;
     showDialog(
       context: context,
       builder: (ctx) => _TimerProgramDialog(
+        initialSeconds: initialSeconds,
         onWriteTag: (seconds) {
+          TimerPreferences.saveLastDuration(seconds);
           Navigator.pop(ctx);
           showModalBottomSheet(
             context: context,
@@ -319,6 +324,7 @@ class HomeDashboardTab extends ConsumerWidget {
           );
         },
         onStartNow: (seconds) {
+          TimerPreferences.saveLastDuration(seconds);
           Navigator.pop(ctx);
           ref.read(timerProvider.notifier).start(seconds, 'TIMER');
           Navigator.push(context, FlipClockTimerScreen.route());
@@ -437,9 +443,11 @@ class HomeDashboardTab extends ConsumerWidget {
 // ── Custom Stateful Programming Dialogs ──────────────────────────────────────
 
 class _TimerProgramDialog extends StatefulWidget {
+  final int initialSeconds;
   final void Function(int seconds) onWriteTag;
   final void Function(int seconds) onStartNow;
   const _TimerProgramDialog({
+    this.initialSeconds = 300,
     required this.onWriteTag,
     required this.onStartNow,
   });
@@ -449,16 +457,18 @@ class _TimerProgramDialog extends StatefulWidget {
 }
 
 class _TimerProgramDialogState extends State<_TimerProgramDialog> {
-  int _minutes = 5;
-  int _seconds = 0;
+  late int _minutes;
+  late int _seconds;
   late final TextEditingController _minCtrl;
   late final TextEditingController _secCtrl;
 
   @override
   void initState() {
     super.initState();
-    _minCtrl = TextEditingController(text: '5');
-    _secCtrl = TextEditingController(text: '0');
+    _minutes = widget.initialSeconds ~/ 60;
+    _seconds = widget.initialSeconds % 60;
+    _minCtrl = TextEditingController(text: '$_minutes');
+    _secCtrl = TextEditingController(text: '$_seconds');
   }
 
   @override

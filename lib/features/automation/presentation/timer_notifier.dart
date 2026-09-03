@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:flutter_ringtone_player/flutter_ringtone_player.dart';
+import '../data/timer_preferences.dart';
 
 part 'timer_notifier.freezed.dart';
 part 'timer_notifier.g.dart';
@@ -40,6 +41,7 @@ class TimerNotifier extends _$TimerNotifier {
 
   void start(int seconds, String label) {
     _ticker?.cancel();
+    TimerPreferences.saveLastDuration(seconds);
     state = TimerState(
       duration: seconds,
       remainingSeconds: seconds,

@@ -6,6 +6,7 @@ import '../../../core/widgets/glass_card.dart';
 import '../../nfc_management/presentation/nfc_write_sheet.dart';
 import 'timer_notifier.dart';
 import 'flip_clock_timer_screen.dart';
+import '../data/timer_preferences.dart';
 
 /// Preset timer options in seconds.
 class TimerPreset {
@@ -34,12 +35,12 @@ const List<TimerPreset> kStandardPresets = [
 ];
 
 class LaunchTimerSheet extends ConsumerStatefulWidget {
-  final int initialSeconds;
+  final int? initialSeconds;
   final String? initialLabel;
 
   const LaunchTimerSheet({
     super.key,
-    this.initialSeconds = 300, // Default 5 mins
+    this.initialSeconds,
     this.initialLabel,
   });
 
@@ -55,8 +56,17 @@ class _LaunchTimerSheetState extends ConsumerState<LaunchTimerSheet> {
   @override
   void initState() {
     super.initState();
-    _selectedSeconds = widget.initialSeconds;
+    _selectedSeconds = widget.initialSeconds ?? 300;
     _timerLabel = widget.initialLabel ?? 'TIMER';
+    if (widget.initialSeconds == null) {
+      TimerPreferences.getLastDuration().then((secs) {
+        if (mounted) {
+          setState(() {
+            _selectedSeconds = secs;
+          });
+        }
+      });
+    }
   }
 
   @override
