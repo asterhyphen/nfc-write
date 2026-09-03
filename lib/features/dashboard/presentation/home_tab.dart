@@ -10,6 +10,7 @@ import '../../nfc_management/presentation/nfc_write_sheet.dart';
 import '../../automation/presentation/timer_notifier.dart';
 import '../../automation/presentation/flip_clock_timer_screen.dart';
 import '../../automation/data/timer_preferences.dart';
+import '../../../core/widgets/bouncy_tap.dart';
 
 /// Designer-grade, modern and clean Homepage for scanning & programming NFC.
 class HomeDashboardTab extends ConsumerWidget {
@@ -103,105 +104,121 @@ class HomeDashboardTab extends ConsumerWidget {
                   const SizedBox(height: 24),
 
                   // ── Apple Hero Scan Card ───────────────────────────
-                  Container(
-                    decoration: BoxDecoration(
-                      color: Theme.of(context).cardTheme.color,
-                      borderRadius: BorderRadius.circular(20),
-                      border: Border.all(
-                        color: cs.outline,
-                        width: 0.5,
-                      ),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black.withValues(alpha: Theme.of(context).brightness == Brightness.dark ? 0.35 : 0.05),
-                          blurRadius: 18,
-                          offset: const Offset(0, 5),
-                        ),
-                      ],
-                    ),
-                    child: Material(
-                      color: Colors.transparent,
-                      borderRadius: BorderRadius.circular(20),
-                      child: InkWell(
+                  BouncyTap(
+                    onTap: () => _openScanSheet(context, ref),
+                    scaleDown: 0.96,
+                    child: Container(
+                      decoration: BoxDecoration(
+                        color: Theme.of(context).cardTheme.color,
                         borderRadius: BorderRadius.circular(20),
-                        onTap: () => _openScanSheet(context, ref),
-                        child: Padding(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 20,
-                            vertical: 22,
+                        border: Border.all(
+                          color: cs.outline,
+                          width: 0.5,
+                        ),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withValues(
+                              alpha: Theme.of(context).brightness == Brightness.dark ? 0.35 : 0.05,
+                            ),
+                            blurRadius: 18,
+                            offset: const Offset(0, 5),
                           ),
-                          child: Row(
-                            children: [
-                              Container(
-                                width: 48,
-                                height: 48,
-                                decoration: BoxDecoration(
-                                  color: cs.primary,
-                                  borderRadius: BorderRadius.circular(14),
-                                  boxShadow: [
-                                    BoxShadow(
-                                      color: cs.primary.withValues(alpha: 0.35),
-                                      blurRadius: 12,
-                                      offset: const Offset(0, 4),
-                                    ),
-                                  ],
+                        ],
+                      ),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 20,
+                        vertical: 22,
+                      ),
+                      child: Row(
+                        children: [
+                          Container(
+                            width: 48,
+                            height: 48,
+                            decoration: BoxDecoration(
+                              color: cs.primary,
+                              borderRadius: BorderRadius.circular(14),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: cs.primary.withValues(alpha: 0.4),
+                                  blurRadius: 14,
+                                  offset: const Offset(0, 4),
                                 ),
-                                child: const Icon(
-                                  CupertinoIcons.radiowaves_right,
-                                  color: Colors.white,
-                                  size: 24,
-                                ),
+                              ],
+                            ),
+                            child: const Icon(
+                              CupertinoIcons.radiowaves_right,
+                              color: Colors.white,
+                              size: 24,
+                            ),
+                          )
+                              .animate(onPlay: (c) => c.repeat(reverse: true))
+                              .scale(
+                                begin: const Offset(0.96, 0.96),
+                                end: const Offset(1.05, 1.05),
+                                duration: 1500.ms,
+                                curve: Curves.easeInOut,
                               ),
-                              const SizedBox(width: 16),
-                              Expanded(
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
+                          const SizedBox(width: 16),
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Row(
                                   children: [
-                                    Row(
-                                      children: [
-                                        Container(
-                                          width: 7,
-                                          height: 7,
-                                          decoration: const BoxDecoration(
-                                            shape: BoxShape.circle,
-                                            color: Color(0xFF34C759),
+                                    Container(
+                                      width: 7,
+                                      height: 7,
+                                      decoration: BoxDecoration(
+                                        shape: BoxShape.circle,
+                                        color: const Color(0xFF34C759),
+                                        boxShadow: [
+                                          BoxShadow(
+                                            color: const Color(0xFF34C759).withValues(alpha: 0.6),
+                                            blurRadius: 6,
                                           ),
+                                        ],
+                                      ),
+                                    )
+                                        .animate(onPlay: (c) => c.repeat(reverse: true))
+                                        .scale(
+                                          begin: const Offset(0.8, 0.8),
+                                          end: const Offset(1.3, 1.3),
+                                          duration: 1000.ms,
+                                          curve: Curves.easeInOut,
                                         ),
-                                        const SizedBox(width: 6),
-                                        Text(
-                                          'READY TO SCAN',
-                                          style: GoogleFonts.inter(
-                                            fontSize: 11,
-                                            fontWeight: FontWeight.w700,
-                                            color: cs.primary,
-                                            letterSpacing: 1.0,
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                    const SizedBox(height: 4),
+                                    const SizedBox(width: 7),
                                     Text(
-                                      'Tap to Scan NFC Tag',
+                                      'READY TO SCAN',
                                       style: GoogleFonts.inter(
-                                        fontSize: 17,
-                                        fontWeight: FontWeight.w600,
-                                        letterSpacing: -0.3,
+                                        fontSize: 11,
+                                        fontWeight: FontWeight.w700,
+                                        color: cs.primary,
+                                        letterSpacing: 1.0,
                                       ),
                                     ),
                                   ],
                                 ),
-                              ),
-                              Icon(
-                                CupertinoIcons.chevron_right,
-                                size: 16,
-                                color: cs.onSurface.withValues(alpha: 0.3),
-                              ),
-                            ],
+                                const SizedBox(height: 4),
+                                Text(
+                                  'Tap to Scan NFC Tag',
+                                  style: GoogleFonts.inter(
+                                    fontSize: 17,
+                                    fontWeight: FontWeight.w600,
+                                    letterSpacing: -0.3,
+                                  ),
+                                ),
+                              ],
+                            ),
                           ),
-                        ),
+                          Icon(
+                            CupertinoIcons.chevron_right,
+                            size: 16,
+                            color: cs.onSurface.withValues(alpha: 0.3),
+                          ),
+                        ],
                       ),
                     ),
-                  ).animate().fadeIn(delay: 200.ms).slideY(begin: 0.05),
+                  ).animate().fadeIn(delay: 200.ms, duration: 400.ms).slideY(begin: 0.06, curve: Curves.easeOutCubic),
 
                   const SizedBox(height: 32),
 
@@ -1281,29 +1298,26 @@ class _DesignerActionTile extends StatelessWidget {
     final border = isDark ? const Color(0xFF38383A) : const Color(0xFFE5E5EA);
     final cardBg = isDark ? const Color(0xFF1C1C1E) : Colors.white;
 
-    return Container(
-          margin: const EdgeInsets.only(bottom: 10),
-          decoration: BoxDecoration(
-            color: cardBg,
-            borderRadius: BorderRadius.circular(16),
-            border: Border.all(color: border, width: 0.5),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withValues(alpha: isDark ? 0.25 : 0.04),
-                blurRadius: 10,
-                offset: const Offset(0, 2),
-              ),
-            ],
-          ),
-          child: Material(
-            color: Colors.transparent,
-            borderRadius: BorderRadius.circular(16),
-            child: InkWell(
-              onTap: onTap,
-              borderRadius: BorderRadius.circular(16),
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-                child: Row(
+    return BouncyTap(
+      onTap: onTap,
+      scaleDown: 0.96,
+      child: Container(
+        margin: const EdgeInsets.only(bottom: 10),
+        decoration: BoxDecoration(
+          color: cardBg,
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(color: border, width: 0.5),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withValues(alpha: isDark ? 0.25 : 0.04),
+              blurRadius: 10,
+              offset: const Offset(0, 2),
+            ),
+          ],
+        ),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+          child: Row(
                   children: [
                     // Apple iOS Squircle Icon Badge
                     Container(
@@ -1388,10 +1402,9 @@ class _DesignerActionTile extends StatelessWidget {
                 ),
               ),
             ),
-          ),
-        )
+          )
         .animate()
-        .fadeIn(delay: Duration(milliseconds: 300 + (index * 50)))
-        .slideY(begin: 0.06, curve: Curves.easeOutQuad, duration: 350.ms);
+        .fadeIn(delay: Duration(milliseconds: 200 + (index * 45)), duration: 350.ms)
+        .slideY(begin: 0.08, end: 0, curve: Curves.easeOutCubic);
   }
 }

@@ -750,34 +750,49 @@ class _PulsingScanRingState extends State<PulsingScanRing>
     return AnimatedBuilder(
       animation: _controller,
       builder: (context, child) {
+        final val = _controller.value;
+        final phase2 = (val + 0.33) % 1.0;
+        final phase3 = (val + 0.66) % 1.0;
+
         return Stack(
           alignment: Alignment.center,
           children: [
-            // Outer expanding ring
+            // Wave 1
             Container(
-              width: 100 + (_controller.value * 100),
-              height: 100 + (_controller.value * 100),
+              width: 100 + (val * 110),
+              height: 100 + (val * 110),
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
+                color: cs.primary.withValues(alpha: 0.05 * (1.0 - val)),
                 border: Border.all(
-                  color: cs.primary.withValues(
-                    alpha: 0.25 * (1.0 - _controller.value),
-                  ),
-                  width: 3,
+                  color: cs.primary.withValues(alpha: 0.30 * (1.0 - val)),
+                  width: 2,
                 ),
               ),
             ),
-            // Inner expanding ring
+            // Wave 2
             Container(
-              width: 100 + (_controller.value * 50),
-              height: 100 + (_controller.value * 50),
+              width: 100 + (phase2 * 110),
+              height: 100 + (phase2 * 110),
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
+                color: cs.primary.withValues(alpha: 0.04 * (1.0 - phase2)),
                 border: Border.all(
-                  color: cs.primary.withValues(
-                    alpha: 0.15 * (1.0 - _controller.value),
-                  ),
-                  width: 2,
+                  color: cs.primary.withValues(alpha: 0.25 * (1.0 - phase2)),
+                  width: 1.5,
+                ),
+              ),
+            ),
+            // Wave 3
+            Container(
+              width: 100 + (phase3 * 110),
+              height: 100 + (phase3 * 110),
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: cs.primary.withValues(alpha: 0.03 * (1.0 - phase3)),
+                border: Border.all(
+                  color: cs.primary.withValues(alpha: 0.20 * (1.0 - phase3)),
+                  width: 1.0,
                 ),
               ),
             ),

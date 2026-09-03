@@ -439,11 +439,26 @@ class _WaitingToWrite extends StatelessWidget {
     return Column(
       children: [
         const SizedBox(height: 32),
-        Icon(
-          Icons.nfc_rounded,
-          size: 80,
-          color: cs.primary,
-        ).animate(onPlay: (c) => c.repeat()).shimmer(duration: 1500.ms),
+        Container(
+          width: 88,
+          height: 88,
+          decoration: BoxDecoration(
+            color: cs.primary.withValues(alpha: 0.10),
+            shape: BoxShape.circle,
+          ),
+          child: Icon(
+            Icons.nfc_rounded,
+            size: 48,
+            color: cs.primary,
+          ),
+        )
+            .animate(onPlay: (c) => c.repeat(reverse: true))
+            .scale(
+              begin: const Offset(0.94, 0.94),
+              end: const Offset(1.08, 1.08),
+              duration: 1200.ms,
+              curve: Curves.easeInOut,
+            ),
         const SizedBox(height: 24),
         Text('Ready to write…', style: Theme.of(context).textTheme.titleMedium),
         const SizedBox(height: 8),
@@ -472,18 +487,35 @@ class _WriteSuccess extends StatelessWidget {
     return Column(
       children: [
         const SizedBox(height: 32),
-        CircleAvatar(
-          radius: 40,
-          backgroundColor: Colors.green.withValues(alpha: 0.15),
-          child: const Icon(Icons.check, color: Colors.green, size: 44),
-        ).animate().scale(begin: const Offset(0.4, 0.4)).fadeIn(),
+        Container(
+          width: 80,
+          height: 80,
+          decoration: BoxDecoration(
+            color: const Color(0xFF34C759).withValues(alpha: 0.15),
+            shape: BoxShape.circle,
+            boxShadow: [
+              BoxShadow(
+                color: const Color(0xFF34C759).withValues(alpha: 0.3),
+                blurRadius: 20,
+              ),
+            ],
+          ),
+          child: const Icon(Icons.check_rounded, color: Color(0xFF34C759), size: 48),
+        )
+            .animate()
+            .scale(
+              duration: 450.ms,
+              curve: Curves.easeOutBack,
+              begin: const Offset(0.3, 0.3),
+            )
+            .fadeIn(),
         const SizedBox(height: 20),
         Text(
           'Written Successfully!',
           style: Theme.of(
             context,
           ).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
-        ).animate().fadeIn(delay: 200.ms),
+        ).animate().fadeIn(delay: 150.ms).slideY(begin: 0.1),
         const SizedBox(height: 8),
         Text(
           'The NDEF record was written to the tag.',
@@ -493,19 +525,22 @@ class _WriteSuccess extends StatelessWidget {
               context,
             ).colorScheme.onSurface.withValues(alpha: 0.6),
           ),
-        ).animate().fadeIn(delay: 300.ms),
+        ).animate().fadeIn(delay: 250.ms),
         const SizedBox(height: 32),
-        FilledButton.icon(
-          onPressed: onClose,
-          icon: const Icon(Icons.done),
-          label: const Text('Done'),
-          style: FilledButton.styleFrom(
-            minimumSize: const Size(double.infinity, 50),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(14),
+        SizedBox(
+          width: double.infinity,
+          child: FilledButton.icon(
+            onPressed: onClose,
+            icon: const Icon(Icons.done_rounded),
+            label: const Text('Done'),
+            style: FilledButton.styleFrom(
+              padding: const EdgeInsets.symmetric(vertical: 14),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(14),
+              ),
             ),
           ),
-        ).animate().fadeIn(delay: 400.ms),
+        ).animate().fadeIn(delay: 350.ms).slideY(begin: 0.1),
       ],
     );
   }
@@ -527,8 +562,12 @@ class _WriteError extends StatelessWidget {
         CircleAvatar(
           radius: 40,
           backgroundColor: cs.error.withValues(alpha: 0.12),
-          child: Icon(Icons.error_outline, color: cs.error, size: 44),
-        ).animate().scale(begin: const Offset(0.4, 0.4)).fadeIn(),
+          child: Icon(Icons.error_outline_rounded, color: cs.error, size: 44),
+        )
+            .animate()
+            .scale(begin: const Offset(0.4, 0.4), curve: Curves.easeOutBack)
+            .shake(duration: 450.ms, hz: 4)
+            .fadeIn(),
         const SizedBox(height: 20),
         Text(
           'Write Failed',
@@ -545,14 +584,17 @@ class _WriteError extends StatelessWidget {
           ),
         ),
         const SizedBox(height: 28),
-        FilledButton.icon(
-          onPressed: onRetry,
-          icon: const Icon(Icons.arrow_back),
-          label: const Text('Edit & Retry'),
-          style: FilledButton.styleFrom(
-            minimumSize: const Size(double.infinity, 50),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(14),
+        SizedBox(
+          width: double.infinity,
+          child: FilledButton.icon(
+            onPressed: onRetry,
+            icon: const Icon(Icons.arrow_back_rounded),
+            label: const Text('Edit & Retry'),
+            style: FilledButton.styleFrom(
+              padding: const EdgeInsets.symmetric(vertical: 14),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(14),
+              ),
             ),
           ),
         ),

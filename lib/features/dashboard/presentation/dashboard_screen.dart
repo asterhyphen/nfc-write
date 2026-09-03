@@ -2,15 +2,15 @@ import 'dart:ui';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:google_fonts/google_fonts.dart';
 
-import '../../settings/presentation/settings_tab.dart';
-import '../../templates/presentation/templates_tab.dart';
 import '../../../core/config/background_nfc_manager.dart';
+import '../../../core/widgets/bouncy_tap.dart';
+import '../../templates/presentation/templates_tab.dart';
+import '../../settings/presentation/settings_tab.dart';
 import 'home_tab.dart';
 
-/// Root shell widget with an authentic Apple floating frosted glass capsule tab bar.
-///
-/// Each tab is lazily kept alive via [IndexedStack].
+/// Root shell with an Apple frosted glass floating capsule bottom navigation bar.
 class DashboardScreen extends ConsumerStatefulWidget {
   const DashboardScreen({super.key});
 
@@ -54,7 +54,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
             BoxShadow(
               color: Colors.black.withValues(alpha: isDark ? 0.35 : 0.08),
               blurRadius: 24,
-              offset: const Offset(0, 8),
+              offset: const Offset(0, 10),
             ),
           ],
         ),
@@ -64,11 +64,11 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
             filter: ImageFilter.blur(sigmaX: 25, sigmaY: 25),
             child: Container(
               height: 66,
-              padding: const EdgeInsets.symmetric(horizontal: 8),
+              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
               decoration: BoxDecoration(
                 color: isDark
-                    ? const Color(0xFF1C1C1E).withValues(alpha: 0.82)
-                    : Colors.white.withValues(alpha: 0.85),
+                    ? const Color(0xFF1C1C1E).withValues(alpha: 0.85)
+                    : Colors.white.withValues(alpha: 0.88),
                 borderRadius: BorderRadius.circular(36),
                 border: Border.all(
                   color: isDark
@@ -131,35 +131,42 @@ class _AppleTabItem extends StatelessWidget {
     final cs = Theme.of(context).colorScheme;
     final isDark = cs.brightness == Brightness.dark;
     final activeColor = cs.primary;
-    final inactiveColor = isDark
-        ? const Color(0xFF8E8E93)
-        : const Color(0xFF8E8E93);
+    const inactiveColor = Color(0xFF8E8E93);
 
     return Expanded(
-      child: GestureDetector(
-        behavior: HitTestBehavior.opaque,
+      child: BouncyTap(
         onTap: onTap,
+        scaleDown: 0.92,
         child: AnimatedContainer(
-          duration: const Duration(milliseconds: 200),
-          curve: Curves.easeInOut,
-          padding: const EdgeInsets.symmetric(vertical: 8),
+          duration: const Duration(milliseconds: 240),
+          curve: Curves.easeOutCubic,
+          padding: const EdgeInsets.symmetric(vertical: 4),
+          decoration: BoxDecoration(
+            color: isSelected
+                ? (isDark
+                    ? activeColor.withValues(alpha: 0.16)
+                    : activeColor.withValues(alpha: 0.10))
+                : Colors.transparent,
+            borderRadius: BorderRadius.circular(22),
+          ),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               AnimatedScale(
-                scale: isSelected ? 1.08 : 1.0,
-                duration: const Duration(milliseconds: 200),
+                scale: isSelected ? 1.10 : 1.0,
+                duration: const Duration(milliseconds: 220),
+                curve: Curves.easeOutBack,
                 child: Icon(
                   isSelected ? icon : unselectedIcon,
-                  size: 24,
+                  size: 23,
                   color: isSelected ? activeColor : inactiveColor,
                 ),
               ),
               const SizedBox(height: 3),
               Text(
                 label,
-                style: TextStyle(
+                style: GoogleFonts.inter(
                   fontSize: 11,
                   fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
                   color: isSelected ? activeColor : inactiveColor,
