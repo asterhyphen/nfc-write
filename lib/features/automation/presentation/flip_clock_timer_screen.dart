@@ -31,10 +31,8 @@ class _FlipClockTimerScreenState extends ConsumerState<FlipClockTimerScreen>
   @override
   void initState() {
     super.initState();
-    // Support all orientations naturally
+    // Default to horizontal (landscape) view always for the flip clock timer
     SystemChrome.setPreferredOrientations([
-      DeviceOrientation.portraitUp,
-      DeviceOrientation.portraitDown,
       DeviceOrientation.landscapeLeft,
       DeviceOrientation.landscapeRight,
     ]);
@@ -111,9 +109,15 @@ class _FlipClockTimerScreenState extends ConsumerState<FlipClockTimerScreen>
     // Urgency pulse in the final 10 seconds
     final isUrgent = timerState.remainingSeconds <= 10 && timerState.isRunning;
 
-    return Scaffold(
-      backgroundColor: const Color(0xFF09090F),
-      body: Stack(
+    return PopScope(
+      canPop: false,
+      onPopInvokedWithResult: (didPop, result) {
+        if (didPop) return;
+        _handleCancel(context);
+      },
+      child: Scaffold(
+        backgroundColor: const Color(0xFF09090F),
+        body: Stack(
           children: [
             // ── Background Animated Gradient ────────────────────────
             AnimatedBuilder(
@@ -321,7 +325,8 @@ class _FlipClockTimerScreenState extends ConsumerState<FlipClockTimerScreen>
             ),
           ],
         ),
-      );
+      ),
+    );
   }
 }
 
