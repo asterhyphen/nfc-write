@@ -1,22 +1,29 @@
 package dev.aster.nfc_write
 
+import android.app.AlarmManager
+import android.app.NotificationManager
+import android.app.PendingIntent
+import android.content.Context
 import android.content.Intent
 import android.nfc.NfcAdapter
 import android.nfc.NdefMessage
 import android.nfc.NdefRecord
+import android.os.Build
 import android.os.Bundle
 import io.flutter.embedding.android.FlutterActivity
 import io.flutter.embedding.engine.FlutterEngine
 import io.flutter.plugin.common.MethodChannel
 
 class MainActivity : FlutterActivity() {
-    private val CHANNEL = "dev.aster.nfc_write/nfc"
+    private val NFC_CHANNEL = "dev.aster.nfc_write/nfc"
+    private val TIMER_CHANNEL = "dev.aster.nfc_write/timer"
     private var channel: MethodChannel? = null
+    private var timerChannel: MethodChannel? = null
     private var pendingPayload: String? = null
 
     override fun configureFlutterEngine(flutterEngine: FlutterEngine) {
         super.configureFlutterEngine(flutterEngine)
-        channel = MethodChannel(flutterEngine.dartExecutor.binaryMessenger, CHANNEL)
+        channel = MethodChannel(flutterEngine.dartExecutor.binaryMessenger, NFC_CHANNEL)
         channel?.setMethodCallHandler { call, result ->
             if (call.method == "getPendingPayload") {
                 result.success(pendingPayload)
@@ -25,6 +32,67 @@ class MainActivity : FlutterActivity() {
                 result.notImplemented()
             }
         }
+
+        timerChannel = MethodChannel(flutterEngine.dartExecutor.binaryMessenger, TIMER_CHANNEL)
+        timerChannel?.setMethodCallHandler { call, result ->
+            when (call.method) {
+                "scheduleTimerAlarm" -> {
+                    val triggerAtMillis = (call.argument<Number>("triggerAtMillis"))?.toLong() ?: 0L
+                    val title = call.argument<String>("title") ?: "Timer Finished"
+                    val label = call.argument<String>("label") ?: "Focus Session"
+                    scheduleAlarm(triggerAtMillis, title, label)
+                    result.success(true)
+                }
+                "cancelTimerAlarm" -> {
+                    cancelAlarm()
+                    result.success(true)
+                }
+                else -> result.notImplemented()
+            }
+        }
+    }
+
+    private fun scheduleAlarm(triggerAtMillis: Long, title: String, label: String) {
+        val alarmManager = getSystemService(Context.ALARM_SERVICE) as? AlarmManager ?: return
+        val intent = Intent(this, TimerAlarmReceiver::class.java).apply {
+            putExtra("title", title)
+            putExtra("label", label)
+        }
+        val pendingIntent = PendingIntent.getBroadcast(
+            this,
+            1001,
+            intent,
+            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+        )
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            alarmManager.setExactAndAllowWhileIdle(
+                AlarmManager.RTC_WAKEUP,
+                triggerAtMillis,
+                pendingIntent
+            )
+        } else {
+            alarmManager.setExact(
+                AlarmManager.RTC_WAKEUP,
+                triggerAtMillis,
+                pendingIntent
+            )
+        }
+    }
+
+    private fun cancelAlarm() {
+        val alarmManager = getSystemService(Context.ALARM_SERVICE) as? AlarmManager ?: return
+        val intent = Intent(this, TimerAlarmReceiver::class.java)
+        val pendingIntent = PendingIntent.getBroadcast(
+            this,
+            1001,
+            intent,
+            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+        )
+        alarmManager.cancel(pendingIntent)
+
+        val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as? NotificationManager
+        notificationManager?.cancel(1001)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
