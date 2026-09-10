@@ -22,41 +22,12 @@ class HomeDashboardTab extends ConsumerWidget {
 
     return Scaffold(
       backgroundColor: Colors.transparent,
-      body: Stack(
-        children: [
-          // ── Ambient Glassmorphic Background Blur Lights ────────────────────
-          Positioned(
-            top: -100,
-            right: -80,
-            child: Container(
-              width: 320,
-              height: 320,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                color: cs.primary.withValues(alpha: 0.16),
-              ),
-            ),
-          ).animate().fadeIn(duration: 900.ms),
-          Positioned(
-            bottom: 40,
-            left: -120,
-            child: Container(
-              width: 360,
-              height: 360,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                color: cs.tertiary.withValues(alpha: 0.12),
-              ),
-            ),
-          ).animate().fadeIn(duration: 1100.ms),
-
-          // ── Main Page Layout ───────────────────────────────────────────────
-          SafeArea(
-            child: SingleChildScrollView(
-              padding: const EdgeInsets.fromLTRB(20, 20, 20, 32),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
+      body: SafeArea(
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.fromLTRB(20, 20, 20, 32),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
                   // ── Apple iOS Large Title Header ───────────────────────────
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -86,16 +57,16 @@ class HomeDashboardTab extends ConsumerWidget {
                         ],
                       ),
                       Container(
-                        width: 40,
-                        height: 40,
+                        width: 36,
+                        height: 36,
                         decoration: BoxDecoration(
                           color: cs.primary.withValues(alpha: 0.12),
-                          shape: BoxShape.circle,
+                          borderRadius: BorderRadius.circular(10),
                         ),
                         child: Icon(
                           CupertinoIcons.bolt_fill,
                           color: cs.primary,
-                          size: 20,
+                          size: 18,
                         ),
                       ),
                     ],
@@ -299,9 +270,7 @@ class HomeDashboardTab extends ConsumerWidget {
               ),
             ),
           ),
-        ],
-      ),
-    );
+        );
   }
 
   void _openScanSheet(BuildContext context, WidgetRef ref) {
