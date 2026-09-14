@@ -308,13 +308,25 @@ class _NfcScanSheetState extends ConsumerState<NfcScanSheet> {
         await launchUrl(url, mode: LaunchMode.externalApplication);
       }
     } else if (res.tagType == 'Timer' || res.content.startsWith('timer://')) {
-      final secs =
-          int.tryParse(res.content.replaceFirst('timer://', '')) ?? 300;
+      final raw = res.content.replaceFirst('timer://', '');
       if (mounted) {
         Navigator.pop(context);
-        ref
-            .read(timerProvider.notifier)
-            .start(secs, res.tagName ?? 'NFC Timer Action');
+        if (raw.toLowerCase().startsWith('countup') || raw == '0') {
+          int? limit;
+          if (raw.contains('limit=')) {
+            final uri = Uri.tryParse('timer://$raw');
+            limit = int.tryParse(uri?.queryParameters['limit'] ?? '');
+          }
+          ref.read(timerProvider.notifier).startCountUp(
+                label: res.tagName ?? 'NFC Focus Action',
+                limitSeconds: limit,
+              );
+        } else {
+          final secs = int.tryParse(raw) ?? 300;
+          ref
+              .read(timerProvider.notifier)
+              .start(secs, res.tagName ?? 'NFC Timer Action');
+        }
         Navigator.push(context, FlipClockTimerScreen.route());
       }
     } else if (res.content.startsWith('notification://')) {

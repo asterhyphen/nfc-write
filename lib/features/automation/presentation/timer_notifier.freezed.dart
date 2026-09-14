@@ -14,7 +14,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$TimerState {
 
- int get duration; int get remainingSeconds; bool get isRunning; bool get isPaused; bool get isFinished; String get label; DateTime? get targetEndTime;
+ int get duration; int get remainingSeconds; int get elapsedSeconds; bool get isRunning; bool get isPaused; bool get isFinished; String get label; TimerMode get mode; DateTime? get targetEndTime; DateTime? get startTime; int? get countUpLimitSeconds;
 /// Create a copy of TimerState
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -25,16 +25,16 @@ $TimerStateCopyWith<TimerState> get copyWith => _$TimerStateCopyWithImpl<TimerSt
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is TimerState&&(identical(other.duration, duration) || other.duration == duration)&&(identical(other.remainingSeconds, remainingSeconds) || other.remainingSeconds == remainingSeconds)&&(identical(other.isRunning, isRunning) || other.isRunning == isRunning)&&(identical(other.isPaused, isPaused) || other.isPaused == isPaused)&&(identical(other.isFinished, isFinished) || other.isFinished == isFinished)&&(identical(other.label, label) || other.label == label)&&(identical(other.targetEndTime, targetEndTime) || other.targetEndTime == targetEndTime));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is TimerState&&(identical(other.duration, duration) || other.duration == duration)&&(identical(other.remainingSeconds, remainingSeconds) || other.remainingSeconds == remainingSeconds)&&(identical(other.elapsedSeconds, elapsedSeconds) || other.elapsedSeconds == elapsedSeconds)&&(identical(other.isRunning, isRunning) || other.isRunning == isRunning)&&(identical(other.isPaused, isPaused) || other.isPaused == isPaused)&&(identical(other.isFinished, isFinished) || other.isFinished == isFinished)&&(identical(other.label, label) || other.label == label)&&(identical(other.mode, mode) || other.mode == mode)&&(identical(other.targetEndTime, targetEndTime) || other.targetEndTime == targetEndTime)&&(identical(other.startTime, startTime) || other.startTime == startTime)&&(identical(other.countUpLimitSeconds, countUpLimitSeconds) || other.countUpLimitSeconds == countUpLimitSeconds));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,duration,remainingSeconds,isRunning,isPaused,isFinished,label,targetEndTime);
+int get hashCode => Object.hash(runtimeType,duration,remainingSeconds,elapsedSeconds,isRunning,isPaused,isFinished,label,mode,targetEndTime,startTime,countUpLimitSeconds);
 
 @override
 String toString() {
-  return 'TimerState(duration: $duration, remainingSeconds: $remainingSeconds, isRunning: $isRunning, isPaused: $isPaused, isFinished: $isFinished, label: $label, targetEndTime: $targetEndTime)';
+  return 'TimerState(duration: $duration, remainingSeconds: $remainingSeconds, elapsedSeconds: $elapsedSeconds, isRunning: $isRunning, isPaused: $isPaused, isFinished: $isFinished, label: $label, mode: $mode, targetEndTime: $targetEndTime, startTime: $startTime, countUpLimitSeconds: $countUpLimitSeconds)';
 }
 
 
@@ -45,7 +45,7 @@ abstract mixin class $TimerStateCopyWith<$Res>  {
   factory $TimerStateCopyWith(TimerState value, $Res Function(TimerState) _then) = _$TimerStateCopyWithImpl;
 @useResult
 $Res call({
- int duration, int remainingSeconds, bool isRunning, bool isPaused, bool isFinished, String label, DateTime? targetEndTime
+ int duration, int remainingSeconds, int elapsedSeconds, bool isRunning, bool isPaused, bool isFinished, String label, TimerMode mode, DateTime? targetEndTime, DateTime? startTime, int? countUpLimitSeconds
 });
 
 
@@ -62,16 +62,20 @@ class _$TimerStateCopyWithImpl<$Res>
 
 /// Create a copy of TimerState
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? duration = null,Object? remainingSeconds = null,Object? isRunning = null,Object? isPaused = null,Object? isFinished = null,Object? label = null,Object? targetEndTime = freezed,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? duration = null,Object? remainingSeconds = null,Object? elapsedSeconds = null,Object? isRunning = null,Object? isPaused = null,Object? isFinished = null,Object? label = null,Object? mode = null,Object? targetEndTime = freezed,Object? startTime = freezed,Object? countUpLimitSeconds = freezed,}) {
   return _then(_self.copyWith(
 duration: null == duration ? _self.duration : duration // ignore: cast_nullable_to_non_nullable
 as int,remainingSeconds: null == remainingSeconds ? _self.remainingSeconds : remainingSeconds // ignore: cast_nullable_to_non_nullable
+as int,elapsedSeconds: null == elapsedSeconds ? _self.elapsedSeconds : elapsedSeconds // ignore: cast_nullable_to_non_nullable
 as int,isRunning: null == isRunning ? _self.isRunning : isRunning // ignore: cast_nullable_to_non_nullable
 as bool,isPaused: null == isPaused ? _self.isPaused : isPaused // ignore: cast_nullable_to_non_nullable
 as bool,isFinished: null == isFinished ? _self.isFinished : isFinished // ignore: cast_nullable_to_non_nullable
 as bool,label: null == label ? _self.label : label // ignore: cast_nullable_to_non_nullable
-as String,targetEndTime: freezed == targetEndTime ? _self.targetEndTime : targetEndTime // ignore: cast_nullable_to_non_nullable
-as DateTime?,
+as String,mode: null == mode ? _self.mode : mode // ignore: cast_nullable_to_non_nullable
+as TimerMode,targetEndTime: freezed == targetEndTime ? _self.targetEndTime : targetEndTime // ignore: cast_nullable_to_non_nullable
+as DateTime?,startTime: freezed == startTime ? _self.startTime : startTime // ignore: cast_nullable_to_non_nullable
+as DateTime?,countUpLimitSeconds: freezed == countUpLimitSeconds ? _self.countUpLimitSeconds : countUpLimitSeconds // ignore: cast_nullable_to_non_nullable
+as int?,
   ));
 }
 
@@ -156,10 +160,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( int duration,  int remainingSeconds,  bool isRunning,  bool isPaused,  bool isFinished,  String label,  DateTime? targetEndTime)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( int duration,  int remainingSeconds,  int elapsedSeconds,  bool isRunning,  bool isPaused,  bool isFinished,  String label,  TimerMode mode,  DateTime? targetEndTime,  DateTime? startTime,  int? countUpLimitSeconds)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _TimerState() when $default != null:
-return $default(_that.duration,_that.remainingSeconds,_that.isRunning,_that.isPaused,_that.isFinished,_that.label,_that.targetEndTime);case _:
+return $default(_that.duration,_that.remainingSeconds,_that.elapsedSeconds,_that.isRunning,_that.isPaused,_that.isFinished,_that.label,_that.mode,_that.targetEndTime,_that.startTime,_that.countUpLimitSeconds);case _:
   return orElse();
 
 }
@@ -177,10 +181,10 @@ return $default(_that.duration,_that.remainingSeconds,_that.isRunning,_that.isPa
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( int duration,  int remainingSeconds,  bool isRunning,  bool isPaused,  bool isFinished,  String label,  DateTime? targetEndTime)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( int duration,  int remainingSeconds,  int elapsedSeconds,  bool isRunning,  bool isPaused,  bool isFinished,  String label,  TimerMode mode,  DateTime? targetEndTime,  DateTime? startTime,  int? countUpLimitSeconds)  $default,) {final _that = this;
 switch (_that) {
 case _TimerState():
-return $default(_that.duration,_that.remainingSeconds,_that.isRunning,_that.isPaused,_that.isFinished,_that.label,_that.targetEndTime);case _:
+return $default(_that.duration,_that.remainingSeconds,_that.elapsedSeconds,_that.isRunning,_that.isPaused,_that.isFinished,_that.label,_that.mode,_that.targetEndTime,_that.startTime,_that.countUpLimitSeconds);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -197,10 +201,10 @@ return $default(_that.duration,_that.remainingSeconds,_that.isRunning,_that.isPa
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( int duration,  int remainingSeconds,  bool isRunning,  bool isPaused,  bool isFinished,  String label,  DateTime? targetEndTime)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( int duration,  int remainingSeconds,  int elapsedSeconds,  bool isRunning,  bool isPaused,  bool isFinished,  String label,  TimerMode mode,  DateTime? targetEndTime,  DateTime? startTime,  int? countUpLimitSeconds)?  $default,) {final _that = this;
 switch (_that) {
 case _TimerState() when $default != null:
-return $default(_that.duration,_that.remainingSeconds,_that.isRunning,_that.isPaused,_that.isFinished,_that.label,_that.targetEndTime);case _:
+return $default(_that.duration,_that.remainingSeconds,_that.elapsedSeconds,_that.isRunning,_that.isPaused,_that.isFinished,_that.label,_that.mode,_that.targetEndTime,_that.startTime,_that.countUpLimitSeconds);case _:
   return null;
 
 }
@@ -212,16 +216,20 @@ return $default(_that.duration,_that.remainingSeconds,_that.isRunning,_that.isPa
 
 
 class _TimerState implements TimerState {
-  const _TimerState({required this.duration, required this.remainingSeconds, required this.isRunning, required this.isPaused, required this.isFinished, required this.label, this.targetEndTime});
+  const _TimerState({required this.duration, required this.remainingSeconds, this.elapsedSeconds = 0, required this.isRunning, required this.isPaused, required this.isFinished, required this.label, this.mode = TimerMode.countdown, this.targetEndTime, this.startTime, this.countUpLimitSeconds});
   
 
 @override final  int duration;
 @override final  int remainingSeconds;
+@override@JsonKey() final  int elapsedSeconds;
 @override final  bool isRunning;
 @override final  bool isPaused;
 @override final  bool isFinished;
 @override final  String label;
+@override@JsonKey() final  TimerMode mode;
 @override final  DateTime? targetEndTime;
+@override final  DateTime? startTime;
+@override final  int? countUpLimitSeconds;
 
 /// Create a copy of TimerState
 /// with the given fields replaced by the non-null parameter values.
@@ -233,16 +241,16 @@ _$TimerStateCopyWith<_TimerState> get copyWith => __$TimerStateCopyWithImpl<_Tim
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _TimerState&&(identical(other.duration, duration) || other.duration == duration)&&(identical(other.remainingSeconds, remainingSeconds) || other.remainingSeconds == remainingSeconds)&&(identical(other.isRunning, isRunning) || other.isRunning == isRunning)&&(identical(other.isPaused, isPaused) || other.isPaused == isPaused)&&(identical(other.isFinished, isFinished) || other.isFinished == isFinished)&&(identical(other.label, label) || other.label == label)&&(identical(other.targetEndTime, targetEndTime) || other.targetEndTime == targetEndTime));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _TimerState&&(identical(other.duration, duration) || other.duration == duration)&&(identical(other.remainingSeconds, remainingSeconds) || other.remainingSeconds == remainingSeconds)&&(identical(other.elapsedSeconds, elapsedSeconds) || other.elapsedSeconds == elapsedSeconds)&&(identical(other.isRunning, isRunning) || other.isRunning == isRunning)&&(identical(other.isPaused, isPaused) || other.isPaused == isPaused)&&(identical(other.isFinished, isFinished) || other.isFinished == isFinished)&&(identical(other.label, label) || other.label == label)&&(identical(other.mode, mode) || other.mode == mode)&&(identical(other.targetEndTime, targetEndTime) || other.targetEndTime == targetEndTime)&&(identical(other.startTime, startTime) || other.startTime == startTime)&&(identical(other.countUpLimitSeconds, countUpLimitSeconds) || other.countUpLimitSeconds == countUpLimitSeconds));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,duration,remainingSeconds,isRunning,isPaused,isFinished,label,targetEndTime);
+int get hashCode => Object.hash(runtimeType,duration,remainingSeconds,elapsedSeconds,isRunning,isPaused,isFinished,label,mode,targetEndTime,startTime,countUpLimitSeconds);
 
 @override
 String toString() {
-  return 'TimerState(duration: $duration, remainingSeconds: $remainingSeconds, isRunning: $isRunning, isPaused: $isPaused, isFinished: $isFinished, label: $label, targetEndTime: $targetEndTime)';
+  return 'TimerState(duration: $duration, remainingSeconds: $remainingSeconds, elapsedSeconds: $elapsedSeconds, isRunning: $isRunning, isPaused: $isPaused, isFinished: $isFinished, label: $label, mode: $mode, targetEndTime: $targetEndTime, startTime: $startTime, countUpLimitSeconds: $countUpLimitSeconds)';
 }
 
 
@@ -253,7 +261,7 @@ abstract mixin class _$TimerStateCopyWith<$Res> implements $TimerStateCopyWith<$
   factory _$TimerStateCopyWith(_TimerState value, $Res Function(_TimerState) _then) = __$TimerStateCopyWithImpl;
 @override @useResult
 $Res call({
- int duration, int remainingSeconds, bool isRunning, bool isPaused, bool isFinished, String label, DateTime? targetEndTime
+ int duration, int remainingSeconds, int elapsedSeconds, bool isRunning, bool isPaused, bool isFinished, String label, TimerMode mode, DateTime? targetEndTime, DateTime? startTime, int? countUpLimitSeconds
 });
 
 
@@ -270,16 +278,20 @@ class __$TimerStateCopyWithImpl<$Res>
 
 /// Create a copy of TimerState
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? duration = null,Object? remainingSeconds = null,Object? isRunning = null,Object? isPaused = null,Object? isFinished = null,Object? label = null,Object? targetEndTime = freezed,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? duration = null,Object? remainingSeconds = null,Object? elapsedSeconds = null,Object? isRunning = null,Object? isPaused = null,Object? isFinished = null,Object? label = null,Object? mode = null,Object? targetEndTime = freezed,Object? startTime = freezed,Object? countUpLimitSeconds = freezed,}) {
   return _then(_TimerState(
 duration: null == duration ? _self.duration : duration // ignore: cast_nullable_to_non_nullable
 as int,remainingSeconds: null == remainingSeconds ? _self.remainingSeconds : remainingSeconds // ignore: cast_nullable_to_non_nullable
+as int,elapsedSeconds: null == elapsedSeconds ? _self.elapsedSeconds : elapsedSeconds // ignore: cast_nullable_to_non_nullable
 as int,isRunning: null == isRunning ? _self.isRunning : isRunning // ignore: cast_nullable_to_non_nullable
 as bool,isPaused: null == isPaused ? _self.isPaused : isPaused // ignore: cast_nullable_to_non_nullable
 as bool,isFinished: null == isFinished ? _self.isFinished : isFinished // ignore: cast_nullable_to_non_nullable
 as bool,label: null == label ? _self.label : label // ignore: cast_nullable_to_non_nullable
-as String,targetEndTime: freezed == targetEndTime ? _self.targetEndTime : targetEndTime // ignore: cast_nullable_to_non_nullable
-as DateTime?,
+as String,mode: null == mode ? _self.mode : mode // ignore: cast_nullable_to_non_nullable
+as TimerMode,targetEndTime: freezed == targetEndTime ? _self.targetEndTime : targetEndTime // ignore: cast_nullable_to_non_nullable
+as DateTime?,startTime: freezed == startTime ? _self.startTime : startTime // ignore: cast_nullable_to_non_nullable
+as DateTime?,countUpLimitSeconds: freezed == countUpLimitSeconds ? _self.countUpLimitSeconds : countUpLimitSeconds // ignore: cast_nullable_to_non_nullable
+as int?,
   ));
 }
 

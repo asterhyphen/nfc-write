@@ -156,13 +156,23 @@ class _FlipClockTimerScreenState extends ConsumerState<FlipClockTimerScreen>
             ),
 
             // ── Progress indicator bar at the top ────────────────────
-            if (timerState.duration > 0 && !timerState.isFinished)
+            if (!timerState.isFinished)
               Positioned(
                 top: 0,
                 left: 0,
                 right: 0,
                 child: LinearProgressIndicator(
-                  value: timerState.remainingSeconds / timerState.duration,
+                  value: timerState.mode == TimerMode.countup
+                      ? (timerState.countUpLimitSeconds != null &&
+                              timerState.countUpLimitSeconds! > 0
+                          ? (timerState.elapsedSeconds /
+                                  timerState.countUpLimitSeconds!)
+                              .clamp(0.0, 1.0)
+                          : null)
+                      : (timerState.duration > 0
+                          ? (timerState.remainingSeconds / timerState.duration)
+                              .clamp(0.0, 1.0)
+                          : 0.0),
                   backgroundColor: Colors.transparent,
                   valueColor: AlwaysStoppedAnimation<Color>(
                     isUrgent
@@ -202,13 +212,39 @@ class _FlipClockTimerScreenState extends ConsumerState<FlipClockTimerScreen>
                           ),
                         ),
                       ),
-                      Text(
-                        timerState.label.toUpperCase(),
-                        style: const TextStyle(
-                          color: Colors.white,
-                          fontSize: 13,
-                          fontWeight: FontWeight.w700,
-                          letterSpacing: 2.0,
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 12,
+                          vertical: 6,
+                        ),
+                        decoration: BoxDecoration(
+                          color: Colors.white.withValues(alpha: 0.12),
+                          borderRadius: BorderRadius.circular(16),
+                          border: Border.all(color: Colors.white24, width: 0.5),
+                        ),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Icon(
+                              timerState.mode == TimerMode.countup
+                                  ? Icons.trending_up_rounded
+                                  : Icons.timer_rounded,
+                              size: 14,
+                              color: Colors.white70,
+                            ),
+                            const SizedBox(width: 6),
+                            Text(
+                              timerState.mode == TimerMode.countup
+                                  ? '${timerState.label.toUpperCase()} • COUNT UP'
+                                  : timerState.label.toUpperCase(),
+                              style: const TextStyle(
+                                color: Colors.white,
+                                fontSize: 11,
+                                fontWeight: FontWeight.w700,
+                                letterSpacing: 1.5,
+                              ),
+                            ),
+                          ],
                         ),
                       ),
                       const SizedBox(width: 44),
@@ -225,7 +261,9 @@ class _FlipClockTimerScreenState extends ConsumerState<FlipClockTimerScreen>
                 child: FittedBox(
                   fit: BoxFit.scaleDown,
                   child: FlipClockDisplay(
-                    seconds: timerState.remainingSeconds,
+                    seconds: timerState.mode == TimerMode.countup
+                        ? timerState.elapsedSeconds
+                        : timerState.remainingSeconds,
                     isUrgent: isUrgent,
                     isFinished: timerState.isFinished,
                   ),

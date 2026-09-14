@@ -35,13 +35,26 @@ class BackgroundNfcManager {
     BuildContext context,
   ) async {
     if (payload.startsWith('timer://')) {
-      final secs = int.tryParse(payload.replaceFirst('timer://', '')) ?? 300;
+      final raw = payload.replaceFirst('timer://', '');
       final registry = await ref.read(tagRegistryRepositoryProvider.future);
       final tagName = registry.getTagName(payload);
-      ref.read(timerProvider.notifier).start(secs, tagName ?? 'TIMER');
+
+      if (raw.toLowerCase().startsWith('countup') || raw == '0') {
+        int? limit;
+        if (raw.contains('limit=')) {
+          final uri = Uri.tryParse('timer://$raw');
+          limit = int.tryParse(uri?.queryParameters['limit'] ?? '');
+        }
+        ref.read(timerProvider.notifier).startCountUp(
+              label: tagName ?? 'FOCUS FLOW',
+              limitSeconds: limit,
+            );
+      } else {
+        final secs = int.tryParse(raw) ?? 300;
+        ref.read(timerProvider.notifier).start(secs, tagName ?? 'TIMER');
+      }
 
       if (context.mounted) {
-        // Push Flip Clock Screen
         Navigator.push(context, FlipClockTimerScreen.route());
       }
     } else if (payload.startsWith('notification://')) {

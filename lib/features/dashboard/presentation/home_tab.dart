@@ -296,7 +296,7 @@ class HomeDashboardTab extends ConsumerWidget {
       context: context,
       builder: (ctx) => _TimerProgramDialog(
         initialSeconds: initialSeconds,
-        onWriteTag: (seconds) {
+        onWriteCountdown: (seconds) {
           TimerPreferences.saveLastDuration(seconds);
           Navigator.pop(ctx);
           showModalBottomSheet(
@@ -309,10 +309,33 @@ class HomeDashboardTab extends ConsumerWidget {
             ),
           );
         },
-        onStartNow: (seconds) {
+        onStartCountdown: (seconds) {
           TimerPreferences.saveLastDuration(seconds);
           Navigator.pop(ctx);
           ref.read(timerProvider.notifier).start(seconds, 'TIMER');
+          Navigator.push(context, FlipClockTimerScreen.route());
+        },
+        onWriteCountUp: (limit) {
+          Navigator.pop(ctx);
+          final payload = limit != null
+              ? 'timer://countup?limit=$limit'
+              : 'timer://countup';
+          showModalBottomSheet(
+            context: context,
+            isScrollControlled: true,
+            backgroundColor: Colors.transparent,
+            builder: (_) => NfcWriteSheet(
+              initialType: WriteType.text,
+              initialContent: payload,
+            ),
+          );
+        },
+        onStartCountUp: (limit) {
+          Navigator.pop(ctx);
+          ref.read(timerProvider.notifier).startCountUp(
+                label: 'FOCUS FLOW',
+                limitSeconds: limit,
+              );
           Navigator.push(context, FlipClockTimerScreen.route());
         },
       ),
@@ -430,12 +453,17 @@ class HomeDashboardTab extends ConsumerWidget {
 
 class _TimerProgramDialog extends StatefulWidget {
   final int initialSeconds;
-  final void Function(int seconds) onWriteTag;
-  final void Function(int seconds) onStartNow;
+  final void Function(int seconds) onWriteCountdown;
+  final void Function(int seconds) onStartCountdown;
+  final void Function(int? limit) onWriteCountUp;
+  final void Function(int? limit) onStartCountUp;
+
   const _TimerProgramDialog({
     this.initialSeconds = 300,
-    required this.onWriteTag,
-    required this.onStartNow,
+    required this.onWriteCountdown,
+    required this.onStartCountdown,
+    required this.onWriteCountUp,
+    required this.onStartCountUp,
   });
 
   @override
@@ -443,8 +471,10 @@ class _TimerProgramDialog extends StatefulWidget {
 }
 
 class _TimerProgramDialogState extends State<_TimerProgramDialog> {
+  TimerMode _mode = TimerMode.countdown;
   late int _minutes;
   late int _seconds;
+  int? _countUpLimit;
   late final TextEditingController _minCtrl;
   late final TextEditingController _secCtrl;
 
@@ -518,136 +548,274 @@ class _TimerProgramDialogState extends State<_TimerProgramDialog> {
                     color: Colors.orange.withValues(alpha: 0.15),
                     borderRadius: BorderRadius.circular(12),
                   ),
-                  child: const Icon(
-                    Icons.timer_rounded,
+                  child: Icon(
+                    _mode == TimerMode.countup
+                        ? Icons.trending_up_rounded
+                        : Icons.timer_rounded,
                     color: Colors.orange,
                     size: 20,
                   ),
                 ),
                 const SizedBox(width: 12),
-                const Text(
-                  'Program Timer Action',
-                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.w800),
-                ),
-              ],
-            ),
-            const SizedBox(height: 20),
-
-            // Preset Chips
-            const Text(
-              'Presets',
-              style: TextStyle(
-                fontSize: 11,
-                fontWeight: FontWeight.bold,
-                color: Colors.grey,
-              ),
-            ),
-            const SizedBox(height: 8),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                _presetChip(1, '1m'),
-                _presetChip(5, '5m'),
-                _presetChip(10, '10m'),
-                _presetChip(25, '25m (Pomo)'),
-                _presetChip(60, '1h'),
-              ],
-            ),
-            const SizedBox(height: 20),
-
-            // Live Time Display
-            Center(
-              child: Container(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 20,
-                  vertical: 10,
-                ),
-                decoration: BoxDecoration(
-                  color: Colors.orange.withValues(alpha: 0.1),
-                  borderRadius: BorderRadius.circular(16),
-                  border: Border.all(
-                    color: Colors.orange.withValues(alpha: 0.3),
-                    width: 1.2,
-                  ),
-                ),
-                child: Text(
-                  '${_minutes.toString().padLeft(2, '0')}:${_seconds.toString().padLeft(2, '0')}',
+                Text(
+                  _mode == TimerMode.countup
+                      ? 'Program Count Up Action'
+                      : 'Program Timer Action',
                   style: const TextStyle(
-                    fontSize: 32,
-                    fontWeight: FontWeight.w900,
-                    fontFamily: 'monospace',
-                    color: Colors.orange,
-                  ),
-                ),
-              ),
-            ),
-            const SizedBox(height: 20),
-
-            // Input Fields
-            Row(
-              children: [
-                Expanded(
-                  child: TextField(
-                    controller: _minCtrl,
-                    keyboardType: TextInputType.number,
-                    onChanged: (_) => _updateFromInputs(),
-                    decoration: InputDecoration(
-                      labelText: 'Minutes',
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      contentPadding: const EdgeInsets.symmetric(
-                        horizontal: 12,
-                        vertical: 12,
-                      ),
-                    ),
-                  ),
-                ),
-                const SizedBox(width: 16),
-                Expanded(
-                  child: TextField(
-                    controller: _secCtrl,
-                    keyboardType: TextInputType.number,
-                    onChanged: (_) => _updateFromInputs(),
-                    decoration: InputDecoration(
-                      labelText: 'Seconds',
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      contentPadding: const EdgeInsets.symmetric(
-                        horizontal: 12,
-                        vertical: 12,
-                      ),
-                    ),
+                    fontSize: 18,
+                    fontWeight: FontWeight.w800,
                   ),
                 ),
               ],
             ),
-            const SizedBox(height: 20),
+            const SizedBox(height: 16),
 
-            // Slider
-            SliderTheme(
-              data: SliderThemeData(
-                activeTrackColor: Colors.orange,
-                inactiveTrackColor: Colors.orange.withValues(alpha: 0.2),
-                thumbColor: Colors.orange,
-                overlayColor: Colors.orange.withValues(alpha: 0.1),
+            // ── Mode Switcher Control ───────────────────────────────
+            Container(
+              width: double.infinity,
+              padding: const EdgeInsets.all(3),
+              decoration: BoxDecoration(
+                color: isDark ? Colors.white10 : const Color(0xFFF2F2F7),
+                borderRadius: BorderRadius.circular(14),
               ),
-              child: Slider(
-                value: _minutes.toDouble().clamp(1.0, 120.0),
-                min: 1,
-                max: 120,
-                divisions: 119,
-                onChanged: (val) {
-                  setState(() {
-                    _minutes = val.round();
-                    _minCtrl.text = _minutes.toString();
-                  });
-                },
+              child: Row(
+                children: [
+                  Expanded(
+                    child: GestureDetector(
+                      onTap: () => setState(() => _mode = TimerMode.countdown),
+                      child: AnimatedContainer(
+                        duration: const Duration(milliseconds: 200),
+                        padding: const EdgeInsets.symmetric(vertical: 8),
+                        decoration: BoxDecoration(
+                          color: _mode == TimerMode.countdown
+                              ? (isDark ? const Color(0xFF2C2C2E) : Colors.white)
+                              : Colors.transparent,
+                          borderRadius: BorderRadius.circular(11),
+                          boxShadow: _mode == TimerMode.countdown
+                              ? [
+                                  BoxShadow(
+                                    color: Colors.black.withValues(alpha: 0.08),
+                                    blurRadius: 4,
+                                  )
+                                ]
+                              : null,
+                        ),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(
+                              Icons.hourglass_top_rounded,
+                              size: 15,
+                              color: _mode == TimerMode.countdown
+                                  ? Colors.orange
+                                  : Colors.grey,
+                            ),
+                            const SizedBox(width: 6),
+                            Text(
+                              'Countdown',
+                              style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 12,
+                                color: _mode == TimerMode.countdown
+                                    ? (isDark ? Colors.white : Colors.black87)
+                                    : Colors.grey,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                  Expanded(
+                    child: GestureDetector(
+                      onTap: () => setState(() => _mode = TimerMode.countup),
+                      child: AnimatedContainer(
+                        duration: const Duration(milliseconds: 200),
+                        padding: const EdgeInsets.symmetric(vertical: 8),
+                        decoration: BoxDecoration(
+                          color: _mode == TimerMode.countup
+                              ? (isDark ? const Color(0xFF2C2C2E) : Colors.white)
+                              : Colors.transparent,
+                          borderRadius: BorderRadius.circular(11),
+                          boxShadow: _mode == TimerMode.countup
+                              ? [
+                                  BoxShadow(
+                                    color: Colors.black.withValues(alpha: 0.08),
+                                    blurRadius: 4,
+                                  )
+                                ]
+                              : null,
+                        ),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(
+                              Icons.trending_up_rounded,
+                              size: 15,
+                              color: _mode == TimerMode.countup
+                                  ? Colors.orange
+                                  : Colors.grey,
+                            ),
+                            const SizedBox(width: 6),
+                            Text(
+                              'Count Up',
+                              style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 12,
+                                color: _mode == TimerMode.countup
+                                    ? (isDark ? Colors.white : Colors.black87)
+                                    : Colors.grey,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
               ),
             ),
+            const SizedBox(height: 16),
 
-            const SizedBox(height: 24),
+            if (_mode == TimerMode.countdown) ...[
+              // Preset Chips
+              const Text(
+                'Presets',
+                style: TextStyle(
+                  fontSize: 11,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.grey,
+                ),
+              ),
+              const SizedBox(height: 8),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  _presetChip(1, '1m'),
+                  _presetChip(5, '5m'),
+                  _presetChip(10, '10m'),
+                  _presetChip(25, '25m (Pomo)'),
+                  _presetChip(60, '1h'),
+                ],
+              ),
+              const SizedBox(height: 16),
+
+              // Live Time Display
+              Center(
+                child: Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 20,
+                    vertical: 8,
+                  ),
+                  decoration: BoxDecoration(
+                    color: Colors.orange.withValues(alpha: 0.1),
+                    borderRadius: BorderRadius.circular(16),
+                    border: Border.all(
+                      color: Colors.orange.withValues(alpha: 0.3),
+                      width: 1.2,
+                    ),
+                  ),
+                  child: Text(
+                    '${_minutes.toString().padLeft(2, '0')}:${_seconds.toString().padLeft(2, '0')}',
+                    style: const TextStyle(
+                      fontSize: 30,
+                      fontWeight: FontWeight.w900,
+                      fontFamily: 'monospace',
+                      color: Colors.orange,
+                    ),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 16),
+
+              // Input Fields
+              Row(
+                children: [
+                  Expanded(
+                    child: TextField(
+                      controller: _minCtrl,
+                      keyboardType: TextInputType.number,
+                      onChanged: (_) => _updateFromInputs(),
+                      decoration: InputDecoration(
+                        labelText: 'Minutes',
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        contentPadding: const EdgeInsets.symmetric(
+                          horizontal: 12,
+                          vertical: 10,
+                        ),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 16),
+                  Expanded(
+                    child: TextField(
+                      controller: _secCtrl,
+                      keyboardType: TextInputType.number,
+                      onChanged: (_) => _updateFromInputs(),
+                      decoration: InputDecoration(
+                        labelText: 'Seconds',
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        contentPadding: const EdgeInsets.symmetric(
+                          horizontal: 12,
+                          vertical: 10,
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 14),
+
+              // Slider
+              SliderTheme(
+                data: SliderThemeData(
+                  activeTrackColor: Colors.orange,
+                  inactiveTrackColor: Colors.orange.withValues(alpha: 0.2),
+                  thumbColor: Colors.orange,
+                  overlayColor: Colors.orange.withValues(alpha: 0.1),
+                ),
+                child: Slider(
+                  value: _minutes.toDouble().clamp(1.0, 120.0),
+                  min: 1,
+                  max: 120,
+                  divisions: 119,
+                  onChanged: (val) {
+                    setState(() {
+                      _minutes = val.round();
+                      _minCtrl.text = _minutes.toString();
+                    });
+                  },
+                ),
+              ),
+            ] else ...[
+              // Count Up Options
+              const Text(
+                'Focus Target Milestone (Optional)',
+                style: TextStyle(
+                  fontSize: 12,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.grey,
+                ),
+              ),
+              const SizedBox(height: 12),
+              Wrap(
+                spacing: 8,
+                runSpacing: 8,
+                children: [
+                  _countUpChip(null, 'Open Flow (No Limit)'),
+                  _countUpChip(1500, '25m Pomodoro'),
+                  _countUpChip(2700, '45m Deep Work'),
+                  _countUpChip(3600, '60m Sprint'),
+                ],
+              ),
+              const SizedBox(height: 24),
+            ],
+
+            const SizedBox(height: 16),
 
             // Buttons
             Align(
@@ -666,9 +834,15 @@ class _TimerProgramDialogState extends State<_TimerProgramDialog> {
                     ),
                   ),
                   OutlinedButton(
-                    onPressed: totalSeconds > 0
-                        ? () => widget.onWriteTag(totalSeconds)
-                        : null,
+                    onPressed: () {
+                      if (_mode == TimerMode.countup) {
+                        widget.onWriteCountUp(_countUpLimit);
+                      } else {
+                        if (totalSeconds > 0) {
+                          widget.onWriteCountdown(totalSeconds);
+                        }
+                      }
+                    },
                     style: OutlinedButton.styleFrom(
                       foregroundColor: Colors.orange,
                       side: const BorderSide(color: Colors.orange),
@@ -683,9 +857,15 @@ class _TimerProgramDialogState extends State<_TimerProgramDialog> {
                     child: const Text('Write to Tag'),
                   ),
                   FilledButton(
-                    onPressed: totalSeconds > 0
-                        ? () => widget.onStartNow(totalSeconds)
-                        : null,
+                    onPressed: () {
+                      if (_mode == TimerMode.countup) {
+                        widget.onStartCountUp(_countUpLimit);
+                      } else {
+                        if (totalSeconds > 0) {
+                          widget.onStartCountdown(totalSeconds);
+                        }
+                      }
+                    },
                     style: FilledButton.styleFrom(
                       backgroundColor: Colors.orange,
                       foregroundColor: Colors.white,
@@ -697,7 +877,11 @@ class _TimerProgramDialogState extends State<_TimerProgramDialog> {
                         vertical: 10,
                       ),
                     ),
-                    child: const Text('Start Now'),
+                    child: Text(
+                      _mode == TimerMode.countup
+                          ? 'Start Count Up'
+                          : 'Start Now',
+                    ),
                   ),
                 ],
               ),
@@ -705,6 +889,33 @@ class _TimerProgramDialogState extends State<_TimerProgramDialog> {
           ],
         ),
       ),
+    );
+  }
+
+  Widget _countUpChip(int? limit, String label) {
+    final isSelected = _countUpLimit == limit;
+    return ChoiceChip(
+      showCheckmark: false,
+      label: Text(label),
+      labelStyle: TextStyle(
+        fontSize: 12,
+        fontWeight: FontWeight.bold,
+        color: isSelected ? Colors.white : Colors.orange,
+      ),
+      selected: isSelected,
+      selectedColor: Colors.orange,
+      backgroundColor: Colors.orange.withValues(alpha: 0.1),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(12),
+        side: BorderSide(
+          color: isSelected
+              ? Colors.orange
+              : Colors.orange.withValues(alpha: 0.3),
+        ),
+      ),
+      onSelected: (selected) {
+        if (selected) setState(() => _countUpLimit = limit);
+      },
     );
   }
 

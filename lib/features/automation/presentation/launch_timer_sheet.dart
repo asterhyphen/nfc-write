@@ -49,7 +49,9 @@ class LaunchTimerSheet extends ConsumerStatefulWidget {
 }
 
 class _LaunchTimerSheetState extends ConsumerState<LaunchTimerSheet> {
+  TimerMode _mode = TimerMode.countdown;
   late int _selectedSeconds;
+  int? _countUpLimit;
   late String _timerLabel;
   final TextEditingController _customCtrl = TextEditingController();
 
@@ -76,7 +78,14 @@ class _LaunchTimerSheetState extends ConsumerState<LaunchTimerSheet> {
   }
 
   void _startTimer() {
-    ref.read(timerProvider.notifier).start(_selectedSeconds, _timerLabel);
+    if (_mode == TimerMode.countup) {
+      ref.read(timerProvider.notifier).startCountUp(
+            label: _timerLabel == 'TIMER' ? 'FOCUS FLOW' : _timerLabel,
+            limitSeconds: _countUpLimit,
+          );
+    } else {
+      ref.read(timerProvider.notifier).start(_selectedSeconds, _timerLabel);
+    }
     Navigator.push(context, FlipClockTimerScreen.route());
   }
 
@@ -160,20 +169,28 @@ class _LaunchTimerSheetState extends ConsumerState<LaunchTimerSheet> {
                 color: cs.primaryContainer,
                 shape: BoxShape.circle,
               ),
-              child: Icon(Icons.timer_rounded, color: cs.primary, size: 24),
+              child: Icon(
+                _mode == TimerMode.countup
+                    ? Icons.trending_up_rounded
+                    : Icons.timer_rounded,
+                color: cs.primary,
+                size: 24,
+              ),
             ),
             const SizedBox(width: 14),
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  'Launch Timer',
+                  _mode == TimerMode.countup ? 'Count Up Flow' : 'Launch Timer',
                   style: Theme.of(context).textTheme.headlineSmall?.copyWith(
                     fontWeight: FontWeight.bold,
                   ),
                 ),
                 Text(
-                  'Select a standard duration or set custom',
+                  _mode == TimerMode.countup
+                      ? 'Open stopwatch or set milestone goals'
+                      : 'Select a duration or enter custom',
                   style: Theme.of(context).textTheme.bodySmall?.copyWith(
                     color: cs.onSurface.withValues(alpha: 0.6),
                   ),
@@ -183,89 +200,303 @@ class _LaunchTimerSheetState extends ConsumerState<LaunchTimerSheet> {
           ],
         ).animate().fadeIn(duration: 300.ms),
 
-        const SizedBox(height: 24),
-
-        // Presets Grid
-        Text(
-          'Standard Presets',
-          style: Theme.of(
-            context,
-          ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
-        ),
-        const SizedBox(height: 12),
-
-        GridView.builder(
-          shrinkWrap: true,
-          physics: const NeverScrollableScrollPhysics(),
-          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-            crossAxisCount: 3,
-            mainAxisSpacing: 10,
-            crossAxisSpacing: 10,
-            childAspectRatio: 1.6,
-          ),
-          itemCount: kStandardPresets.length,
-          itemBuilder: (ctx, i) {
-            final p = kStandardPresets[i];
-            final isSelected = _selectedSeconds == p.seconds;
-            return ChoiceChip(
-              showCheckmark: false,
-              avatar: Icon(
-                p.icon,
-                size: 18,
-                color: isSelected ? cs.onPrimary : cs.primary,
-              ),
-              label: Text(
-                p.label,
-                style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                  color: isSelected ? cs.onPrimary : cs.onSurface,
-                ),
-              ),
-              selected: isSelected,
-              selectedColor: cs.primary,
-              backgroundColor: cs.surfaceContainerHigh,
-              onSelected: (selected) {
-                if (selected) {
-                  setState(() {
-                    _selectedSeconds = p.seconds;
-                    _customCtrl.clear();
-                  });
-                }
-              },
-            );
-          },
-        ).animate().fadeIn(delay: 150.ms),
-
         const SizedBox(height: 20),
 
-        // Custom Duration Input
-        GlassCard(
+        // ── Mode Switcher Segmented Control ─────────────────────────
+        Container(
+          width: double.infinity,
+          padding: const EdgeInsets.all(4),
+          decoration: BoxDecoration(
+            color: cs.surfaceContainerHighest.withValues(alpha: 0.6),
+            borderRadius: BorderRadius.circular(16),
+          ),
           child: Row(
             children: [
-              const Icon(Icons.edit_calendar_rounded, size: 20),
-              const SizedBox(width: 12),
               Expanded(
-                child: TextField(
-                  controller: _customCtrl,
-                  keyboardType: TextInputType.number,
-                  decoration: const InputDecoration(
-                    hintText: 'Custom duration (in minutes)',
-                    border: InputBorder.none,
-                    isDense: true,
+                child: GestureDetector(
+                  onTap: () => setState(() => _mode = TimerMode.countdown),
+                  child: AnimatedContainer(
+                    duration: const Duration(milliseconds: 200),
+                    curve: Curves.easeOutCubic,
+                    padding: const EdgeInsets.symmetric(vertical: 10),
+                    decoration: BoxDecoration(
+                      color: _mode == TimerMode.countdown
+                          ? cs.surface
+                          : Colors.transparent,
+                      borderRadius: BorderRadius.circular(12),
+                      boxShadow: _mode == TimerMode.countdown
+                          ? [
+                              BoxShadow(
+                                color: Colors.black.withValues(alpha: 0.08),
+                                blurRadius: 4,
+                                offset: const Offset(0, 2),
+                              )
+                            ]
+                          : null,
+                    ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(
+                          Icons.hourglass_top_rounded,
+                          size: 16,
+                          color: _mode == TimerMode.countdown
+                              ? cs.primary
+                              : cs.onSurfaceVariant,
+                        ),
+                        const SizedBox(width: 6),
+                        Text(
+                          'Countdown',
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 13,
+                            color: _mode == TimerMode.countdown
+                                ? cs.onSurface
+                                : cs.onSurfaceVariant,
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
-                  onChanged: (val) {
-                    final mins = int.tryParse(val);
-                    if (mins != null && mins > 0) {
-                      setState(() {
-                        _selectedSeconds = mins * 60;
-                      });
-                    }
-                  },
+                ),
+              ),
+              Expanded(
+                child: GestureDetector(
+                  onTap: () => setState(() => _mode = TimerMode.countup),
+                  child: AnimatedContainer(
+                    duration: const Duration(milliseconds: 200),
+                    curve: Curves.easeOutCubic,
+                    padding: const EdgeInsets.symmetric(vertical: 10),
+                    decoration: BoxDecoration(
+                      color: _mode == TimerMode.countup
+                          ? cs.surface
+                          : Colors.transparent,
+                      borderRadius: BorderRadius.circular(12),
+                      boxShadow: _mode == TimerMode.countup
+                          ? [
+                              BoxShadow(
+                                color: Colors.black.withValues(alpha: 0.08),
+                                blurRadius: 4,
+                                offset: const Offset(0, 2),
+                              )
+                            ]
+                          : null,
+                    ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(
+                          Icons.trending_up_rounded,
+                          size: 16,
+                          color: _mode == TimerMode.countup
+                              ? cs.primary
+                              : cs.onSurfaceVariant,
+                        ),
+                        const SizedBox(width: 6),
+                        Text(
+                          'Count Up',
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 13,
+                            color: _mode == TimerMode.countup
+                                ? cs.onSurface
+                                : cs.onSurfaceVariant,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
                 ),
               ),
             ],
           ),
-        ).animate().fadeIn(delay: 250.ms),
+        ).animate().fadeIn(delay: 100.ms),
+
+        const SizedBox(height: 20),
+
+        if (_mode == TimerMode.countdown) ...[
+          // Countdown Presets Grid
+          Text(
+            'Countdown Presets',
+            style: Theme.of(
+              context,
+            ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
+          ),
+          const SizedBox(height: 12),
+
+          GridView.builder(
+            shrinkWrap: true,
+            physics: const NeverScrollableScrollPhysics(),
+            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: 3,
+              mainAxisSpacing: 10,
+              crossAxisSpacing: 10,
+              childAspectRatio: 1.6,
+            ),
+            itemCount: kStandardPresets.length,
+            itemBuilder: (ctx, i) {
+              final p = kStandardPresets[i];
+              final isSelected = _selectedSeconds == p.seconds;
+              return ChoiceChip(
+                showCheckmark: false,
+                avatar: Icon(
+                  p.icon,
+                  size: 18,
+                  color: isSelected ? cs.onPrimary : cs.primary,
+                ),
+                label: Text(
+                  p.label,
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    color: isSelected ? cs.onPrimary : cs.onSurface,
+                  ),
+                ),
+                selected: isSelected,
+                selectedColor: cs.primary,
+                backgroundColor: cs.surfaceContainerHigh,
+                onSelected: (selected) {
+                  if (selected) {
+                    setState(() {
+                      _selectedSeconds = p.seconds;
+                      _customCtrl.clear();
+                    });
+                  }
+                },
+              );
+            },
+          ).animate().fadeIn(delay: 150.ms),
+
+          const SizedBox(height: 20),
+
+          // Custom Duration Input
+          GlassCard(
+            child: Row(
+              children: [
+                const Icon(Icons.edit_calendar_rounded, size: 20),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: TextField(
+                    controller: _customCtrl,
+                    keyboardType: TextInputType.number,
+                    decoration: const InputDecoration(
+                      hintText: 'Custom duration (in minutes)',
+                      border: InputBorder.none,
+                      isDense: true,
+                    ),
+                    onChanged: (val) {
+                      final mins = int.tryParse(val);
+                      if (mins != null && mins > 0) {
+                        setState(() {
+                          _selectedSeconds = mins * 60;
+                        });
+                      }
+                    },
+                  ),
+                ),
+              ],
+            ),
+          ).animate().fadeIn(delay: 250.ms),
+        ] else ...[
+          // Count Up Mode Options
+          Text(
+            'Milestone Target (Optional)',
+            style: Theme.of(
+              context,
+            ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
+          ),
+          const SizedBox(height: 12),
+
+          Wrap(
+            spacing: 10,
+            runSpacing: 10,
+            children: [
+              ChoiceChip(
+                showCheckmark: false,
+                avatar: Icon(
+                  Icons.all_inclusive_rounded,
+                  size: 18,
+                  color: _countUpLimit == null ? cs.onPrimary : cs.primary,
+                ),
+                label: Text(
+                  'Open Flow (No Limit)',
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    color: _countUpLimit == null ? cs.onPrimary : cs.onSurface,
+                  ),
+                ),
+                selected: _countUpLimit == null,
+                selectedColor: cs.primary,
+                backgroundColor: cs.surfaceContainerHigh,
+                onSelected: (selected) {
+                  if (selected) setState(() => _countUpLimit = null);
+                },
+              ),
+              ChoiceChip(
+                showCheckmark: false,
+                avatar: Icon(
+                  Icons.psychology_rounded,
+                  size: 18,
+                  color: _countUpLimit == 1500 ? cs.onPrimary : cs.primary,
+                ),
+                label: Text(
+                  '25m Pomodoro',
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    color: _countUpLimit == 1500 ? cs.onPrimary : cs.onSurface,
+                  ),
+                ),
+                selected: _countUpLimit == 1500,
+                selectedColor: cs.primary,
+                backgroundColor: cs.surfaceContainerHigh,
+                onSelected: (selected) {
+                  if (selected) setState(() => _countUpLimit = 1500);
+                },
+              ),
+              ChoiceChip(
+                showCheckmark: false,
+                avatar: Icon(
+                  Icons.bolt_rounded,
+                  size: 18,
+                  color: _countUpLimit == 2700 ? cs.onPrimary : cs.primary,
+                ),
+                label: Text(
+                  '45m Deep Work',
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    color: _countUpLimit == 2700 ? cs.onPrimary : cs.onSurface,
+                  ),
+                ),
+                selected: _countUpLimit == 2700,
+                selectedColor: cs.primary,
+                backgroundColor: cs.surfaceContainerHigh,
+                onSelected: (selected) {
+                  if (selected) setState(() => _countUpLimit = 2700);
+                },
+              ),
+              ChoiceChip(
+                showCheckmark: false,
+                avatar: Icon(
+                  Icons.alarm_rounded,
+                  size: 18,
+                  color: _countUpLimit == 3600 ? cs.onPrimary : cs.primary,
+                ),
+                label: Text(
+                  '60m Sprint',
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    color: _countUpLimit == 3600 ? cs.onPrimary : cs.onSurface,
+                  ),
+                ),
+                selected: _countUpLimit == 3600,
+                selectedColor: cs.primary,
+                backgroundColor: cs.surfaceContainerHigh,
+                onSelected: (selected) {
+                  if (selected) setState(() => _countUpLimit = 3600);
+                },
+              ),
+            ],
+          ).animate().fadeIn(delay: 150.ms),
+        ],
 
         const SizedBox(height: 28),
 
@@ -290,7 +521,11 @@ class _LaunchTimerSheetState extends ConsumerState<LaunchTimerSheet> {
               child: FilledButton.icon(
                 onPressed: _startTimer,
                 icon: const Icon(Icons.play_arrow_rounded),
-                label: Text('Start (${_formatDuration(_selectedSeconds)})'),
+                label: Text(
+                  _mode == TimerMode.countup
+                      ? 'Start Count Up'
+                      : 'Start (${_formatDuration(_selectedSeconds)})',
+                ),
                 style: FilledButton.styleFrom(
                   padding: const EdgeInsets.symmetric(vertical: 16),
                   shape: RoundedRectangleBorder(
@@ -445,11 +680,20 @@ class _LaunchTimerSheetState extends ConsumerState<LaunchTimerSheet> {
   }
 
   void _writeTimerToNfc() {
+    final payload = _mode == TimerMode.countup
+        ? (_countUpLimit != null
+            ? 'timer://countup?limit=$_countUpLimit'
+            : 'timer://countup')
+        : 'timer://$_selectedSeconds';
+
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
-      builder: (_) => const NfcWriteSheet(),
+      builder: (_) => NfcWriteSheet(
+        initialType: WriteType.text,
+        initialContent: payload,
+      ),
     );
   }
 }
