@@ -135,6 +135,7 @@ class TimerNotifier extends _$TimerNotifier {
       if (state.countUpLimitSeconds != null && state.countUpLimitSeconds! > 0) {
         if (elapsed >= state.countUpLimitSeconds!) {
           _ticker?.cancel();
+          NativeTimerService.hideOngoingNotification();
           state = state.copyWith(
             elapsedSeconds: state.countUpLimitSeconds!,
             remainingSeconds: 0,
@@ -161,6 +162,7 @@ class TimerNotifier extends _$TimerNotifier {
         }
       } else {
         _ticker?.cancel();
+        NativeTimerService.hideOngoingNotification();
         state = state.copyWith(
           remainingSeconds: 0,
           isRunning: false,
@@ -184,6 +186,7 @@ class TimerNotifier extends _$TimerNotifier {
   void pause() {
     _ticker?.cancel();
     NativeTimerService.cancelAlarm();
+    NativeTimerService.hideOngoingNotification();
 
     if (state.mode == TimerMode.countup) {
       final elapsed = state.startTime != null
@@ -260,6 +263,7 @@ class TimerNotifier extends _$TimerNotifier {
     _ticker?.cancel();
     FlutterRingtonePlayer().stop();
     NativeTimerService.cancelAlarm();
+    NativeTimerService.hideOngoingNotification();
     state = state.copyWith(
       isRunning: false,
       isPaused: false,

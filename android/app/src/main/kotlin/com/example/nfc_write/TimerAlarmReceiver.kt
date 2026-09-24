@@ -75,6 +75,7 @@ class TimerAlarmReceiver : BroadcastReceiver() {
             .setFullScreenIntent(pendingIntent, true)
             .build()
 
+        notificationManager.cancel(1002)
         notificationManager.notify(1001, notification)
     }
 }

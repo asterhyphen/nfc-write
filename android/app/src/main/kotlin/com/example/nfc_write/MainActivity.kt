@@ -1,6 +1,7 @@
 package dev.aster.nfc_write
 
 import android.app.AlarmManager
+import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.Context
@@ -10,6 +11,7 @@ import android.nfc.NdefMessage
 import android.nfc.NdefRecord
 import android.os.Build
 import android.os.Bundle
+import androidx.core.app.NotificationCompat
 import io.flutter.embedding.android.FlutterActivity
 import io.flutter.embedding.engine.FlutterEngine
 import io.flutter.plugin.common.MethodChannel
@@ -17,6 +19,10 @@ import io.flutter.plugin.common.MethodChannel
 class MainActivity : FlutterActivity() {
     private val NFC_CHANNEL = "dev.aster.nfc_write/nfc"
     private val TIMER_CHANNEL = "dev.aster.nfc_write/timer"
+    private val ONGOING_NOTIFICATION_ID = 1002
+    private val ALARM_NOTIFICATION_ID = 1001
+    private val LIVE_CHANNEL_ID = "tiptaptup_timer_live_channel"
+
     private var channel: MethodChannel? = null
     private var timerChannel: MethodChannel? = null
     private var pendingPayload: String? = null
@@ -43,6 +49,17 @@ class MainActivity : FlutterActivity() {
                     scheduleAlarm(triggerAtMillis, title, label)
                     result.success(true)
                 }
+                "showOngoingNotification" -> {
+                    val whenMillis = (call.argument<Number>("whenMillis"))?.toLong() ?: 0L
+                    val label = call.argument<String>("label") ?: "Timer"
+                    val isCountdown = call.argument<Boolean>("isCountdown") ?: true
+                    showOngoingNotification(whenMillis, label, isCountdown)
+                    result.success(true)
+                }
+                "hideOngoingNotification" -> {
+                    hideOngoingNotification()
+                    result.success(true)
+                }
                 "cancelTimerAlarm" -> {
                     cancelAlarm()
                     result.success(true)
@@ -50,6 +67,58 @@ class MainActivity : FlutterActivity() {
                 else -> result.notImplemented()
             }
         }
+    }
+
+    private fun showOngoingNotification(whenMillis: Long, label: String, isCountdown: Boolean) {
+        val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as? NotificationManager ?: return
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            val channel = NotificationChannel(
+                LIVE_CHANNEL_ID,
+                "Live Timer Countdown",
+                NotificationManager.IMPORTANCE_LOW
+            ).apply {
+                description = "Live ticking timer countdown on lock screen and notification bar"
+                setShowBadge(false)
+                enableVibration(false)
+                setSound(null, null)
+            }
+            notificationManager.createNotificationChannel(channel)
+        }
+
+        val launchIntent = Intent(this, MainActivity::class.java).apply {
+            flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP
+        }
+        val pendingIntent = PendingIntent.getActivity(
+            this,
+            1002,
+            launchIntent,
+            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+        )
+
+        val title = if (isCountdown) "⏳ $label" else "⏱️ $label"
+        val subtitle = if (isCountdown) "Counting down…" else "Focus flow in progress…"
+
+        val builder = NotificationCompat.Builder(this, LIVE_CHANNEL_ID)
+            .setSmallIcon(android.R.drawable.ic_lock_idle_alarm)
+            .setContentTitle(title)
+            .setContentText(subtitle)
+            .setWhen(whenMillis)
+            .setUsesChronometer(true)
+            .setChronometerCountDown(isCountdown)
+            .setOngoing(true)
+            .setOnlyAlertOnce(true)
+            .setPriority(NotificationCompat.PRIORITY_LOW)
+            .setCategory(NotificationCompat.CATEGORY_PROGRESS)
+            .setContentIntent(pendingIntent)
+            .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
+
+        notificationManager.notify(ONGOING_NOTIFICATION_ID, builder.build())
+    }
+
+    private fun hideOngoingNotification() {
+        val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as? NotificationManager
+        notificationManager?.cancel(ONGOING_NOTIFICATION_ID)
     }
 
     private fun scheduleAlarm(triggerAtMillis: Long, title: String, label: String) {
@@ -92,7 +161,8 @@ class MainActivity : FlutterActivity() {
         alarmManager.cancel(pendingIntent)
 
         val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as? NotificationManager
-        notificationManager?.cancel(1001)
+        notificationManager?.cancel(ALARM_NOTIFICATION_ID)
+        notificationManager?.cancel(ONGOING_NOTIFICATION_ID)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {

@@ -36,6 +36,33 @@ class NativeTimerService {
     } catch (_) {}
   }
 
+  /// Shows a live ticking Android chronometer countdown notification.
+  static Future<void> showOngoingNotification({
+    required DateTime whenTime,
+    required String label,
+    required bool isCountdown,
+  }) async {
+    try {
+      if (Platform.isAndroid) {
+        await requestNotificationPermission();
+        await _channel.invokeMethod('showOngoingNotification', {
+          'whenMillis': whenTime.millisecondsSinceEpoch,
+          'label': label,
+          'isCountdown': isCountdown,
+        });
+      }
+    } catch (_) {}
+  }
+
+  /// Hides the live ongoing notification.
+  static Future<void> hideOngoingNotification() async {
+    try {
+      if (Platform.isAndroid) {
+        await _channel.invokeMethod('hideOngoingNotification');
+      }
+    } catch (_) {}
+  }
+
   /// Cancels any scheduled native hardware alarms.
   static Future<void> cancelAlarm() async {
     try {
